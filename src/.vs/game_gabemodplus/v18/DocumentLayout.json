@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\triggers.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\triggers.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\shared\\gamerules.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\shared\\gamerules.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -37,8 +41,25 @@
               "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "triggers.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\triggers.cpp",
+              "RelativeDocumentMoniker": "game\\server\\triggers.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\triggers.cpp",
+              "RelativeToolTip": "game\\server\\triggers.cpp",
+              "ViewState": "AgIAADYGAAAAAAAAAAAewPoFAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-18T17:56:26.153Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "player.cpp",
               "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\player.cpp",
               "RelativeDocumentMoniker": "game\\server\\player.cpp",
@@ -46,25 +67,24 @@
               "RelativeToolTip": "game\\server\\player.cpp",
               "ViewState": "AgIAACoTAAAAAAAAAAAuwDcTAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-18T16:36:27.531Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-18T16:36:27.531Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "gamerules.cpp",
               "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\shared\\gamerules.cpp",
               "RelativeDocumentMoniker": "game\\shared\\gamerules.cpp",
               "ToolTip": "C:\\GabeModPlus\\src\\game\\shared\\gamerules.cpp",
               "RelativeToolTip": "game\\shared\\gamerules.cpp",
-              "ViewState": "AgIAAKoAAAAAAAAAAAAAAKwAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAKoAAAAAAAAAAAAAALMAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-02-18T16:33:04.871Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "gabe_newgamedialog.cpp",
               "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp",
               "RelativeDocumentMoniker": "game\\client\\gabe_newgamedialog.cpp",
@@ -72,12 +92,11 @@
               "RelativeToolTip": "game\\client\\gabe_newgamedialog.cpp",
               "ViewState": "AgIAABMBAAAAAAAAAAAAAAsBAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-18T16:07:22.319Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-18T16:07:22.319Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "hl2mp_player.cpp",
               "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp",
               "RelativeDocumentMoniker": "game\\server\\hl2mp\\hl2mp_player.cpp",
@@ -85,12 +104,11 @@
               "RelativeToolTip": "game\\server\\hl2mp\\hl2mp_player.cpp",
               "ViewState": "AgIAAAwBAAAAAAAAAAAewBYBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-18T16:13:00.818Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-18T16:13:00.818Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "gabeplus_npc_nextbot.cpp",
               "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\gabeplus_npc_nextbot.cpp",
               "RelativeDocumentMoniker": "game\\server\\gabeplus_npc_nextbot.cpp",
@@ -98,8 +116,7 @@
               "RelativeToolTip": "game\\server\\gabeplus_npc_nextbot.cpp",
               "ViewState": "AgIAABUAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-18T16:06:07.521Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-18T16:06:07.521Z"
             }
           ]
         }
