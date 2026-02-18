@@ -1377,19 +1377,18 @@ bool CBaseCombatWeapon::Deploy()
 {
 	MDLCACHE_CRITICAL_SECTION();
 
-	// No animation
-	SendWeaponAnim(ACT_INVALID);
+	SendWeaponAnim(ACT_VM_IDLE);  // must be valid
 
-	// Allow immediate firing
 	m_flNextPrimaryAttack = gpGlobals->curtime;
 	m_flNextSecondaryAttack = gpGlobals->curtime;
 
 	return true;
 }
 
+
 Activity CBaseCombatWeapon::GetDrawActivity(void)
 {
-	return ACT_INVALID;
+	return ACT_VM_DRAW;
 }
 
 //-----------------------------------------------------------------------------

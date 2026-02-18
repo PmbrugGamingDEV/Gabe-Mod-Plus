@@ -32,7 +32,7 @@ C:\GABEMODPLUS\SRC\GABE_LUA515\RELEASE\LSTRLIB.OBJ
 C:\GABEMODPLUS\SRC\GABE_LUA515\RELEASE\LSTRING.OBJ
 C:\GABEMODPLUS\SRC\GABE_LUA515\RELEASE\LSTATE.OBJ
 C:\GABEMODPLUS\SRC\GABE_LUA515\RELEASE\VC110.PDB
-C:\GABEMODPLUS\SRC\RELEASE\GABE_LUA515.LIB
+C:\GABEMODPLUS\SRC\LIB\PUBLIC\GABE_LUA515.LIB
 C:\GabeModPlus\src\gabe_lua515\Release\lapi.obj
 C:\GabeModPlus\src\gabe_lua515\Release\lauxlib.obj
 C:\GabeModPlus\src\gabe_lua515\Release\lbaselib.obj
@@ -74,4 +74,4 @@ C:\GabeModPlus\src\gabe_lua515\Release\Lib-link.write.1.tlog
 C:\GabeModPlus\src\gabe_lua515\Release\lib.command.1.tlog
 C:\GabeModPlus\src\gabe_lua515\Release\Lib.read.1.tlog
 C:\GabeModPlus\src\gabe_lua515\Release\vc110.pdb
-C:\GabeModPlus\src\Release\gabe_lua515.lib
+C:\GabeModPlus\src\lib\public\gabe_lua515.lib
