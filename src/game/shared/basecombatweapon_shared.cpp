@@ -1373,15 +1373,23 @@ selects and deploys each weapon as you pass it. (sjb)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CBaseCombatWeapon::Deploy( )
+bool CBaseCombatWeapon::Deploy()
 {
 	MDLCACHE_CRITICAL_SECTION();
-	return DefaultDeploy( (char*)GetViewModel(), (char*)GetWorldModel(), GetDrawActivity(), (char*)GetAnimPrefix() );
+
+	// No animation
+	SendWeaponAnim(ACT_INVALID);
+
+	// Allow immediate firing
+	m_flNextPrimaryAttack = gpGlobals->curtime;
+	m_flNextSecondaryAttack = gpGlobals->curtime;
+
+	return true;
 }
 
-Activity CBaseCombatWeapon::GetDrawActivity( void )
+Activity CBaseCombatWeapon::GetDrawActivity(void)
 {
-	return ACT_VM_DRAW;
+	return ACT_INVALID;
 }
 
 //-----------------------------------------------------------------------------
@@ -1397,31 +1405,10 @@ bool CBaseCombatWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 	// kill any think functions
 	SetThink(NULL);
 
-	// Send holster animation
-	SendWeaponAnim( ACT_VM_HOLSTER );
-
-	// Some weapon's don't have holster anims yet, so detect that
-	float flSequenceDuration = 0;
-	if ( GetActivity() == ACT_VM_HOLSTER )
-	{
-		flSequenceDuration = SequenceDuration();
-	}
-
 	CBaseCombatCharacter *pOwner = GetOwner();
 	if (pOwner)
 	{
-		pOwner->SetNextAttack( gpGlobals->curtime + flSequenceDuration );
-	}
-
-	// If we don't have a holster anim, hide immediately to avoid timing issues
-	if ( !flSequenceDuration )
-	{
-		SetWeaponVisible( false );
-	}
-	else
-	{
-		// Hide the weapon when the holster animation's finished
-		SetContextThink( &CBaseCombatWeapon::HideThink, gpGlobals->curtime + flSequenceDuration, HIDEWEAPON_THINK_CONTEXT );
+		pOwner->SetNextAttack( gpGlobals->curtime );
 	}
 
 	// if we were displaying a hud hint, squelch it.
