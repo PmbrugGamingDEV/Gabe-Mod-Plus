@@ -28,7 +28,7 @@ private:
     bool      m_bMoving;
 };
 
-LINK_ENTITY_TO_CLASS(npc_simple_nextbot, CNPC_SimpleNextBot);
+LINK_ENTITY_TO_CLASS(npc_nextbot, CNPC_SimpleNextBot);
 
 BEGIN_DATADESC(CNPC_SimpleNextBot)
 DEFINE_THINKFUNC(Think),

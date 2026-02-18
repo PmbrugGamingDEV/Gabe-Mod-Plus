@@ -4911,6 +4911,19 @@ void CBasePlayer::Spawn( void )
 
 	g_pGameRules->GetPlayerSpawnSpot( this );
 
+	if (g_pGameRules->GetPlayerSpawnSpot( this ) == nullptr)
+	{
+		// Return to the main menu if we can't find a spawn point. This is not a good thing to do, but it's better than crashing.
+		Warning("[Gabe Mod Plus] Couldn't find a spawn point for %s, disconnecting from server...\n", this->GetPlayerName());
+		if (engine && this && this->edict())
+		{
+			engine->ClientCommand(this->edict(), "disconnect\n");
+		}
+
+
+		return;
+	}
+
 	m_Local.m_bDucked = false;// This will persist over round restart if you hold duck otherwise. 
 	m_Local.m_bDucking = false;
     SetViewOffset( VEC_VIEW );

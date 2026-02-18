@@ -693,9 +693,6 @@
     <ClCompile Include="matrixproxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\public\tier0\memoverride.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1638,6 +1635,7 @@
     <ClCompile Include="vgui_keyvalue.cpp">
       <Filter>Keyvalue Editor</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\public\tier0\memoverride.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="achievement_notification_panel.h">

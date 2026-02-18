@@ -173,7 +173,19 @@ bool CGameRules::CanHaveAmmo( CBaseCombatCharacter *pPlayer, const char *szName 
 CBaseEntity *CGameRules::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
 {
 	CBaseEntity *pSpawnSpot = pPlayer->EntSelectSpawnPoint();
-	Assert( pSpawnSpot );
+	//Assert( pSpawnSpot );
+	if ( !pSpawnSpot )
+	{
+		// Return to the main menu if we can't find a spawn point. This is not a good thing to do, but it's better than crashing.
+		Warning("[Gabe Mod Plus] Couldn't find a spawn point for %s, disconnecting from server...\n", pPlayer->GetPlayerName());
+		if (engine && pPlayer && pPlayer->edict())
+		{
+			engine->ClientCommand(pPlayer->edict(), "disconnect\n");
+		}
+
+
+		return NULL;
+	}
 
 	pPlayer->SetLocalOrigin( pSpawnSpot->GetAbsOrigin() + Vector(0,0,1) );
 	pPlayer->SetAbsVelocity( vec3_origin );

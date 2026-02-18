@@ -242,6 +242,8 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_slam" );
 
 	GiveNamedItem( "weapon_physcannon" );
+
+	Weapon_Switch(Weapon_OwnsThisType("weapon_physcannon"));
 }
 
 void CHL2MP_Player::GiveDefaultItems( void )
@@ -267,6 +269,8 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	GiveNamedItem( "weapon_smg1" );
 	GiveNamedItem( "weapon_frag" );
 	GiveNamedItem( "weapon_physcannon" );
+
+	Weapon_Switch(Weapon_OwnsThisType("weapon_physcannon"));
 }
 
 void CHL2MP_Player::GiveSDKItems(void)

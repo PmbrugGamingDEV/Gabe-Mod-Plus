@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef _DEBUG
+
 #include <vgui/VGUI.h>
 #include <vgui_controls/Panel.h>
 
@@ -64,3 +66,5 @@ private:
 	
 	static int m_iNumberOfViews;
 };
+
+#endif

@@ -1,4 +1,6 @@
 #include "cbase.h"
+#ifndef _DEBUG
+
 #include <Awesomium/WebCore.h>
 #include <Awesomium/WebConfig.h>
 
@@ -91,3 +93,5 @@ WebCore* Awesomium_GetCore()
 {
     return g_WebCore;
 }
+
+#endif // !_DEBUG

@@ -1,4 +1,6 @@
 #include "cbase.h"
+#ifndef _DEBUG
+
 #include "inputsystem/iinputsystem.h"
 
 #include <VAwesomium.h>
@@ -205,3 +207,5 @@ void VAwesomium::PerformLayout()
 	BaseClass::PerformLayout();
 	ResizeView();
 }
+
+#endif

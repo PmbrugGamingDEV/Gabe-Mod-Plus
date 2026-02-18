@@ -1,4 +1,5 @@
 #include "cbase.h"
+#ifndef _DEBUG
 #include "vgui_controls/Frame.h"
 #include "vgui_controls/Button.h"
 #include "vgui_controls/TextEntry.h"
@@ -168,3 +169,5 @@ CON_COMMAND(awesomium_browser, "Open advanced Awesomium browser")
     g_pBrowser->MakePopup();
     g_pBrowser->MoveToFront();
 }
+
+#endif

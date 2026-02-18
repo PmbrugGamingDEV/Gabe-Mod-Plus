@@ -173,31 +173,112 @@ public:
 	}
 
 private:
+
 	const char* GetMapCategory(const char* map) const
 	{
-		//TODO: Add more cats here
+		if (!map || !map[0])
+			return "Misc";
+
+		// ===== Deathmatch =====
 		if (!Q_strnicmp(map, "dm_", 3) ||
-			!Q_strnicmp(map, "halls3", 6))
+			!Q_strnicmp(map, "ffa_", 4) ||
+			!Q_strnicmp(map, "arena_", 6))
 			return "Deathmatch";
 
+		// ===== Team Modes =====
+		if (!Q_strnicmp(map, "ctf_", 4))
+			return "Capture The Flag";
+
+		if (!Q_strnicmp(map, "tdm_", 4))
+			return "Team Deathmatch";
+
+		if (!Q_strnicmp(map, "koth_", 5))
+			return "King of the Hill";
+
+		if (!Q_strnicmp(map, "payload_", 8) ||
+			!Q_strnicmp(map, "pl_", 3))
+			return "Payload";
+
+		// ===== Sandbox =====
 		if (!Q_strnicmp(map, "build_", 6) ||
 			!Q_strnicmp(map, "gabe_", 5) ||
-			!Q_strnicmp(map, "sandbox", 7))
+			!Q_strnicmp(map, "sandbox", 7) ||
+			!Q_strnicmp(map, "sb_", 3))
 			return "Sandbox";
 
+		// ===== Half-Life 2 Campaign =====
 		if (!Q_strnicmp(map, "d1_", 3) ||
 			!Q_strnicmp(map, "d2_", 3) ||
 			!Q_strnicmp(map, "d3_", 3))
 			return "Half-Life 2";
 
 		if (!Q_strnicmp(map, "ep1_", 4))
-			return "Half-Life 2: Episode 1";
+			return "Episode 1";
 
+		if (!Q_strnicmp(map, "ep2_", 4))
+			return "Episode 2";
+
+		if (!Q_strnicmp(map, "lostcoast", 9))
+			return "Lostcoast";
+
+		// ===== Portal =====
+		if (!Q_strnicmp(map, "testchmb_", 9) ||
+			!Q_strnicmp(map, "portal_", 7))
+			return "Portal";
+
+		// ===== Counter-Strike Style =====
+		if (!Q_strnicmp(map, "de_", 3))
+			return "Bomb Defusal";
+
+		if (!Q_strnicmp(map, "cs_", 3))
+			return "Counter Strike";
+
+		if (!Q_strnicmp(map, "aim_", 4))
+			return "Aim Maps";
+
+		if (!Q_strnicmp(map, "surf_", 5))
+			return "Surf";
+
+		if (!Q_strnicmp(map, "bhop_", 5))
+			return "Bunny Hop";
+
+		if (!Q_strnicmp(map, "jail_", 5))
+			return "Jailbreak";
+
+		// ===== Zombie / Survival =====
+		if (!Q_strnicmp(map, "zm_", 3))
+			return "Zombie Survival";
+
+		if (!Q_strnicmp(map, "zs_", 3))
+			return "Zombie Survival";
+
+		if (!Q_strnicmp(map, "coop_", 5))
+			return "Cooperative";
+
+		if (!Q_strnicmp(map, "survival_", 9))
+			return "Survival";
+
+		// ===== Training / Dev =====
 		if (!Q_strnicmp(map, "background", 10))
 			return "Background Maps";
 
-		if (!Q_strnicmp(map, "sdk_", 4))
+		if (!Q_strnicmp(map, "sdk_", 4) ||
+			!Q_strnicmp(map, "dev_", 4) ||
+			!Q_strnicmp(map, "test_", 5))
 			return "Source SDK";
+
+		// ===== Experimental / Custom =====
+		if (!Q_strnicmp(map, "phys_", 5))
+			return "Physics";
+
+		if (!Q_strnicmp(map, "race_", 5))
+			return "Racing";
+
+		if (!Q_strnicmp(map, "parkour_", 8))
+			return "Parkour";
+
+		if (!Q_strnicmp(map, "puzzle_", 7))
+			return "Puzzle";
 
 		return "Misc";
 	}
@@ -591,7 +672,7 @@ public:
 		m_pServerInfoTab = new CGamepadUIServerInfoTab(m_pSheet);
 		m_pSheet->AddPage(m_pServerInfoTab, "Server Info");
 
-		SetSize(750, 750);
+		SetSize(750, 500);
 		CenterOnScreen();
 		InvalidateLayout(true, true);
 	}
