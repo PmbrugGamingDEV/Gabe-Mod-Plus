@@ -45,7 +45,9 @@ public:
 	void	ItemPostFrame( void );
 	void	ItemPreFrame( void );
 	void	ItemBusyFrame( void );
+	void	FireSingleBullet( void );
 	void	PrimaryAttack( void );
+	void	SecondaryAttack(void);
 	void	AddViewKick( void );
 	void	DryFire( void );
 
@@ -96,6 +98,8 @@ private:
 
 private:
 	CWeaponPistol( const CWeaponPistol & );
+	float m_flNextBurstShot;
+	int   m_iBurstRemaining;
 };
 
 IMPLEMENT_NETWORKCLASS_ALIASED( WeaponPistol, DT_WeaponPistol )
@@ -159,6 +163,9 @@ CWeaponPistol::CWeaponPistol( void )
 	m_fMinRange2		= 24;
 	m_fMaxRange2		= 200;
 
+	m_iBurstRemaining = 0;
+	m_flNextBurstShot = 0.0f;
+
 	m_bFiresUnderwater	= true;
 }
 
@@ -215,6 +222,22 @@ void CWeaponPistol::PrimaryAttack( void )
 
 	// Add an accuracy penalty which can move past our maximum penalty time if we're really spastic
 	m_flAccuracyPenalty += PISTOL_ACCURACY_SHOT_PENALTY_TIME;
+}
+
+void CWeaponPistol::SecondaryAttack(void)
+{
+	if (m_iClip1 <= 0)
+	{
+		DryFire();
+		return;
+	}
+
+	m_iBurstRemaining = min(18, m_iClip1);
+	m_flNextBurstShot = gpGlobals->curtime;
+
+	float flBurstDuration = m_iBurstRemaining * 0.1f;
+
+	m_flNextSecondaryAttack = gpGlobals->curtime + flBurstDuration + SequenceDuration(ACT_VM_RELOAD); // Burst duration and reload time
 }
 
 //-----------------------------------------------------------------------------
@@ -289,6 +312,28 @@ void CWeaponPistol::ItemBusyFrame( void )
 	BaseClass::ItemBusyFrame();
 }
 
+void CWeaponPistol::FireSingleBullet( void )
+{
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+	if (pOwner == NULL)
+		return;
+
+	FireBulletsInfo_t info;
+	info.m_iShots = 1;
+	info.m_vecSrc = pOwner->Weapon_ShootPosition();
+	info.m_vecDirShooting = pOwner->GetAutoaimVector(0.5f);
+	info.m_vecSpread = VECTOR_CONE_15DEGREES;
+	info.m_flDistance = MAX_TRACE_LENGTH;
+	info.m_iAmmoType = m_iPrimaryAmmoType;
+
+	WeaponSound(SINGLE);
+	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+
+	pOwner->FireBullets(info);
+	pOwner->DoMuzzleFlash();
+	AddViewKick();
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Allows firing as fast as button is pressed
 //-----------------------------------------------------------------------------
@@ -320,13 +365,21 @@ void CWeaponPistol::ItemPostFrame( void )
 	{
 		DryFire();
 	}
+
+	if (m_iBurstRemaining > 0 && gpGlobals->curtime >= m_flNextBurstShot)
+	{
+		FireSingleBullet();
+		m_iBurstRemaining--;
+		m_iClip1--;
+		m_flNextBurstShot = gpGlobals->curtime + 0.1f; // Delay between each burst shot
+	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : int
 //-----------------------------------------------------------------------------
-Activity CWeaponPistol::GetPrimaryAttackActivity( void )
+Activity CWeaponPistol::GetPrimaryAttackActivity( void ) 
 {
 	if ( m_nNumShotsFired < 1 )
 		return ACT_VM_PRIMARYATTACK;
@@ -357,7 +410,7 @@ bool CWeaponPistol::Reload( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CWeaponPistol::AddViewKick( void )
+void CWeaponPistol::AddViewKick( void ) 
 {
 	CBasePlayer *pPlayer  = ToBasePlayer( GetOwner() );
 	

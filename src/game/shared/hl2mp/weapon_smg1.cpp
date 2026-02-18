@@ -28,6 +28,10 @@
 
 #include "tier0/memdbgon.h"
 
+#ifndef CLIENT_DLL // Server specific.
+extern ConVar gabeplus_deathmatch;
+#endif
+
 #define SMG1_GRENADE_DAMAGE 100.0f
 #define SMG1_GRENADE_RADIUS 250.0f
 
@@ -336,6 +340,13 @@ void CWeaponSMG1::SecondaryAttack( void )
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
 	ToHL2MPPlayer( pPlayer )->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
 	WeaponSound(WPN_DOUBLE);
+
+#ifndef CLIENT_DLL
+	if (gabeplus_deathmatch.GetBool())
+	{
+		pPlayer->RemoveAmmo(1, m_iSecondaryAmmoType);
+	}
+#endif
 
 	m_flNextPrimaryAttack = gpGlobals->curtime + 0.5f;
 	m_flNextSecondaryAttack = gpGlobals->curtime + smg1_grenade_delay.GetFloat();
