@@ -22,3 +22,15 @@ Release_hl2mp/
 # User files
 *.user
 *.suo
+
+# Others
+.vs/
+*.sdf
+*.ncb
+*.VC.db
+*.pdb
+*.ipch
+*.obj
+*.log
+*.tlog
+*.lastbuildstate
