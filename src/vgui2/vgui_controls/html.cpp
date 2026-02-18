@@ -85,6 +85,8 @@ HTML::HTML(Panel *parent, const char *name, bool allowJavaScript) : Panel(parent
 	m_bRegenerateHTMLBitmap = true;
 	SetEnabled(true);
 	SetVisible(true);
+
+	m_iHistoryPos = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -329,37 +331,51 @@ void HTML::CalcScrollBars(int w, int h)
 //-----------------------------------------------------------------------------
 void HTML::OpenURL(const char *URL, bool force)
 {
-	if ( IsSteamInOfflineMode() && !force )
-	{
-		const char *baseDir = getenv("HTML_OFFLINE_DIR");
-		if ( baseDir )
-		{
-			// get the app we need to run
-			char htmlLocation[_MAX_PATH];
-			char otherName[128];
-			char fileLocation[_MAX_PATH];
+    // ----- HISTORY TRACKING FOR GABE MOD PLUS -----
+    if ( m_iHistoryPos + 1 < m_History.Count() )
+    {
+        m_History.RemoveMultiple(
+            m_iHistoryPos + 1,
+            m_History.Count() - ( m_iHistoryPos + 1 )
+        );
+    }
 
-			if ( ! g_pFullFileSystem->FileExists( baseDir ) ) 
-			{
-				_snprintf( otherName, sizeof(otherName), "%senglish.html", OFFLINE_FILE );
-				baseDir = otherName;
-			}
-			g_pFullFileSystem->GetLocalCopy( baseDir ); // put this file on disk for IE to load
+    m_History.AddToTail( URL );
+    m_iHistoryPos = m_History.Count() - 1;
+    // ----------------------------
 
-			g_pFullFileSystem->GetLocalPath( baseDir, fileLocation, sizeof(fileLocation) );
-			_snprintf(htmlLocation, sizeof(htmlLocation), "file://%s", fileLocation);
-			browser->OpenURL( htmlLocation );
-		}
-		else
-		{
-			browser->OpenURL(URL);
-		}
-	}
-	else
-	{
-		browser->OpenURL(URL);
-	}
+    if ( IsSteamInOfflineMode() && !force )
+    {
+        const char *baseDir = getenv("HTML_OFFLINE_DIR");
+        if ( baseDir )
+        {
+            char htmlLocation[_MAX_PATH];
+            char otherName[128];
+            char fileLocation[_MAX_PATH];
+
+            if ( !g_pFullFileSystem->FileExists( baseDir ) ) 
+            {
+                _snprintf( otherName, sizeof(otherName), "%senglish.html", OFFLINE_FILE );
+                baseDir = otherName;
+            }
+
+            g_pFullFileSystem->GetLocalCopy( baseDir );
+            g_pFullFileSystem->GetLocalPath( baseDir, fileLocation, sizeof(fileLocation) );
+            _snprintf( htmlLocation, sizeof(htmlLocation), "file://%s", fileLocation );
+
+            browser->OpenURL( htmlLocation );
+        }
+        else
+        {
+            browser->OpenURL( URL );
+        }
+    }
+    else
+    {
+        browser->OpenURL( URL );
+    }
 }
+
 
 //-----------------------------------------------------------------------------
 // Purpose: opens the URL, will accept any URL that IE accepts
@@ -384,6 +400,36 @@ void HTML::Clear()
 {
 	browser->Clear();
 }
+
+// GABE MOD PLUS UTILITY FUNCTIONS
+void HTML::GoBack()
+{
+    if ( !CanGoBack() )
+        return;
+
+    --m_iHistoryPos;
+    browser->OpenURL( m_History[m_iHistoryPos].String() );
+}
+
+void HTML::GoForward()
+{
+    if ( !CanGoForward() )
+        return;
+
+    ++m_iHistoryPos;
+    browser->OpenURL( m_History[m_iHistoryPos].String() );
+}
+
+bool HTML::CanGoBack() const
+{
+    return ( m_iHistoryPos > 0 );
+}
+
+bool HTML::CanGoForward() const
+{
+    return ( m_iHistoryPos + 1 < m_History.Count() );
+}
+
 
 //-----------------------------------------------------------------------------
 // Purpose: appends "text" to the end of the current page. "text" should be a HTML formatted string
@@ -627,6 +673,24 @@ void HTML::BrowserResize()
 //-----------------------------------------------------------------------------
 void HTML::OnFinishURL(const char *url)
 {
+	// Gabe Mod +
+	if ( url && url[0] )
+	{
+		if ( m_History.Count() == 0 || Q_stricmp( m_History[m_iHistoryPos].String(), url ) != 0 )
+		{
+			if ( m_iHistoryPos + 1 < m_History.Count() )
+			{
+				m_History.RemoveMultiple(
+					m_iHistoryPos + 1,
+					m_History.Count() - ( m_iHistoryPos + 1 )
+				);
+			}
+
+			m_History.AddToTail( url );
+			m_iHistoryPos = m_History.Count() - 1;
+		}
+	}
+	/////////////////////////////////
 	// reset the scroll bar positions
 	_vbar->SetValue(0);
 	_hbar->SetValue(0);

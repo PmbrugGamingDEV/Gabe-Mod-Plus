@@ -23,6 +23,9 @@
 #include <vgui_controls/AnimationController.h>
 #include "vgui_int.h"
 #include "hud_macros.h"
+// Fenix: Needed for the custom background loading screens
+#include "GameUI/IGameUI.h"
+#include "mapload_background.h"
 #include "hltvcamera.h"
 #include "particlemgr.h"
 #include "c_vguiscreen.h"
@@ -44,12 +47,21 @@ class CHudChat;
 
 static vgui::HContext s_hVGuiContext = DEFAULT_VGUI_CONTEXT;
 
+// Fenix: Needed for the custom background loading screens
+// See interface.h/.cpp for specifics: basically this ensures that we actually Sys_UnloadModule the dll and that we don't call Sys_LoadModule 
+// over and over again.
+static CDllDemandLoader g_GameUI("GameUI");
+
 ConVar cl_drawhud( "cl_drawhud", "1", FCVAR_CHEAT, "Enable the rendering of the hud" );
 ConVar hud_takesshots( "hud_takesshots", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Auto-save a scoreboard screenshot at the end of a map." );
 
 extern ConVar v_viewmodel_fov;
 
 extern bool IsInCommentaryMode( void );
+
+// Fenix: Needed for the custom background loading screens
+CMapLoadBG* pPanelBg;
+IMaterial* pMatMapBg;
 
 CON_COMMAND( hud_reloadscheme, "Reloads hud layout and animation scripts." )
 {
@@ -162,6 +174,9 @@ ClientModeShared::ClientModeShared()
 	m_pChatElement = NULL;
 	m_pWeaponSelection = NULL;
 	m_nRootSize[ 0 ] = m_nRootSize[ 1 ] = -1;
+	// Fenix: Needed for the custom background loading screens
+	pPanelBg = NULL;
+	pMatMapBg = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -208,6 +223,22 @@ void ClientModeShared::Init()
 
 	HOOK_MESSAGE( VGUIMenu );
 	HOOK_MESSAGE( Rumble );
+
+	// Fenix: Custom background loading screens - Injects the custom panel at the loading screen
+	CreateInterfaceFn gameUIFactory = g_GameUI.GetFactory();
+	if (gameUIFactory)
+	{
+		IGameUI* pGameUI = (IGameUI*)gameUIFactory(GAMEUI_INTERFACE_VERSION, NULL);
+		if (pGameUI)
+		{
+			// Insert custom loading panel for the loading dialog
+			pPanelBg = new CMapLoadBG("Background");
+			pPanelBg->InvalidateLayout(false, true);
+			pPanelBg->SetVisible(false);
+			pPanelBg->MakePopup(false);
+			pGameUI->SetLoadingBackgroundDialog(pPanelBg->GetVPanel());
+		}
+	}
 }
 
 
@@ -317,6 +348,26 @@ void ClientModeShared::OverrideMouseInput( float *x, float *y )
 		pWeapon->OverrideMouseInput( x, y );
 	}
 }
+
+#ifdef ARGG
+//-----------------------------------------------------------------------------
+// Purpose: Allow weapons to override mouse input to view angles (for orbiting)
+//-----------------------------------------------------------------------------
+// adnan
+// control the mouse input in the grav gun through this
+bool ClientModeShared::OverrideViewAngles(void)
+{
+	C_BaseCombatWeapon* pWeapon = GetActiveWeapon();
+	if (pWeapon)
+	{
+		// adnan
+		return pWeapon->OverrideViewAngles();
+	}
+
+	return false;
+}
+// end adnan
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -574,6 +625,27 @@ void ClientModeShared::LevelInit( const char *newmap )
 	// Reset any player explosion/shock effects
 	CLocalPlayerFilter filter;
 	enginesound->SetPlayerDSP( filter, 0, true );
+
+	// Fenix: Custom background loading screens - decides if use a loading screen for a map or a default one
+#ifdef _WIN32
+	char szMapBgName[MAX_PATH];
+#else	// !_WIN32
+	char szMapBgName[PATH_MAX];
+#endif	// _WIN32
+
+	Q_snprintf(szMapBgName, sizeof(szMapBgName), "vgui/loading/maps/%s", newmap);
+
+	pMatMapBg = materials->FindMaterial(szMapBgName, TEXTURE_GROUP_OTHER);
+
+	if (!pMatMapBg->IsErrorMaterial())
+	{
+		Q_snprintf(szMapBgName, sizeof(szMapBgName), "loading/maps/%s", newmap);
+		pPanelBg->SetNewBackgroundImage(szMapBgName);
+	}
+	else
+	{
+		pPanelBg->SetNewBackgroundImage("loading/default");
+	}
 }
 
 //-----------------------------------------------------------------------------

@@ -55,6 +55,30 @@
     <Filter Include="game_controls Header Files">
       <UniqueIdentifier>{e50ee342-63ce-4a2d-82ea-4302283296c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Debug Stuff">
+      <UniqueIdentifier>{0e4882f7-7b78-4c8a-9bfe-d6600f0988af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Weapon 357 Camera">
+      <UniqueIdentifier>{2185bec3-84ce-4ffe-b06e-d66aa0c83cd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Physgun">
+      <UniqueIdentifier>{73b7c07e-9557-40a0-b9b0-6e7f440033b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Lua">
+      <UniqueIdentifier>{6e8d25ac-71c2-4600-8e3b-c5c624803bd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Maestra Fénix Loading Screen">
+      <UniqueIdentifier>{71f020e6-3a6c-4e11-8eaf-f3f9267d86cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Awesomium">
+      <UniqueIdentifier>{c9428593-49f9-44e4-b614-4d3f05d72f3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Shared">
+      <UniqueIdentifier>{35fb01c2-d9ba-4820-ad46-75f57fb2df66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Keyvalue Editor">
+      <UniqueIdentifier>{d8559613-167d-4f23-9be3-defdbe7f53a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">
@@ -1347,9 +1371,6 @@
     <ClCompile Include="hl2mp\ui\hl2mptextwindow.cpp">
       <Filter>Source Files\HL2MP\UI</Filter>
     </ClCompile>
-    <ClCompile Include="hl2mp\hud_deathnotice.cpp">
-      <Filter>Source Files\HL2MP\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\shared\hl2\basehlcombatweapon_shared.cpp">
       <Filter>Source Files\HL2MP\HL2 DLL</Filter>
     </ClCompile>
@@ -1539,9 +1560,6 @@
     <ClCompile Include="..\shared\Multiplayer\multiplayer_animstate.cpp">
       <Filter>Source Files\Multiplayer</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\c_weapon_gravitygun.cpp">
-      <Filter>Source Files\Gabe Mod + Stuff</Filter>
-    </ClCompile>
     <ClCompile Include="gabe_watermark.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
@@ -1562,6 +1580,63 @@
     </ClCompile>
     <ClCompile Include="gabe_newgamedialog.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_spawnmenu.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="c_weapon_proplauncher.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_friendslist.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\hl2mp\weapon_physgun.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Physgun</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_credits.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hud_killfeed.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_tutorial.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_issues.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\hl2mp\weapon_mp5.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_test.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="c_weapon__stubs_gabemod.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="mapload_background.cpp">
+      <Filter>Maestra Fénix Loading Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="VAwesomium.cpp">
+      <Filter>Awesomium</Filter>
+    </ClCompile>
+    <ClCompile Include="awesomium_init.cpp">
+      <Filter>Awesomium</Filter>
+    </ClCompile>
+    <ClCompile Include="awesomium_testpanel.cpp">
+      <Filter>Awesomium</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\gabe_events.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\achievements_gabemod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\hl2\achievements_hl2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_keyvalue.cpp">
+      <Filter>Keyvalue Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3359,6 +3434,42 @@
     <ClInclude Include="game_controls\vguitextwindow.h">
       <Filter>game_controls Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="c_weapon_proplauncher.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_killfeed.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\lauxlib.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\lua.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\lua.hpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\luaconf.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\lualib.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="mapload_background.h">
+      <Filter>Maestra Fénix Loading Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="VAwesomium.h">
+      <Filter>Awesomium</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\gabe_events.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\gabe_client.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_keyvalue.h">
+      <Filter>Keyvalue Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\lib\public\bitmap.lib">
@@ -3398,6 +3509,9 @@
       <Filter>Link Libraries</Filter>
     </Library>
     <Library Include="..\..\lib\public\vstdlib.lib">
+      <Filter>Link Libraries</Filter>
+    </Library>
+    <Library Include="..\..\lib\public\gabe_lua515.lib">
       <Filter>Link Libraries</Filter>
     </Library>
   </ItemGroup>

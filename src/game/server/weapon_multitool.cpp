@@ -1,3 +1,10 @@
+//===== Copyright (c) 1996-2026 Valve Corporation. All rights reserved. =====//
+// 
+//
+// Purpose: A versatile tool for manipulating entities in various ways.
+//
+//=================================================================//
+
 #include "cbase.h"
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
 #include "explode.h"
@@ -7,14 +14,32 @@
 #include "IEffects.h"
 #include "gabeplus_shared.h"
 #include "in_buttons.h"
+#include "baseanimating.h"
 #include "vphysics/constraints.h"
 #include "rope.h"
 #include "props.h"
+#include "physics_prop_ragdoll.h"
+#include "usermessages.h"
+#include "ai_basenpc.h"
+#include "baseflex.h"
+#include "vphysics_interface.h"
+#include "te_effect_dispatch.h"
 
+// memdbgon must be the last include file in a .cpp file!!!
+#include "memdbgon.h"
 
 extern IEffects* g_pEffects;
 
 class CWeaponMultitool;
+
+#define MAX_DUPE_RAGDOLL_BONES 64
+
+ConVar mtool_mode(
+	"mtool_mode",
+	"remove",          // default
+	FCVAR_ARCHIVE,
+	"Multitool mode selector"
+);
 
 const struct ColorPreset {
 	int r, g, b;
@@ -34,6 +59,55 @@ const struct ColorPreset {
 	{0, 0, 0, "Rainbow"}
 };
 const int COLOR_COUNT = sizeof(g_ColorPresets) / sizeof(g_ColorPresets[0]);
+
+const char* g_DecalNames[] =
+{
+	"YellowBlood",
+	"Bigshot",
+	"RedGlowFade",
+	"BeerSplash",
+	"Blood",
+	"Scorch",
+	"ManhackCut",
+	"FadingScorch",
+	"Rollermine.Crater",
+	"Impact.Concrete",
+	"Impact.Metal",
+	"Impact.Glass",
+	"Impact.Sand"
+};
+const int DECAL_COUNT = sizeof(g_DecalNames) / sizeof(g_DecalNames[0]);
+
+struct RenderFxEntry
+{
+	RenderFx_t fx;
+	const char* name;
+};
+
+RenderFxEntry g_RenderFxModes[] =
+{
+	{ kRenderFxNone,             "None" },
+	{ kRenderFxPulseSlow,        "Pulse Slow" },
+	{ kRenderFxPulseFast,        "Pulse Fast" },
+	{ kRenderFxPulseSlowWide,    "Pulse Wide" },
+	{ kRenderFxFadeSlow,         "Fade Slow" },
+	{ kRenderFxFadeFast,         "Fade Fast" },
+	{ kRenderFxSolidSlow,        "Solid Slow" },
+	{ kRenderFxSolidFast,        "Solid Fast" },
+	{ kRenderFxStrobeSlow,       "Strobe Slow" },
+	{ kRenderFxStrobeFast,       "Strobe Fast" },
+	{ kRenderFxStrobeFaster,     "Strobe Faster" },
+	{ kRenderFxFlickerSlow,      "Flicker Slow" },
+	{ kRenderFxFlickerFast,      "Flicker Fast" },
+	{ kRenderFxNoDissipation,    "No Dissipation" },
+	{ kRenderFxDistort,          "Distort" },
+	{ kRenderFxHologram,         "Hologram" },
+	{ kRenderFxExplode,          "Explode" },
+	{ kRenderFxGlowShell,        "Glow Shell" },
+	{ kRenderFxClampMinScale,    "Clamp Min Scale" }
+};
+
+const int RENDERFX_COUNT = sizeof(g_RenderFxModes) / sizeof(g_RenderFxModes[0]);
 
 class CRainbowThinker : public CBaseEntity
 {
@@ -70,15 +144,114 @@ public:
 LINK_ENTITY_TO_CLASS(env_rainbowthink, CRainbowThinker);
 
 BEGIN_DATADESC(CRainbowThinker)
-	DEFINE_FIELD(m_hTargetEnt, FIELD_EHANDLE),
-	DEFINE_FUNCTION(Think),
+DEFINE_FIELD(m_hTargetEnt, FIELD_EHANDLE),
+DEFINE_FUNCTION(Think),
 END_DATADESC()
 
-static Vector GetDuplicateSpawnPos( CBasePlayer *pPlayer )
+static Vector GetDuplicateSpawnPos(CBasePlayer* pPlayer)
 {
 	Vector forward;
-	pPlayer->EyeVectors( &forward );
+	pPlayer->EyeVectors(&forward);
 	return pPlayer->EyePosition() + forward * 96.0f;
+}
+
+ConVar gabeplus_multitool_pmessagetext("gabe+_multitool_pmessagetext", "Customize me with gabe+_multitool_pmessagename!", FCVAR_ARCHIVE);
+
+class CL_Watermelon : public CBaseAnimating
+{
+public:
+	DECLARE_CLASS(CL_Watermelon, CBaseAnimating);
+	DECLARE_DATADESC();
+
+	void Spawn() override;
+	void Precache() override;
+	void Touch(CBaseEntity* pOther) override;
+	void Think() override;
+	void SetLightColor(int r, int g, int b); // Function to set the light color
+
+private:
+	float m_flDamageAmount; // Damage to inflict on NPCs
+	CHandle<CBaseEntity> m_hDynamicLight; // Handle to the dynamic light entity
+};
+
+LINK_ENTITY_TO_CLASS(l_watermelon, CL_Watermelon);
+
+BEGIN_DATADESC(CL_Watermelon)
+DEFINE_FIELD(m_flDamageAmount, FIELD_FLOAT),
+DEFINE_FIELD(m_hDynamicLight, FIELD_EHANDLE),
+END_DATADESC()
+
+void CL_Watermelon::Precache()
+{
+	PrecacheModel("models/props_junk/watermelon01.mdl");
+	BaseClass::Precache();
+
+	// Precache the burn sound effect
+	PrecacheScriptSound("Watermelon.Burn");
+}
+
+void CL_Watermelon::Spawn()
+{
+	Precache();
+
+	SetModel("models/props_junk/watermelon01.mdl");
+	SetSolid(SOLID_VPHYSICS);
+	SetMoveType(MOVETYPE_VPHYSICS);
+
+	// Initialize physics
+	VPhysicsInitNormal(SOLID_VPHYSICS, 0, false);
+
+	// Set the amount of damage the watermelon will inflict
+	m_flDamageAmount = 25.0f; // You can adjust the damage amount here
+
+	// Create and configure the dynamic light
+	m_hDynamicLight = CreateEntityByName("light_dynamic");
+	if (m_hDynamicLight)
+	{
+		m_hDynamicLight->SetParent(this);
+		m_hDynamicLight->SetLocalOrigin(vec3_origin);
+		m_hDynamicLight->KeyValue("brightness", "5");  // Adjust brightness as needed
+		m_hDynamicLight->KeyValue("distance", "500");  // Adjust light distance as needed
+		m_hDynamicLight->Spawn();
+	}
+
+	SetThink(&CL_Watermelon::Think);
+	SetNextThink(gpGlobals->curtime + 0.1f);
+}
+
+void CL_Watermelon::Think()
+{
+	// Perform any necessary actions
+	SetNextThink(gpGlobals->curtime + 0.1f); // Keep thinking
+}
+
+void CL_Watermelon::Touch(CBaseEntity* pOther)
+{
+	if (pOther->IsNPC())
+	{
+		// Inflict damage on the NPC or player
+		CTakeDamageInfo damageInfo(this, this, m_flDamageAmount, DMG_BURN);
+		pOther->TakeDamage(damageInfo);
+		// Set up the effect data
+		CEffectData data;
+		data.m_vOrigin = GetAbsOrigin();
+		data.m_vNormal = Vector(0, 0, 1);
+		data.m_fFlags = 0;
+		data.m_nEntIndex = entindex();
+
+		// Dispatch the sparks effect
+		DispatchEffect("Sparks", data);
+		// Play burn sound effect
+		EmitSound("WeaponDissolve.Dissolve");
+	}
+}
+
+void CL_Watermelon::SetLightColor(int r, int g, int b)
+{
+	if (m_hDynamicLight)
+	{
+		m_hDynamicLight->SetRenderColor(r, g, b);
+	}
 }
 
 class CWeaponMultitool : public CBaseHL2MPCombatWeapon
@@ -98,6 +271,7 @@ private:
 	CBaseEntity* FindEntityInFront();
 	void ApplyToolAction(CBaseEntity* pEnt);
 	void ShowDistance(CBaseEntity* pEnt);
+	void ThrowLightWatermelon();
 
 	int m_nMultitoolMode;
 	int m_nColorIndex;
@@ -106,16 +280,35 @@ private:
 	EHANDLE m_hConstraintTarget2;
 	int m_nConstraintType; // 0: BallSocket, 1: Weld, 2: Axis
 
+	int m_nLightWatermelonColor;
+
+	int m_nMaterialIndex;
+
+
+	struct DupedRagdollBone_t
+	{
+		Vector  localPos;   // offset from entity origin
+		QAngle  ang;        // world angles are fine
+	};
+
 	struct DupedEntityData_t
 	{
 		string_t className;
 		string_t modelName;
+
 		QAngle   angles;
 		color32  color;
-		//int      skin;
-		//int      body;
+
+		Vector   mins;
+		Vector   maxs;
+
 		float    mass;
 		bool     valid;
+
+		bool     isRagdoll;
+		int      boneCount;
+
+		DupedRagdollBone_t bones[MAX_DUPE_RAGDOLL_BONES];
 	};
 
 	DupedEntityData_t m_DupeData;
@@ -128,11 +321,13 @@ LINK_ENTITY_TO_CLASS(weapon_multitool, CWeaponMultitool);
 PRECACHE_WEAPON_REGISTER(weapon_multitool);
 
 BEGIN_DATADESC(CWeaponMultitool)
-	DEFINE_FIELD(m_hConstraintTarget1, FIELD_EHANDLE),
-	DEFINE_FIELD(m_hConstraintTarget2, FIELD_EHANDLE),
-	DEFINE_FIELD(m_nConstraintType, FIELD_INTEGER),
-	DEFINE_FIELD(m_nMultitoolMode, FIELD_INTEGER),
-	DEFINE_FIELD(m_nColorIndex, FIELD_INTEGER),
+DEFINE_FIELD(m_hConstraintTarget1, FIELD_EHANDLE),
+DEFINE_FIELD(m_hConstraintTarget2, FIELD_EHANDLE),
+DEFINE_FIELD(m_nConstraintType, FIELD_INTEGER),
+DEFINE_FIELD(m_nMultitoolMode, FIELD_INTEGER),
+DEFINE_FIELD(m_nLightWatermelonColor, FIELD_INTEGER),
+DEFINE_FIELD(m_nColorIndex, FIELD_INTEGER),
+DEFINE_FIELD(m_nDecalIndex, FIELD_INTEGER),
 END_DATADESC()
 
 CWeaponMultitool::CWeaponMultitool()
@@ -144,6 +339,9 @@ CWeaponMultitool::CWeaponMultitool()
 	m_hConstraintTarget2 = NULL;
 	m_nConstraintType = 0;
 	m_DupeData.valid = false;
+	m_bFiresUnderwater = true;
+	m_nLightWatermelonColor = 0;
+	m_nMaterialIndex = 0;
 }
 
 enum MultitoolMode_t
@@ -154,8 +352,33 @@ enum MultitoolMode_t
 	MODE_CONSTRAINT,
 	MODE_IGNITE,
 	MODE_DUPLICATE,
+	MODE_EXPLODE,
+	MODE_POINTMESSAGE,
+	MODE_LIGHT_WATERMELON,
+	MODE_DECAL,
+	MODE_MATERIAL,
 	MODE_MAX
 };
+
+MultitoolMode_t StringToMode(const char* psz)
+{
+	if (!psz)
+		return MODE_REMOVE;
+
+	if (!Q_stricmp(psz, "remove"))           return MODE_REMOVE;
+	if (!Q_stricmp(psz, "distance"))         return MODE_DISTANCE;
+	if (!Q_stricmp(psz, "color"))            return MODE_COLOR;
+	if (!Q_stricmp(psz, "constraint"))       return MODE_CONSTRAINT;
+	if (!Q_stricmp(psz, "ignite"))           return MODE_IGNITE;
+	if (!Q_stricmp(psz, "duplicate"))        return MODE_DUPLICATE;
+	if (!Q_stricmp(psz, "explode"))          return MODE_EXPLODE;
+	if (!Q_stricmp(psz, "pointmessage"))     return MODE_POINTMESSAGE;
+	if (!Q_stricmp(psz, "light_watermelon")) return MODE_LIGHT_WATERMELON;
+	if (!Q_stricmp(psz, "decal"))            return MODE_DECAL;
+	if (!Q_stricmp(psz, "material"))         return MODE_MATERIAL;
+
+	return MODE_REMOVE;
+}
 
 const char* g_szModeNames[] =
 {
@@ -164,7 +387,12 @@ const char* g_szModeNames[] =
 	"Color",
 	"Constraints",
 	"Ignite",
-	"Duplicate"
+	"Duplicate",
+	"Explode",
+	"Point Message",
+	"Light Watermelon",
+	"Decal",
+	"(Render FX) Materials",
 };
 
 const char* g_szConstraintTypes[] = {
@@ -199,7 +427,7 @@ void CWeaponMultitool::PrimaryAttack()
 
 	EmitSound("Weapon_357.Single");
 
-		trace_t tr;
+	trace_t tr;
 	Vector vecStart = pPlayer->EyePosition();
 	Vector vecForward;
 	pPlayer->EyeVectors(&vecForward);
@@ -209,26 +437,205 @@ void CWeaponMultitool::PrimaryAttack()
 
 	if (tr.fraction < 1.0f)
 	{
-		g_pEffects->Sparks(tr.endpos, 4, 2);
+		g_pEffects->Sparks(tr.endpos, 1, 1);
+		g_pEffects->Ricochet(tr.endpos, tr.plane.normal);
+		g_pEffects->EnergySplash(tr.endpos, tr.plane.normal);
 	}
 
 	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2f;
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.15f;
 }
 
 void CWeaponMultitool::SecondaryAttack()
 {
-	m_nMultitoolMode = (m_nMultitoolMode + 1) % MODE_MAX;
-
 	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
-	if (pPlayer)
-		HudText(pPlayer, UTIL_VarArgs("Multitool: %s", g_szModeNames[m_nMultitoolMode]), 255, 255, 200);
+	if (!pPlayer)
+		return;
 
-	SendWeaponAnim(ACT_VM_SECONDARYATTACK);
+	if (m_nMultitoolMode != MODE_DUPLICATE)
+		return;
 
-	m_flNextSecondaryAttack = gpGlobals->curtime + 0.3f;
+	CBaseEntity* pEnt = FindEntityInFront();
+
+	if (pEnt->GetClassname() && (Q_stricmp(pEnt->GetClassname(), "prop_vehicle_jeep") == 0 || Q_stricmp(pEnt->GetClassname(), "prop_vehicle_airboat") == 0))
+	{
+		NDebugOverlay::EntityTextAtPosition(pEnt->GetAbsOrigin(), 0, "Cannot dupe vehicles, sorry!", 2.0f, 255, 0, 0, 255);
+		return;
+	}
+
+	if (!pEnt || pEnt->IsWorld())
+	{
+		HudText(pPlayer, "Nothing to copy.", 255, 100, 100);
+		return;
+	}
+
+	// -----------------------------------------
+	// Base info (always safe)
+	// -----------------------------------------
+	m_DupeData.className = AllocPooledString(pEnt->GetClassname());
+	m_DupeData.modelName = pEnt->GetModelName();
+	m_DupeData.angles = pEnt->GetAbsAngles();
+	m_DupeData.color = pEnt->GetRenderColor();
+	m_DupeData.valid = true;
+
+	// -----------------------------------------
+	// Collision bounds (SAFE)
+	// -----------------------------------------
+	if (pEnt->CollisionProp())
+	{
+		m_DupeData.mins = pEnt->CollisionProp()->OBBMins();
+		m_DupeData.maxs = pEnt->CollisionProp()->OBBMaxs();
+	}
+	else
+	{
+		m_DupeData.mins = Vector(-8, -8, -8);
+		m_DupeData.maxs = Vector(8, 8, 8);
+	}
+
+	// -----------------------------------------
+	// Physics mass (SAFE)
+	// -----------------------------------------
+	m_DupeData.mass = 0.0f;
+
+	IPhysicsObject* pPhys = pEnt->VPhysicsGetObject();
+	if (pPhys)
+	{
+		m_DupeData.mass = pPhys->GetMass();
+	}
+
+	// -----------------------------------------
+	// Ragdoll handling (SAFE)
+	// -----------------------------------------
+	m_DupeData.isRagdoll = false;
+	m_DupeData.boneCount = 0;
+
+	CBaseAnimating* pAnim = pEnt->GetBaseAnimating();
+
+	if (pAnim && pAnim->IsRagdoll())
+	{
+		CRagdollProp* ragdollProp =
+			dynamic_cast<CRagdollProp*>(pAnim);
+
+		if (ragdollProp)
+		{
+			ragdoll_t* pRagdoll =
+				ragdollProp->GetRagdoll();
+
+			if (pRagdoll && pRagdoll->listCount > 0)
+			{
+				m_DupeData.isRagdoll = true;
+
+				Vector baseOrigin =
+					pEnt->GetAbsOrigin();
+
+				m_DupeData.boneCount =
+					MIN(pRagdoll->listCount,
+						MAX_DUPE_RAGDOLL_BONES);
+
+				for (int i = 0;
+					i < m_DupeData.boneCount;
+					i++)
+				{
+					IPhysicsObject* pBonePhys =
+						pRagdoll->list[i].pObject;
+
+					if (pBonePhys)
+					{
+						Vector worldPos;
+						QAngle worldAng;
+
+						pBonePhys->GetPosition(
+							&worldPos,
+							&worldAng
+						);
+
+						m_DupeData.bones[i].localPos =
+							worldPos - baseOrigin;
+
+						m_DupeData.bones[i].ang =
+							worldAng;
+					}
+				}
+			}
+		}
+	}
+
+	// -----------------------------------------
+	// Success feedback
+	// -----------------------------------------
+	HudText(
+		pPlayer,
+		UTIL_VarArgs(
+			"Copied: %s",
+			STRING(m_DupeData.className)
+		),
+		150, 255, 150
+	);
+
+	// -----------------------------------------
+	// Visual trace feedback
+	// -----------------------------------------
+	trace_t tr;
+	Vector vecStart = pPlayer->EyePosition();
+	Vector vecForward;
+	pPlayer->EyeVectors(&vecForward);
+	Vector vecEnd = vecStart + vecForward * 2048;
+
+	UTIL_TraceLine(
+		vecStart,
+		vecEnd,
+		MASK_SOLID,
+		pPlayer,
+		COLLISION_GROUP_NONE,
+		&tr
+	);
+
+	if (tr.fraction < 1.0f)
+	{
+		g_pEffects->Sparks(tr.endpos, 1, 1);
+		g_pEffects->Ricochet(tr.endpos, tr.plane.normal);
+		g_pEffects->EnergySplash(tr.endpos, tr.plane.normal);
+	}
+
+	SendWeaponAnim(ACT_VM_RELOAD);
+	WeaponSound(RELOAD);
+
+	m_flNextSecondaryAttack =
+		gpGlobals->curtime + 0.3f;
 }
+
+void CWeaponMultitool::ThrowLightWatermelon()
+{
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
+		return;
+
+	Vector vecSrc = pPlayer->Weapon_ShootPosition();
+	Vector vecDir;
+	pPlayer->EyeVectors(&vecDir);
+
+	CBaseEntity* pEnt = CreateEntityByName("l_watermelon");
+	if (!pEnt)
+		return;
+
+	pEnt->SetAbsOrigin(vecSrc);
+	pEnt->SetAbsAngles(pPlayer->EyeAngles());
+	DispatchSpawn(pEnt);
+
+	IPhysicsObject* pPhys = pEnt->VPhysicsGetObject();
+	if (pPhys)
+	{
+		Vector vel = vecDir * 1000.0f;
+		Vector ang = RandomAngularImpulse(-200, 200);
+		pPhys->AddVelocity(&vel, &ang);
+	}
+
+	// Apply color
+	const ColorPreset& col = g_ColorPresets[m_nLightWatermelonColor];
+	pEnt->SetRenderColor(col.r, col.g, col.b);
+}
+
 
 void RainbowThink(CBaseEntity* pEnt)
 {
@@ -246,268 +653,523 @@ void RainbowThink(CBaseEntity* pEnt)
 
 void CWeaponMultitool::ApplyToolAction(CBaseEntity* pEnt)
 {
-		CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
 	if (!pPlayer) return;
 
 	switch (m_nMultitoolMode)
 	{
 	case MODE_REMOVE:
 	{
-		if (!pEnt->IsWorld())
+		if (pEnt->IsWorld())
+			break;
+
+		// Don’t dissolve players
+		if (pEnt->IsPlayer())
+		{
+			HudText(pPlayer, "No players.", 255, 100, 100);
+			break;
+		}
+
+		CBaseAnimating* pAnim = pEnt->GetBaseAnimating();
+		if (pAnim)
+		{
+			pAnim->Dissolve(
+				NULL,
+				gpGlobals->curtime,
+				false,
+				ENTITY_DISSOLVE_CORE,
+				GetAbsOrigin(),
+				500
+			);
+
+		}
+		else
+		{
+			// fallback if it can't dissolve
 			UTIL_Remove(pEnt);
+		}
+
 		break;
 	}
+
 	case MODE_DISTANCE:
 	{
 		ShowDistance(pEnt);
 		break;
 	}
 
-		case MODE_COLOR:
+	case MODE_EXPLODE:
+	{
+		trace_t tr;
+		Vector vecStart = pPlayer->EyePosition();
+		Vector vecForward;
+		pPlayer->EyeVectors(&vecForward);
+		Vector vecEnd = vecStart + vecForward * 2048;
+
+		UTIL_TraceLine(vecStart, vecEnd, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+
+		ExplosionCreate(tr.endpos, QAngle(0, 0, 0), this, 150, 128, true);
+		break;
+	}
+
+	case MODE_DECAL:
+	{
+		trace_t tr;
+		Vector vecStart = pPlayer->EyePosition();
+		Vector vecForward;
+		pPlayer->EyeVectors(&vecForward);
+		Vector vecEnd = vecStart + vecForward * 2048;
+
+		UTIL_TraceLine(vecStart, vecEnd, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+
+		if (tr.fraction < 1.0f && tr.m_pEnt)
 		{
-			if (m_nColorIndex == COLOR_COUNT - 1) // Rainbow
-			{
-				
-				CBaseEntity* pChild = NULL;
-				while ((pChild = gEntList.FindEntityByClassname(pChild, "env_rainbowthink")) != NULL)
-				{
-					CRainbowThinker* pThinker = dynamic_cast<CRainbowThinker*>(pChild);
-					if (pThinker && pThinker->m_hTargetEnt == pEnt)
-					{
-						UTIL_Remove(pThinker);
-					}
-				}
+			CBroadcastRecipientFilter filter;
+			UTIL_DecalTrace(&tr, g_DecalNames[m_nDecalIndex]);
+		}
+		break;
+	}
 
-				
-				CRainbowThinker* pThink = static_cast<CRainbowThinker*>(CreateEntityByName("env_rainbowthink"));
-				if (pThink)
+	case MODE_COLOR:
+	{
+		if (m_nColorIndex == COLOR_COUNT - 1) // Rainbow
+		{
+
+			CBaseEntity* pChild = NULL;
+			while ((pChild = gEntList.FindEntityByClassname(pChild, "env_rainbowthink")) != NULL)
+			{
+				CRainbowThinker* pThinker = dynamic_cast<CRainbowThinker*>(pChild);
+				if (pThinker && pThinker->m_hTargetEnt == pEnt)
 				{
-					pThink->m_hTargetEnt = pEnt;
-					pThink->Spawn();
-					DispatchSpawn(pThink);
+					UTIL_Remove(pThinker);
 				}
 			}
-			else
-			{
-				
-				CBaseEntity* pChild = NULL;
-				while ((pChild = gEntList.FindEntityByClassname(pChild, "env_rainbowthink")) != NULL)
-				{
-					CRainbowThinker* pThinker = dynamic_cast<CRainbowThinker*>(pChild);
-					if (pThinker && pThinker->m_hTargetEnt == pEnt)
-					{
-						UTIL_Remove(pThinker);
-					}
-				}
 
-				const ColorPreset& color = g_ColorPresets[m_nColorIndex];
-				pEnt->SetRenderColor(color.r, color.g, color.b);
+
+			CRainbowThinker* pThink = static_cast<CRainbowThinker*>(CreateEntityByName("env_rainbowthink"));
+			if (pThink)
+			{
+				pThink->m_hTargetEnt = pEnt;
+				pThink->Spawn();
+				DispatchSpawn(pThink);
 			}
+		}
+		else
+		{
+
+			CBaseEntity* pChild = NULL;
+			while ((pChild = gEntList.FindEntityByClassname(pChild, "env_rainbowthink")) != NULL)
+			{
+				CRainbowThinker* pThinker = dynamic_cast<CRainbowThinker*>(pChild);
+				if (pThinker && pThinker->m_hTargetEnt == pEnt)
+				{
+					UTIL_Remove(pThinker);
+				}
+			}
+
+			const ColorPreset& color = g_ColorPresets[m_nColorIndex];
+			pEnt->SetRenderColor(color.r, color.g, color.b);
+		}
+		break;
+	}
+
+	case MODE_MATERIAL:
+	{
+		if (!pEnt || pEnt->IsWorld())
+			break;
+
+		RenderFxEntry& entry = g_RenderFxModes[m_nMaterialIndex];
+
+		// Always reset first
+		pEnt->m_nRenderFX = kRenderFxNone;
+		pEnt->m_nRenderMode = kRenderNormal;
+		pEnt->SetRenderColor(255, 255, 255, 255);
+		pEnt->RemoveEffects(EF_NODRAW);
+
+		// Apply selected FX
+		pEnt->m_nRenderFX = entry.fx;
+
+		// FX that need alpha blending to be visible
+		switch (entry.fx)
+		{
+		case kRenderFxPulseSlow:
+		case kRenderFxPulseFast:
+		case kRenderFxPulseSlowWide:
+		case kRenderFxFadeSlow:
+		case kRenderFxFadeFast:
+		case kRenderFxSolidSlow:
+		case kRenderFxSolidFast:
+		case kRenderFxStrobeSlow:
+		case kRenderFxStrobeFast:
+		case kRenderFxStrobeFaster:
+		case kRenderFxFlickerSlow:
+		case kRenderFxFlickerFast:
+		case kRenderFxDistort:
+		{
+			pEnt->m_nRenderMode = kRenderTransAlpha;
+			pEnt->SetRenderColor(255, 255, 255, 180);
 			break;
 		}
 
-case MODE_CONSTRAINT:
-{
-	if (!m_hConstraintTarget1)
-	{
-		m_hConstraintTarget1 = pEnt;
-		m_hConstraintTarget2 = NULL; // Reset second just in case
-		HudText(pPlayer, "First point selected.", 200, 255, 255);
-	}
-	else if (m_hConstraintTarget1 == pEnt)
-	{
-		HudText(pPlayer, "Cannot constrain an entity to itself.", 255, 100, 100);
-		m_hConstraintTarget1 = NULL;
-	}
-	else
-	{
-		m_hConstraintTarget2 = pEnt;
-
-		CBaseEntity* pEnt1 = m_hConstraintTarget1;
-		CBaseEntity* pEnt2 = m_hConstraintTarget2;
-
-		Vector origin1 = pEnt1->WorldSpaceCenter();
-		Vector origin2 = pEnt2->WorldSpaceCenter();
-		Vector anchor = (origin1 + origin2) * 0.5f;
-
-		IPhysicsObject* pPhys1 = pEnt1->VPhysicsGetObject();
-		IPhysicsObject* pPhys2 = pEnt2->VPhysicsGetObject();
-
-		if (!pPhys1 || !pPhys2)
+		case kRenderFxGlowShell:
 		{
-			HudText(pPlayer, "Both objects must have physics!", 255, 100, 100);
+			pEnt->SetRenderColor(0, 255, 0);
+			break;
+		}
+
+		case kRenderFxHologram:
+		{
+			pEnt->m_nRenderMode = kRenderTransColor;
+			pEnt->SetRenderColor(0, 150, 255, 160);
+			break;
+		}
+
+		case kRenderFxExplode:
+		{
+			pEnt->m_nRenderMode = kRenderTransAlpha;
+			pEnt->SetRenderColor(255, 120, 0, 200);
+			break;
+		}
+
+		case kRenderFxNoDissipation:
+		case kRenderFxClampMinScale:
+		case kRenderFxNone:
+		default:
+		{
+			// These don't need special handling
+			break;
+		}
+		}
+
+		HudText(
+			pPlayer,
+			UTIL_VarArgs("RenderFX: %s", entry.name),
+			200, 255, 200
+		);
+
+		break;
+	}
+
+
+	case MODE_CONSTRAINT:
+	{
+		if (!m_hConstraintTarget1)
+		{
+			m_hConstraintTarget1 = pEnt;
+			m_hConstraintTarget2 = NULL; // Reset second just in case
+			HudText(pPlayer, "First point selected.", 200, 255, 255);
+		}
+		else if (m_hConstraintTarget1 == pEnt)
+		{
+			HudText(pPlayer, "Cannot constrain an entity to itself.", 255, 100, 100);
+			m_hConstraintTarget1 = NULL;
+		}
+		else
+		{
+			m_hConstraintTarget2 = pEnt;
+
+			CBaseEntity* pEnt1 = m_hConstraintTarget1;
+			CBaseEntity* pEnt2 = m_hConstraintTarget2;
+
+			Vector origin1 = pEnt1->WorldSpaceCenter();
+			Vector origin2 = pEnt2->WorldSpaceCenter();
+			Vector anchor = (origin1 + origin2) * 0.5f;
+
+			IPhysicsObject* pPhys1 = pEnt1->VPhysicsGetObject();
+			IPhysicsObject* pPhys2 = pEnt2->VPhysicsGetObject();
+
+			if (!pPhys1 || !pPhys2)
+			{
+				HudText(pPlayer, "Both objects must have physics!", 255, 100, 100);
+				m_hConstraintTarget1 = NULL;
+				m_hConstraintTarget2 = NULL;
+				break;
+			}
+
+			switch (m_nConstraintType)
+			{
+			case 0: // BallSocket
+			{
+				constraint_ballsocketparams_t ballsocket;
+				ballsocket.Defaults();
+				ballsocket.InitWithCurrentObjectState(pPhys1, pPhys2, anchor);
+				IPhysicsConstraint* pConstraint = physenv->CreateBallsocketConstraint(pPhys1, pPhys2, NULL, ballsocket);
+				if (pConstraint)
+					HudText(pPlayer, "BallSocket constraint created.", 100, 255, 100);
+				break;
+			}
+			case 1: // Weld
+			{
+				constraint_fixedparams_t weld;
+				weld.Defaults();
+				weld.InitWithCurrentObjectState(pPhys1, pPhys2);
+				IPhysicsConstraint* pConstraint = physenv->CreateFixedConstraint(pPhys1, pPhys2, NULL, weld);
+				if (pConstraint)
+					HudText(pPlayer, "Weld constraint created.", 100, 255, 100);
+				break;
+			}
+			case 2: // Rope
+			{
+				PrecacheModel("cable/cable.vmt");
+				CRopeKeyframe* pRope = CRopeKeyframe::Create(pEnt1, pEnt2, 0, 0, 2, "cable/cable.vmt", 10);
+				if (pRope)
+				{
+					constraint_lengthparams_t rope;
+					rope.Defaults();
+					rope.InitWorldspace(pPhys1, pPhys2, origin1, origin2, false);
+					rope.minLength = 0.0f;
+					rope.totalLength = (origin1 - origin2).Length();
+					IPhysicsConstraint* pConstraint = physenv->CreateLengthConstraint(pPhys1, pPhys2, NULL, rope);
+					if (pConstraint)
+						HudText(pPlayer, "Rope constraint created.", 100, 255, 100);
+					else
+						HudText(pPlayer, "Rope visual OK, physics constraint failed.", 255, 200, 100);
+				}
+				else
+				{
+					HudText(pPlayer, "Failed to create visual rope.", 255, 100, 100);
+				}
+				break;
+			}
+			}
+
 			m_hConstraintTarget1 = NULL;
 			m_hConstraintTarget2 = NULL;
-			break;
 		}
-
-		switch (m_nConstraintType)
-		{
-		case 0: // BallSocket
-		{
-			constraint_ballsocketparams_t ballsocket;
-			ballsocket.Defaults();
-			ballsocket.InitWithCurrentObjectState(pPhys1, pPhys2, anchor);
-			IPhysicsConstraint* pConstraint = physenv->CreateBallsocketConstraint(pPhys1, pPhys2, NULL, ballsocket);
-			if (pConstraint)
-				HudText(pPlayer, "BallSocket constraint created.", 100, 255, 100);
-			break;
-		}
-		case 1: // Weld
-		{
-			constraint_fixedparams_t weld;
-			weld.Defaults();
-			weld.InitWithCurrentObjectState(pPhys1, pPhys2);
-			IPhysicsConstraint* pConstraint = physenv->CreateFixedConstraint(pPhys1, pPhys2, NULL, weld);
-			if (pConstraint)
-				HudText(pPlayer, "Weld constraint created.", 100, 255, 100);
-			break;
-		}
-		case 2: // Rope
-		{
-			PrecacheModel("cable/cable.vmt");
-			CRopeKeyframe* pRope = CRopeKeyframe::Create(pEnt1, pEnt2, 0, 0, 2, "cable/cable.vmt", 10);
-			if (pRope)
-			{
-				constraint_lengthparams_t rope;
-				rope.Defaults();
-				rope.InitWorldspace(pPhys1, pPhys2, origin1, origin2, false);
-				rope.minLength = 0.0f;
-				rope.totalLength = (origin1 - origin2).Length();
-				IPhysicsConstraint* pConstraint = physenv->CreateLengthConstraint(pPhys1, pPhys2, NULL, rope);
-				if (pConstraint)
-					HudText(pPlayer, "Rope constraint created.", 100, 255, 100);
-				else
-					HudText(pPlayer, "Rope visual OK, physics constraint failed.", 255, 200, 100);
-			}
-			else
-			{
-				HudText(pPlayer, "Failed to create visual rope.", 255, 100, 100);
-			}
-			break;
-		}
-		}
-
-		m_hConstraintTarget1 = NULL;
-		m_hConstraintTarget2 = NULL;
+		break;
 	}
-	break;
-}
 	case MODE_IGNITE:
 	{
-		if ( pEnt->IsWorld() )
+		if (pEnt->IsWorld())
 		{
-			HudText( pPlayer, "Cannot ignite the world.", 255, 100, 100 );
+			HudText(pPlayer, "Cannot ignite the world.", 255, 100, 100);
 			break;
 		}
 
 		// Check if entity already has a flame attached
-		CEntityFlame *pFlame = dynamic_cast<CEntityFlame*>(
-			gEntList.FindEntityByClassname( NULL, "entityflame" )
-		);
+		CEntityFlame* pFlame = dynamic_cast<CEntityFlame*>(
+			gEntList.FindEntityByClassname(NULL, "entityflame")
+			);
 
 		bool bAlreadyOnFire = false;
 
-		while ( pFlame )
+		while (pFlame)
 		{
-			if ( pFlame->GetMoveParent() == pEnt )
+			if (pFlame->GetMoveParent() == pEnt)
 			{
 				bAlreadyOnFire = true;
 				break;
 			}
 			pFlame = dynamic_cast<CEntityFlame*>(
-				gEntList.FindEntityByClassname( pFlame, "entityflame" )
-			);
+				gEntList.FindEntityByClassname(pFlame, "entityflame")
+				);
 		}
 
-		if ( bAlreadyOnFire )
+		if (bAlreadyOnFire)
 		{
 			// Extinguish = remove flame entity
-			UTIL_Remove( pFlame );
-			HudText( pPlayer, "Fire extinguished.", 150, 200, 255 );
+			UTIL_Remove(pFlame);
+			HudText(pPlayer, "Fire extinguished.", 150, 200, 255);
 		}
 		else
 		{
 			// Ignite by attaching an entityflame
-			CEntityFlame *pNewFlame = CEntityFlame::Create( pEnt );
-			if ( pNewFlame )
+			CEntityFlame* pNewFlame = CEntityFlame::Create(pEnt);
+			if (pNewFlame)
 			{
-				pNewFlame->SetLifetime( 10.0f ); // seconds
-				HudText( pPlayer, "Entity ignited.", 255, 150, 50 );
+				pNewFlame->SetLifetime(10.0f); // seconds
+				HudText(pPlayer, "Entity ignited.", 255, 150, 50);
 			}
 		}
 
 		break;
 	}
-case MODE_DUPLICATE:
-{
-	if ( !m_DupeData.valid )
+	case MODE_DUPLICATE:
 	{
-		HudText( pPlayer, "No copied object. Shift+R to copy.", 255, 150, 100 );
+		if (!m_DupeData.valid)
+		{
+			HudText(pPlayer, "No copied object.", 255, 150, 100);
+			break;
+		}
+
+		trace_t tr;
+		Vector start = pPlayer->EyePosition();
+		Vector forward;
+		pPlayer->EyeVectors(&forward);
+
+		Vector end = start + forward * 4096.0f;
+
+		UTIL_TraceLine(
+			start,
+			end,
+			MASK_SOLID,
+			pPlayer,
+			COLLISION_GROUP_NONE,
+			&tr
+		);
+
+		if (tr.fraction == 1.0f)
+		{
+			HudText(pPlayer, "Aim at a surface to place.", 255, 100, 100);
+			break;
+		}
+
+		Vector spawnPos = tr.endpos + tr.plane.normal * 8.0f;
+
+		// =====================================
+		// RAGDOLL
+		// =====================================
+		if (m_DupeData.isRagdoll)
+		{
+			CRagdollProp* pNew =
+				dynamic_cast<CRagdollProp*>(
+					CreateEntityByName("prop_ragdoll")
+					);
+
+			if (!pNew)
+			{
+				HudText(pPlayer, "Ragdoll spawn failed.", 255, 100, 100);
+				break;
+			}
+
+			pNew->SetModel(STRING(m_DupeData.modelName));
+			pNew->SetAbsOrigin(spawnPos);
+			pNew->SetAbsAngles(m_DupeData.angles);
+
+			DispatchSpawn(pNew);
+			pNew->Activate();
+			pNew->CreateVPhysics();
+
+			ragdoll_t* pData = pNew->GetRagdoll();
+
+			if (pData && pData->listCount > 0)
+			{
+				int count =
+					MIN(m_DupeData.boneCount,
+						pData->listCount);
+
+				for (int i = 0; i < count; i++)
+				{
+					IPhysicsObject* pBonePhys =
+						pData->list[i].pObject;
+
+					if (pBonePhys)
+					{
+						Vector worldPos =
+							spawnPos +
+							m_DupeData.bones[i].localPos;
+
+						pBonePhys->SetPosition(
+							worldPos,
+							m_DupeData.bones[i].ang,
+							true
+						);
+
+						pBonePhys->Wake();
+					}
+				}
+			}
+
+			break;
+		}
+
+		// =====================================
+		// NORMAL ENTITY
+		// =====================================
+		CBaseEntity* pNew =
+			CreateEntityByName(
+				STRING(m_DupeData.className)
+			);
+
+		if (!pNew)
+		{
+			HudText(pPlayer, "Spawn failed.", 255, 100, 100);
+			break;
+		}
+
+		pNew->SetAbsOrigin(spawnPos);
+		pNew->SetAbsAngles(m_DupeData.angles);
+
+		if (m_DupeData.modelName != NULL_STRING)
+			pNew->SetModel(STRING(m_DupeData.modelName));
+
+		pNew->SetRenderColor(
+			m_DupeData.color.r,
+			m_DupeData.color.g,
+			m_DupeData.color.b
+		);
+
+		DispatchSpawn(pNew);
+		pNew->Activate();
+
+		IPhysicsObject* pPhys = pNew->VPhysicsGetObject();
+		if (pPhys && m_DupeData.mass > 0.0f)
+		{
+			pPhys->SetMass(m_DupeData.mass);
+			pPhys->Wake();
+		}
+
 		break;
 	}
 
-	trace_t tr;
-	Vector start = pPlayer->EyePosition();
-	Vector forward;
-	pPlayer->EyeVectors( &forward );
-
-	Vector end = start + forward * 4096.0f;
-
-	UTIL_TraceLine(
-		start,
-		end,
-		MASK_SOLID,
-		pPlayer,
-		COLLISION_GROUP_NONE,
-		&tr
-	);
-
-	if ( tr.fraction == 1.0f )
+	case MODE_POINTMESSAGE:
 	{
-		HudText( pPlayer, "Aim at a surface to place.", 255, 100, 100 );
+		trace_t tr;
+		Vector start = pPlayer->EyePosition();
+		Vector forward;
+		pPlayer->EyeVectors(&forward);
+
+		Vector end = start + forward * 4096.0f;
+
+		UTIL_TraceLine(
+			start,
+			end,
+			MASK_SOLID,
+			pPlayer,
+			COLLISION_GROUP_NONE,
+			&tr
+		);
+
+		if (tr.fraction == 1.0f)
+		{
+			Msg("Multitool: aim at a surface to place point_message.\n");
+			break;
+		}
+
+		Vector spawnPos = tr.endpos + tr.plane.normal * 4.0f;
+
+		CBaseEntity* pMsg = CreateEntityByName("point_message");
+		if (!pMsg)
+		{
+			Msg("Multitool: failed to create point_message.\n");
+			break;
+		}
+
+		pMsg->SetAbsOrigin(spawnPos);
+
+		// Apply keyvalues BEFORE spawn
+		pMsg->KeyValue("targetname", "gabeplus_mtool_pmessage");
+		pMsg->KeyValue("message", gabeplus_multitool_pmessagetext.GetString());
+		pMsg->KeyValue("radius", "512");
+
+		DispatchSpawn(pMsg);
+		pMsg->Activate();
+
+		Msg(
+			"Multitool: point_message created (text=\"%s\", radius=512).\n",
+			gabeplus_multitool_pmessagetext.GetString()
+		);
+
+		break;
+	}
+	case MODE_LIGHT_WATERMELON:
+	{
+		ThrowLightWatermelon();
+		HudText(pPlayer, "Light watermelon thrown.", 200, 255, 200);
 		break;
 	}
 
-	Vector spawnPos = tr.endpos + tr.plane.normal * 8.0f;
-
-	CBaseEntity *pNew = CreateEntityByName( STRING( m_DupeData.className ) );
-	if ( !pNew )
-	{
-		HudText( pPlayer, "Spawn failed.", 255, 100, 100 );
-		break;
 	}
-
-	pNew->SetAbsOrigin( spawnPos );
-	pNew->SetAbsAngles( m_DupeData.angles );
-
-	if ( m_DupeData.modelName != NULL_STRING )
-		pNew->SetModel( STRING( m_DupeData.modelName ) );
-
-	pNew->SetRenderColor(
-		m_DupeData.color.r,
-		m_DupeData.color.g,
-		m_DupeData.color.b
-	);
-
-	//pNew->m_nSkin = m_DupeData.skin;
-	//pNew->m_nBody = m_DupeData.body;
-
-	DispatchSpawn( pNew );
-	pNew->Activate();
-
-	IPhysicsObject *pPhys = pNew->VPhysicsGetObject();
-	if ( pPhys && m_DupeData.mass > 0.0f )
-	{
-		pPhys->SetMass( m_DupeData.mass );
-		pPhys->Wake();
-	}
-
-	HudText( pPlayer, "Duplicate placed.", 150, 255, 150 );
-	break;
-}
-
-}
 }
 
 void CWeaponMultitool::ShowDistance(CBaseEntity* pEnt)
@@ -515,7 +1177,7 @@ void CWeaponMultitool::ShowDistance(CBaseEntity* pEnt)
 	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
 	if (!pPlayer) return;
 
-	float flDist = (pEnt->WorldSpaceCenter() - pPlayer->EyePosition()).Length();
+	float flDist = (pEnt->GetAbsOrigin() - pPlayer->EyePosition()).Length();
 	HudText(pPlayer, UTIL_VarArgs("Distance: %.1f units", flDist), 200, 255, 200);
 }
 
@@ -524,9 +1186,22 @@ void CWeaponMultitool::ItemPostFrame()
 	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
 	if (!pPlayer) return;
 
-	if (m_nMultitoolMode == MODE_COLOR)
+	MultitoolMode_t newMode = StringToMode(mtool_mode.GetString());
+
+	if (newMode != m_nMultitoolMode)
 	{
-		if ((pPlayer->m_nButtons & IN_RELOAD) && (pPlayer->m_afButtonPressed & IN_RELOAD))
+		m_nMultitoolMode = newMode;
+
+		HudText(
+			pPlayer,
+			UTIL_VarArgs("Multitool: %s", g_szModeNames[m_nMultitoolMode]),
+			255, 255, 200
+		);
+	}
+
+	if ((pPlayer->m_nButtons & IN_RELOAD) && (pPlayer->m_afButtonPressed & IN_RELOAD))
+	{
+		if (m_nMultitoolMode == MODE_COLOR || m_nMultitoolMode == MODE_DECAL)
 		{
 			if (m_nMultitoolMode == MODE_COLOR)
 			{
@@ -534,86 +1209,155 @@ void CWeaponMultitool::ItemPostFrame()
 				const char* name = g_ColorPresets[m_nColorIndex].name;
 				HudText(pPlayer, UTIL_VarArgs("Color Mode: %s", name), 255, 255, 255);
 			}
+			else if (m_nMultitoolMode == MODE_DECAL)
+			{
+				m_nDecalIndex = (m_nDecalIndex + 1) % DECAL_COUNT;
+				const char* name = g_DecalNames[m_nDecalIndex];
+				HudText(pPlayer, UTIL_VarArgs("Decal: %s", name), 255, 255, 255);
+			}
 		}
 	}
-	if (m_nMultitoolMode == MODE_CONSTRAINT)
-{
-	if ((pPlayer->m_nButtons & IN_RELOAD) && (pPlayer->m_afButtonPressed & IN_RELOAD))
+
+	if (m_nMultitoolMode == MODE_MATERIAL)
 	{
-		m_nConstraintType = (m_nConstraintType + 1) % CONSTRAINT_TYPE_COUNT;
-		HudText(pPlayer, UTIL_VarArgs("Constraint Type: %s", g_szConstraintTypes[m_nConstraintType]), 255, 255, 255);
-	}
-
-	if ((pPlayer->m_nButtons & IN_USE) && (pPlayer->m_afButtonPressed & IN_USE))
-	{
-		int removed = 0;
-		CBaseEntity* pEnt = NULL;
-
-		// Remove ropes
-		while ((pEnt = gEntList.FindEntityByClassname(pEnt, "move_rope")) != NULL)
+		if (pPlayer->m_afButtonPressed & IN_RELOAD)
 		{
-			UTIL_Remove(pEnt);
-			removed++;
-		}
-		pEnt = NULL;
-		while ((pEnt = gEntList.FindEntityByClassname(pEnt, "keyframe_rope")) != NULL)
-		{
-			UTIL_Remove(pEnt);
-			removed++;
-		}
+			m_nMaterialIndex = (m_nMaterialIndex + 1) % RENDERFX_COUNT;
 
-		// Remove physics constraints
-		pEnt = NULL;
-		while ((pEnt = gEntList.FindEntityByClassname(pEnt, "phys_constraint")) != NULL)
-		{
-			UTIL_Remove(pEnt);
-			removed++;
-		}
-		pEnt = NULL;
-		while ((pEnt = gEntList.FindEntityByClassname(pEnt, "phys_constraintsystem")) != NULL)
-		{
-			UTIL_Remove(pEnt);
-			removed++;
-		}
-
-		HudText(pPlayer, UTIL_VarArgs("Removed %d constraints.", removed), 255, 100, 100);
-	}
-}
-	if ( (pPlayer->m_afButtonPressed & IN_RELOAD) &&
-		(pPlayer->m_nButtons & IN_SPEED) )
-	{
-		if ( m_nMultitoolMode == MODE_DUPLICATE )
-		{
-				CBaseEntity *pEnt = FindEntityInFront();
-				if ( !pEnt || pEnt->IsWorld() )
-				{
-					HudText( pPlayer, "Nothing to copy.", 255, 100, 100 );
-					return;
-				}
-
-				m_DupeData.className = AllocPooledString( pEnt->GetClassname() );
-				m_DupeData.modelName = pEnt->GetModelName();
-				m_DupeData.angles    = pEnt->GetAbsAngles();
-				m_DupeData.color     = pEnt->GetRenderColor();
-
-				m_DupeData.mass = 0.0f;
-				IPhysicsObject *pPhys = pEnt->VPhysicsGetObject();
-				if ( pPhys )
-					m_DupeData.mass = pPhys->GetMass();
-
-				m_DupeData.valid = true;
-
-				HudText(
+			HudText(
 				pPlayer,
 				UTIL_VarArgs(
-					"Object copied: Classname %s with model %s",
-					STRING( m_DupeData.className ),
-					STRING( m_DupeData.modelName )
+					"RenderFX: %s",
+					g_RenderFxModes[m_nMaterialIndex].name
 				),
-				150, 255, 150
+				255, 255, 255
 			);
+		}
+	}
 
 
+	if (m_nMultitoolMode == MODE_CONSTRAINT)
+	{
+		if ((pPlayer->m_nButtons & IN_RELOAD) && (pPlayer->m_afButtonPressed & IN_RELOAD))
+		{
+			m_nConstraintType = (m_nConstraintType + 1) % CONSTRAINT_TYPE_COUNT;
+			HudText(pPlayer, UTIL_VarArgs("Constraint Type: %s", g_szConstraintTypes[m_nConstraintType]), 255, 255, 255);
+		}
+
+		if ((pPlayer->m_nButtons & IN_USE) && (pPlayer->m_afButtonPressed & IN_USE))
+		{
+			int removed = 0;
+			CBaseEntity* pEnt = NULL;
+
+			// Remove ropes
+			while ((pEnt = gEntList.FindEntityByClassname(pEnt, "move_rope")) != NULL)
+			{
+				UTIL_Remove(pEnt);
+				removed++;
+			}
+			pEnt = NULL;
+			while ((pEnt = gEntList.FindEntityByClassname(pEnt, "keyframe_rope")) != NULL)
+			{
+				UTIL_Remove(pEnt);
+				removed++;
+			}
+
+			// Remove physics constraints
+			pEnt = NULL;
+			while ((pEnt = gEntList.FindEntityByClassname(pEnt, "phys_constraint")) != NULL)
+			{
+				UTIL_Remove(pEnt);
+				removed++;
+			}
+			pEnt = NULL;
+			while ((pEnt = gEntList.FindEntityByClassname(pEnt, "phys_constraintsystem")) != NULL)
+			{
+				UTIL_Remove(pEnt);
+				removed++;
+			}
+
+			HudText(pPlayer, UTIL_VarArgs("Removed %d constraints.", removed), 255, 100, 100);
+		}
+	}
+
+	if (m_nMultitoolMode == MODE_LIGHT_WATERMELON)
+	{
+		if ((pPlayer->m_afButtonPressed & IN_RELOAD))
+		{
+			m_nLightWatermelonColor =
+				(m_nLightWatermelonColor + 1) % COLOR_COUNT;
+
+			HudText(
+				pPlayer,
+				UTIL_VarArgs(
+					"Watermelon Light Color: %s",
+					g_ColorPresets[m_nLightWatermelonColor].name
+				),
+				255, 255, 255
+			);
+		}
+	}
+
+	if (m_nMultitoolMode == MODE_POINTMESSAGE)
+	{
+		if ((pPlayer->m_nButtons & IN_RELOAD) &&
+			(pPlayer->m_afButtonPressed & IN_RELOAD))
+		{
+			int removed = 0;
+
+			CBaseEntity* pEnt = NULL;
+			while ((pEnt = gEntList.NextEnt(pEnt)) != NULL)
+			{
+				if (Q_stricmp(
+					STRING(pEnt->GetEntityName()),
+					"gabeplus_mtool_pmessage"
+				) == 0)
+				{
+					UTIL_Remove(pEnt);
+					removed++;
+				}
+			}
+
+			Msg(
+				"Multitool: removed %d point_message entities named \"gabeplus_mtool_pmessage\".\n",
+				removed
+			);
+		}
+	}
+
+	if (m_nMultitoolMode == MODE_DUPLICATE && m_DupeData.valid)
+	{
+		trace_t tr;
+
+		Vector start = pPlayer->EyePosition();
+		Vector forward;
+		pPlayer->EyeVectors(&forward);
+
+		Vector end = start + forward * 4096.0f;
+
+		UTIL_TraceLine(
+			start,
+			end,
+			MASK_SOLID,
+			pPlayer,
+			COLLISION_GROUP_NONE,
+			&tr
+		);
+
+		if (tr.fraction < 1.0f)
+		{
+			Vector renderOrigin = tr.endpos + tr.plane.normal * 2.0f;
+
+			// Draw bounding box preview
+			NDebugOverlay::BoxAngles(
+				renderOrigin,
+				m_DupeData.mins,
+				m_DupeData.maxs,
+				m_DupeData.angles,
+				0, 255, 0,   // Green
+				40,          // Alpha
+				0.0f         // Duration 0 = draw for one frame (we redraw every frame)
+			);
 		}
 	}
 

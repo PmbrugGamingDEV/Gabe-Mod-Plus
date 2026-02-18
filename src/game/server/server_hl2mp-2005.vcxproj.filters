@@ -46,6 +46,30 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\Lua">
       <UniqueIdentifier>{dc0b5299-cc88-44b0-b7cc-49cb7cb2690a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Gamemode">
+      <UniqueIdentifier>{bc9b9094-c6d8-4496-b034-c1b101d8a4a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Debug Stuff">
+      <UniqueIdentifier>{e097f4d0-7a3f-42a1-8545-b3f924974d7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Nextbot">
+      <UniqueIdentifier>{bb7b0479-9c07-4a6b-a738-e15587b3e532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Physgun">
+      <UniqueIdentifier>{7823e239-a92e-4e5d-a4ac-b8c15d43b5a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose">
+      <UniqueIdentifier>{88c03511-eb52-4530-8230-38ad7a4034b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Shared">
+      <UniqueIdentifier>{ddbce1ae-9d01-4619-ab78-ae9c0b261546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\terrainmorph">
+      <UniqueIdentifier>{687025c6-e54f-45f1-8055-69791a9b1262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Saves">
+      <UniqueIdentifier>{c707ae3a-8c71-45d0-8f63-5bcd729c4b7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\achievement_saverestore.cpp">
@@ -1713,9 +1737,6 @@
     <ClCompile Include="..\shared\Multiplayer\multiplayer_animstate.cpp">
       <Filter>Source Files\Multiplayer</Filter>
     </ClCompile>
-    <ClCompile Include="physgun.cpp">
-      <Filter>Source Files\Gabe Mod + Stuff</Filter>
-    </ClCompile>
     <ClCompile Include="weapon_camera.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
@@ -1737,8 +1758,95 @@
     <ClCompile Include="lua_test.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
     </ClCompile>
-    <ClCompile Include="gabe_luamanager.cpp">
+    <ClCompile Include="gabeplus_debugobjects.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Debug Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_npcinfo.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Debug Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_chaosent.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Debug Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_propspawner.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabe_effects.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabe_effect_carrier.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_maxammo.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_multitool_legacy.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="ent_test.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="sticky_pellet.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_stickylauncher.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_proplauncher.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\weapon_immolator.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_npc_nextbot.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Nextbot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\hl2mp\weapon_physgun.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Physgun</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_jetpack.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\vehicle_jetski.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="ge_luamanager.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_dbg.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClCompile>
+    <ClCompile Include="ge_gamelua.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_ents.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\hl2mp\weapon_mp5.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\hl2mp\weapon_eattach.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="npc_fastzombie.cpp">
+      <Filter>Source Files\HL2 DLL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\gabe_events.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_shared.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="edictfiller.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\hl2\achievements_hl2.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="logic_autosave.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="logic_achievement.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3470,8 +3578,38 @@
     <ClInclude Include="lualib.h">
       <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
     </ClInclude>
-    <ClInclude Include="gabe_luamanager.h">
+    <ClInclude Include="gabe_effect_carrier.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="gabe_effects.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon_camera.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="sticky_pellet.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon_stickylauncher.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon_proplauncher.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="ge_luamanager.h">
       <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_dbg.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClInclude>
+    <ClInclude Include="ge_gamelua.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_ents.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\gabe_events.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3503,6 +3641,9 @@
       <Filter>Link Libraries</Filter>
     </Library>
     <Library Include="..\..\lib\public\vstdlib.lib">
+      <Filter>Link Libraries</Filter>
+    </Library>
+    <Library Include="..\..\lib\public\gabe_lua515.lib">
       <Filter>Link Libraries</Filter>
     </Library>
   </ItemGroup>

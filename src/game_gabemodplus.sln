@@ -1,5 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client HL2MP", "game\client\client_hl2mp-2005.vcxproj", "{5FE91DC8-B6DF-4061-984E-36FD36623E72}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server HL2MP", "game\server\server_hl2mp-2005.vcxproj", "{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}"
@@ -8,24 +10,41 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gabe_lua515", "gabe_lua515\
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|Win32 = Debug|Win32
+		Release|Any CPU = Release|Any CPU
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5FE91DC8-B6DF-4061-984E-36FD36623E72}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{5FE91DC8-B6DF-4061-984E-36FD36623E72}.Debug|Any CPU.Build.0 = Debug|Win32
 		{5FE91DC8-B6DF-4061-984E-36FD36623E72}.Debug|Win32.ActiveCfg = Debug|Win32
 		{5FE91DC8-B6DF-4061-984E-36FD36623E72}.Debug|Win32.Build.0 = Debug|Win32
+		{5FE91DC8-B6DF-4061-984E-36FD36623E72}.Release|Any CPU.ActiveCfg = Release|Win32
+		{5FE91DC8-B6DF-4061-984E-36FD36623E72}.Release|Any CPU.Build.0 = Release|Win32
 		{5FE91DC8-B6DF-4061-984E-36FD36623E72}.Release|Win32.ActiveCfg = Release|Win32
 		{5FE91DC8-B6DF-4061-984E-36FD36623E72}.Release|Win32.Build.0 = Release|Win32
+		{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}.Debug|Any CPU.Build.0 = Debug|Win32
 		{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}.Debug|Win32.Build.0 = Debug|Win32
+		{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}.Release|Any CPU.ActiveCfg = Release|Win32
+		{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}.Release|Any CPU.Build.0 = Release|Win32
 		{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}.Release|Win32.ActiveCfg = Release|Win32
 		{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}.Release|Win32.Build.0 = Release|Win32
+		{272FE16A-5B02-4F03-AD4D-EF6498E7838D}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{272FE16A-5B02-4F03-AD4D-EF6498E7838D}.Debug|Any CPU.Build.0 = Debug|Win32
 		{272FE16A-5B02-4F03-AD4D-EF6498E7838D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{272FE16A-5B02-4F03-AD4D-EF6498E7838D}.Debug|Win32.Build.0 = Debug|Win32
+		{272FE16A-5B02-4F03-AD4D-EF6498E7838D}.Release|Any CPU.ActiveCfg = Release|Win32
+		{272FE16A-5B02-4F03-AD4D-EF6498E7838D}.Release|Any CPU.Build.0 = Release|Win32
 		{272FE16A-5B02-4F03-AD4D-EF6498E7838D}.Release|Win32.ActiveCfg = Release|Win32
 		{272FE16A-5B02-4F03-AD4D-EF6498E7838D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3BA69B71-93A5-4DE1-9602-D91B2E939E4B}
 	EndGlobalSection
 EndGlobal

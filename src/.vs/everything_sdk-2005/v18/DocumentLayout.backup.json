@@ -1,0 +1,75 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B6572CBE-7C7F-4FFF-94DE-AFBBBAB11C64}|utils\\serverplugin_sample\\serverplugin_empty-2005.vcxproj|C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_empty.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{B6572CBE-7C7F-4FFF-94DE-AFBBBAB11C64}|utils\\serverplugin_sample\\serverplugin_empty-2005.vcxproj|solutionrelative:utils\\serverplugin_sample\\serverplugin_empty.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B6572CBE-7C7F-4FFF-94DE-AFBBBAB11C64}|utils\\serverplugin_sample\\serverplugin_empty-2005.vcxproj|C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_bot.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{B6572CBE-7C7F-4FFF-94DE-AFBBBAB11C64}|utils\\serverplugin_sample\\serverplugin_empty-2005.vcxproj|solutionrelative:utils\\serverplugin_sample\\serverplugin_bot.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BF3EDBF5-ED65-4567-B348-504C1310A1BB}|vgui2\\vgui_controls\\vgui_controls-2005.vcxproj|C:\\GabeModPlus\\src\\vgui2\\vgui_controls\\consoledialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BF3EDBF5-ED65-4567-B348-504C1310A1BB}|vgui2\\vgui_controls\\vgui_controls-2005.vcxproj|solutionrelative:vgui2\\vgui_controls\\consoledialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "serverplugin_empty.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_empty.cpp",
+              "RelativeDocumentMoniker": "utils\\serverplugin_sample\\serverplugin_empty.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_empty.cpp",
+              "RelativeToolTip": "utils\\serverplugin_sample\\serverplugin_empty.cpp",
+              "ViewState": "AgIAAOkAAAAAAAAAAAD4v/QAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-11T00:11:02.523Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "serverplugin_bot.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_bot.cpp",
+              "RelativeDocumentMoniker": "utils\\serverplugin_sample\\serverplugin_bot.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_bot.cpp",
+              "RelativeToolTip": "utils\\serverplugin_sample\\serverplugin_bot.cpp",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-11T00:10:59.41Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "consoledialog.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\vgui2\\vgui_controls\\consoledialog.cpp",
+              "RelativeDocumentMoniker": "vgui2\\vgui_controls\\consoledialog.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\vgui2\\vgui_controls\\consoledialog.cpp",
+              "RelativeToolTip": "vgui2\\vgui_controls\\consoledialog.cpp",
+              "ViewState": "AgIAAF0AAAAAAAAAAAAkwGoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-08T01:04:11.248Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

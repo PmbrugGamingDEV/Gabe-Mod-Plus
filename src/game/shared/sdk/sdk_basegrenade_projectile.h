@@ -29,8 +29,6 @@ public:
 
 
 public:
-	//Tony; by default projectiles don't have one, so make sure derived weapons do!!
-	virtual SDKWeaponID GetWeaponID( void ) const		{	return SDK_WEAPON_NONE; }
 
 	// This gets sent to the client and placed in the client's interpolation history
 	// so the projectile starts out moving right off the bat.

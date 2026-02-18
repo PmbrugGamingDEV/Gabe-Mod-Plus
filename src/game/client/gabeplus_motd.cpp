@@ -21,7 +21,7 @@ public:
 	CMOTDPanel( VPANEL parent ) : BaseClass( NULL, "MOTDPanel" )
 	{
 		SetParent( parent );
-		SetTitle( "GABE MOD +", true );
+		SetTitle( "GABE MOD 0.7", true );
 		SetSize( 640, 480 );
 		SetMoveable( true );
 		SetSizeable( false );
@@ -63,7 +63,7 @@ void ShowMOTDPanel()
 	if ( g_pMOTDPanel )
 		return;
 
-	g_pMOTDPanel = new CMOTDPanel( enginevgui->GetPanel( PANEL_CLIENTDLL ) );
+	g_pMOTDPanel = new CMOTDPanel( enginevgui->GetPanel( PANEL_GAMEUIDLL ) );
 }
 
 CON_COMMAND_F( gabeplus_chlog, "Shows the changelog for all to see.", FCVAR_CLIENTDLL )

@@ -30,6 +30,11 @@
 #include "xbox/xbox_win32stubs.h"
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#undef PostMessage
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -301,6 +306,15 @@ CConsolePanel::CConsolePanel( vgui::Panel *pParent, const char *pName, bool bSta
 	{
 		SetMinimumSize(100,100);
 	}
+
+#ifdef _WIN32
+	MessageBoxA(
+		NULL,
+		"CConsolePanel constructor called.\nGameUI DLL is LOADED.",
+		"GameUI Debug",
+		MB_OK | MB_ICONINFORMATION
+	);
+#endif
 
 	// create controls
 	m_pHistory = new RichText(this, "ConsoleHistory");
@@ -926,7 +940,7 @@ void CConsolePanel::ApplySchemeSettings(IScheme *pScheme)
 
 	m_PrintColor = GetSchemeColor("Console.TextColor", pScheme);
 	m_DPrintColor = GetSchemeColor("Console.DevTextColor", pScheme);
-	m_pHistory->SetFont( pScheme->GetFont( "ConsoleText", IsProportional() ) );
+	m_pHistory->SetFont( pScheme->GetFont( "Default", IsProportional() ) );
 	m_pCompletionList->SetFont( pScheme->GetFont( "DefaultSmall", IsProportional() ) );
 	InvalidateLayout();
 }
@@ -1118,7 +1132,7 @@ CConsoleDialog::CConsoleDialog( vgui::Panel *pParent, const char *pName, bool bS
 {
 	// initialize dialog
 	SetVisible( false );
-	SetTitle( "#Console_Title", true );
+	SetTitle( "GABE MOD CONSOLE", true );
 	m_pConsolePanel = new CConsolePanel( this, "ConsolePage", bStatusVersion );
 }
 

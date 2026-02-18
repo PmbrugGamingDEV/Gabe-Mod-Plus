@@ -16,6 +16,7 @@
 #include "soundenvelope.h"
 #include "decals.h"
 #include "soundent.h"
+#include "physics_saverestore.h"
 #include "te_effect_dispatch.h"
 
 #define	VEHICLE_HITBOX_DRIVER	1
@@ -232,7 +233,7 @@ void CPropJetski::Think(void)
 		int iSequence = SelectWeightedSequence( ACT_IDLE );
 		if ( iSequence > ACTIVITY_NOT_AVAILABLE )
 		{
-			m_flCycle = 0;
+			SetCycle(0.0f);
 			m_flAnimTime = gpGlobals->curtime;
 			ResetSequence( iSequence );
 			ResetClientsideFrame();
@@ -319,14 +320,6 @@ void CPropJetski::OnTurn( CUserCmd *ucmd )
 //-----------------------------------------------------------------------------
 bool CPropJetski::UpdateLean( CUserCmd *ucmd )
 {
-	// Are we leaning back?
-	if ( ucmd->buttons & IN_JUMP )
-	{
-		m_pVehicle->SetLeanBack( true );
-		return true;
-	}
-
-	m_pVehicle->SetLeanBack( false );
 	return false;
 }
 
@@ -473,7 +466,7 @@ void CPropJetski::DriveVehicle( CBasePlayer *pPlayer, CUserCmd *ucmd )
 	OnSpeed( ucmd );
 	UpdateTurnAndSpeed();
 
-	m_VehiclePhysics.UpdateDriverControls( ucmd, ucmd->frametime );
+	m_VehiclePhysics.UpdateDriverControls( ucmd, gpGlobals->frametime );
 
 	// Save this data.
 	m_nSpeed = m_VehiclePhysics.GetSpeed();

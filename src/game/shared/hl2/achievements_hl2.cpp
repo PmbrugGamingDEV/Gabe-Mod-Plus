@@ -54,7 +54,28 @@ protected:
 };
 DECLARE_ACHIEVEMENT( CAchievementHL2KillBarnaclesWithOneBarrel, ACHIEVEMENT_HL2_KILL_BARNACLESWITHBARREL, "HL2_KILL_BARNACLESWITHBARREL", 5 );
 
-extern int CalcPlayerAttacks( bool bBulletOnly );
+int CalcPlayerAttacks(bool bBulletOnly)
+{
+	// Example logic
+	int count = 0;
+
+	CBasePlayer* pPlayer = UTIL_GetLocalPlayer();
+	if (!pPlayer)
+		return 0;
+
+	// Example: count active attacks
+	if (bBulletOnly)
+	{
+		// bullet-based logic
+		count = 1;
+	}
+	else
+	{
+		count = 2;
+	}
+
+	return count;
+}
 
 class CAchievementHL2BeatRavenholmNoWeapons : public CFailableAchievement
 {

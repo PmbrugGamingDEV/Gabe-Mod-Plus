@@ -2,7 +2,6 @@
 //
 // Purpose: Utility code.
 //
-// $NoKeywords: $
 //=============================================================================//
 
 #include "cbase.h"
@@ -14,185 +13,180 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-extern short		g_sModelIndexSmoke;			// (in combatweapon.cpp) holds the index for the smoke cloud
-extern short		g_sModelIndexBloodDrop;		// (in combatweapon.cpp) holds the sprite index for the initial blood
-extern short		g_sModelIndexBloodSpray;	// (in combatweapon.cpp) holds the sprite index for splattered blood
-
+extern short g_sModelIndexSmoke;
+extern short g_sModelIndexBloodDrop;
+extern short g_sModelIndexBloodSpray;
 
 //-----------------------------------------------------------------------------
-// Client-server neutral effects interface
+// Client-server neutral effects interface (SERVER IMPLEMENTATION)
 //-----------------------------------------------------------------------------
 class CEffectsServer : public IEffects
 {
 public:
-	CEffectsServer();
-	virtual ~CEffectsServer();
+	CEffectsServer() {}
+	virtual ~CEffectsServer() {}
 
-	// Members of the IEffect interface
-	virtual void Beam( const Vector &Start, const Vector &End, int nModelIndex, 
+	// IEffects interface
+	virtual void Beam(
+		const Vector& Start, const Vector& End, int nModelIndex,
 		int nHaloIndex, unsigned char frameStart, unsigned char frameRate,
-		float flLife, unsigned char width, unsigned char endWidth, unsigned char fadeLength, 
-		unsigned char noise, unsigned char red, unsigned char green,
-		unsigned char blue, unsigned char brightness, unsigned char speed);
-	virtual void Smoke( const Vector &origin, int mModel, float flScale, float flFramerate );
-	virtual void Sparks( const Vector &position, int nMagnitude = 1, int nTrailLength = 1, const Vector *pvecDir = NULL );
-	virtual void Dust( const Vector &pos, const Vector &dir, float size, float speed );
-	virtual void MuzzleFlash( const Vector &origin, const QAngle &angles, float scale, int type );
-	virtual void MetalSparks( const Vector &position, const Vector &direction ); 
-	virtual void EnergySplash( const Vector &position, const Vector &direction, bool bExplosive = false );
-	virtual void Ricochet( const Vector &position, const Vector &direction );
+		float flLife, unsigned char width, unsigned char endWidth,
+		unsigned char fadeLength, unsigned char noise,
+		unsigned char red, unsigned char green, unsigned char blue,
+		unsigned char brightness, unsigned char speed);
 
-	// FIXME: Should these methods remain in this interface? Or go in some 
-	// other client-server neutral interface?
-	virtual float Time();
-	virtual bool IsServer();
-	virtual void SuppressEffectsSounds( bool bSuppress ) { Assert(0); }
+	virtual void Smoke(const Vector& origin, int mModel, float flScale, float flFramerate);
+	virtual void Sparks(const Vector& position, int nMagnitude = 1, int nTrailLength = 1, const Vector* pvecDir = NULL);
+	virtual void Dust(const Vector& pos, const Vector& dir, float size, float speed);
+	virtual void MuzzleFlash(const Vector& origin, const QAngle& angles, float scale, int type);
+	virtual void MetalSparks(const Vector& position, const Vector& direction);
+	virtual void EnergySplash(const Vector& position, const Vector& direction, bool bExplosive = false);
+	virtual void Ricochet(const Vector& position, const Vector& direction);
 
-private:
-	//-----------------------------------------------------------------------------
-	// Purpose: Returning true means don't even call TE func
-	// Input  : filter - 
-	//			*suppress_host - 
-	// Output : static bool
-	//-----------------------------------------------------------------------------
-	bool SuppressTE( CRecipientFilter& filter )
-	{
-		if ( GetSuppressHost() )
-		{
-			if ( !filter.IgnorePredictionCull() )
-			{
-				filter.RemoveRecipient( (CBasePlayer *)GetSuppressHost()  );
-			}
-
-			if ( !filter.GetRecipientCount() )
-			{
-				// Suppress it
-				return true;
-			}
-		}
-
-		// There's at least one recipient
-		return false;
-	}
+	virtual float Time() { return gpGlobals->curtime; }
+	virtual bool IsServer() { return true; }
+	virtual void SuppressEffectsSounds(bool) {}
 };
 
+//-----------------------------------------------------------------------------
+// Global interface
+//-----------------------------------------------------------------------------
+static CEffectsServer s_EffectsServer;
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(
+	CEffectsServer,
+	IEffects,
+	IEFFECTS_INTERFACE_VERSION,
+	s_EffectsServer
+);
+
+IEffects* g_pEffects = &s_EffectsServer;
 
 //-----------------------------------------------------------------------------
-// Client-server neutral effects interface accessor
+// EFFECT IMPLEMENTATIONS (ALL BROADCAST — MP SAFE)
 //-----------------------------------------------------------------------------
-static CEffectsServer s_EffectServer;
-EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CEffectsServer, IEffects, IEFFECTS_INTERFACE_VERSION, s_EffectServer);
-IEffects *g_pEffects = &s_EffectServer;
 
-
-//-----------------------------------------------------------------------------
-// constructor, destructor
-//-----------------------------------------------------------------------------
-CEffectsServer::CEffectsServer()
-{
-}
-
-CEffectsServer::~CEffectsServer()
-{
-}
-
-
-//-----------------------------------------------------------------------------
-// Generates a beam
-//-----------------------------------------------------------------------------
-void CEffectsServer::Beam( const Vector &vecStart, const Vector &vecEnd, int nModelIndex, 
-	int nHaloIndex, unsigned char frameStart, unsigned char frameRate,
-	float flLife, unsigned char width, unsigned char endWidth, unsigned char fadeLength, 
-	unsigned char noise, unsigned char red, unsigned char green,
-	unsigned char blue, unsigned char brightness, unsigned char speed)
+void CEffectsServer::Beam(
+	const Vector& vecStart, const Vector& vecEnd,
+	int nModelIndex, int nHaloIndex,
+	unsigned char frameStart, unsigned char frameRate,
+	float flLife, unsigned char width, unsigned char endWidth,
+	unsigned char fadeLength, unsigned char noise,
+	unsigned char red, unsigned char green, unsigned char blue,
+	unsigned char brightness, unsigned char speed)
 {
 	CBroadcastRecipientFilter filter;
-	if ( !SuppressTE( filter ) )
-	{
-		te->BeamPoints( filter, 0.0,
-			&vecStart, &vecEnd, nModelIndex, nHaloIndex, frameStart, frameRate, flLife,  
-			width, endWidth, fadeLength, noise, red, green, blue, brightness, speed );
-	}
+
+	te->BeamPoints(
+		filter,
+		0.0f,
+		&vecStart,
+		&vecEnd,
+		nModelIndex,
+		nHaloIndex,
+		frameStart,
+		frameRate,
+		flLife,
+		width,
+		endWidth,
+		fadeLength,
+		noise,
+		red,
+		green,
+		blue,
+		brightness,
+		speed
+	);
 }
 
-
-//-----------------------------------------------------------------------------
-// Generates various tempent effects
-//-----------------------------------------------------------------------------
-void CEffectsServer::Smoke( const Vector &origin, int mModel, float flScale, float flFramerate )
+void CEffectsServer::Smoke(const Vector& origin, int mModel, float flScale, float flFramerate)
 {
-	CPVSFilter filter( origin );
-	if ( !SuppressTE( filter ) )
-	{
-		te->Smoke( filter, 0.0, &origin, mModel, flScale * 0.1f, flFramerate );
-	}
+	CBroadcastRecipientFilter filter;
+
+	te->Smoke(
+		filter,
+		0.0f,
+		&origin,
+		mModel,
+		flScale,
+		flFramerate
+	);
 }
 
-void CEffectsServer::Sparks( const Vector &position, int nMagnitude, int nTrailLength, const Vector *pvecDir )
+void CEffectsServer::Sparks(const Vector& position, int nMagnitude, int nTrailLength, const Vector* pvecDir)
 {
-	CPVSFilter filter( position );
-	if ( !SuppressTE( filter ) )
-	{
-		te->Sparks( filter, 0.0, &position, nMagnitude, nTrailLength, pvecDir );
-	}
+	CBroadcastRecipientFilter filter;
+
+	te->Sparks(
+		filter,
+		0.0f,
+		&position,
+		nMagnitude,
+		nTrailLength,
+		pvecDir
+	);
 }
 
-void CEffectsServer::Dust( const Vector &pos, const Vector &dir, float size, float speed )
+void CEffectsServer::Dust(const Vector& pos, const Vector& dir, float size, float speed)
 {
-	CPVSFilter filter( pos );
-	if ( !SuppressTE( filter ) )
-	{
-		te->Dust( filter, 0.0, pos, dir, size, speed );
-	}
+	CBroadcastRecipientFilter filter;
+
+	te->Dust(
+		filter,
+		0.0f,
+		pos,
+		dir,
+		size,
+		speed
+	);
 }
 
-void CEffectsServer::MuzzleFlash( const Vector &origin, const QAngle &angles, float scale, int type )
+void CEffectsServer::MuzzleFlash(const Vector& origin, const QAngle& angles, float scale, int type)
 {
-	CPVSFilter filter( origin );
-	if ( !SuppressTE( filter ) )
-	{
-		te->MuzzleFlash( filter, 0.0f, origin, angles, scale, type );
-	}
+	CBroadcastRecipientFilter filter;
+
+	te->MuzzleFlash(
+		filter,
+		0.0f,
+		origin,
+		angles,
+		scale,
+		type
+	);
 }
 
-void CEffectsServer::MetalSparks( const Vector &position, const Vector &direction )
+void CEffectsServer::MetalSparks(const Vector& position, const Vector& direction)
 {
-	CPVSFilter filter( position );
-	if ( !SuppressTE( filter ) )
-	{
-		te->MetalSparks( filter, 0.0, &position, &direction );
-	}
+	CBroadcastRecipientFilter filter;
+
+	te->MetalSparks(
+		filter,
+		0.0f,
+		&position,
+		&direction
+	);
 }
 
-void CEffectsServer::EnergySplash( const Vector &position, const Vector &direction, bool bExplosive )
+void CEffectsServer::EnergySplash(const Vector& position, const Vector& direction, bool bExplosive)
 {
-	CPVSFilter filter( position );
-	if ( !SuppressTE( filter ) )
-	{
-		te->EnergySplash( filter, 0.0, &position, &direction, bExplosive );
-	}
+	CBroadcastRecipientFilter filter;
+
+	te->EnergySplash(
+		filter,
+		0.0f,
+		&position,
+		&direction,
+		bExplosive
+	);
 }
 
-void CEffectsServer::Ricochet( const Vector &position, const Vector &direction )
+void CEffectsServer::Ricochet(const Vector& position, const Vector& direction)
 {
-	CPVSFilter filter( position );
-	if ( !SuppressTE( filter ) )
-	{
-		te->ArmorRicochet( filter, 0.0, &position, &direction );
-	}
-}
+	CBroadcastRecipientFilter filter;
 
-
-//-----------------------------------------------------------------------------
-// FIXME: Should these methods remain in this interface? Or go in some 
-// other client-server neutral interface?
-//-----------------------------------------------------------------------------
-float CEffectsServer::Time()
-{
-	return gpGlobals->curtime;
-}
-
-bool CEffectsServer::IsServer()
-{
-	return true;
+	te->ArmorRicochet(
+		filter,
+		0.0f,
+		&position,
+		&direction
+	);
 }

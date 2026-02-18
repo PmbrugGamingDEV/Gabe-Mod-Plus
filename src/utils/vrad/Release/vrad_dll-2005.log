@@ -1,0 +1,14 @@
+﻿bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
+bitmap.lib(S3_quant.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(deflate.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(inflate.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(zutil.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(adler32.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(trees.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(infblock.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(infcodes.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(inftrees.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(infutil.obj) : error LNK2026: module unsafe for SAFESEH image.
+vmpi.lib(inffast.obj) : error LNK2026: module unsafe for SAFESEH image.
+     Creating library .\Release\Vrad_dll.lib and object .\Release\Vrad_dll.exp
+.\Release\vrad_dll.dll : fatal error LNK1281: Unable to generate SAFESEH image.

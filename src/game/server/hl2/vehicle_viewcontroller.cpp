@@ -10,6 +10,7 @@
 #include "cbase.h"
 #include "vehicle_base.h"
 #include "hl2_player.h"
+#include "hl2mp_player.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -126,6 +127,8 @@ void CPropVehicleViewController::EnterVehicle( CBasePlayer *pPlayer )
 void CPropVehicleViewController::ExitVehicle( int nRole )
 {
 	BaseClass::ExitVehicle( nRole );
+	// GABEMOD: for a simple firstperson switch
+	engine->ServerCommand("firstperson");
 	m_bEnterAnimOn = false;
 }
 

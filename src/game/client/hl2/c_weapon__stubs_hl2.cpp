@@ -9,6 +9,7 @@
 #include "basehlcombatweapon_shared.h"
 #include "c_basehlcombatweapon.h"
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
+#include "sdk/weapon_sdkbase.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -24,9 +25,7 @@ STUB_WEAPON_CLASS( weapon_cubemap, WeaponCubemap, C_BaseCombatWeapon );
 STUB_WEAPON_CLASS( weapon_alyxgun, WeaponAlyxGun, C_HLSelectFireMachineGun );
 STUB_WEAPON_CLASS( weapon_citizenpackage, WeaponCitizenPackage, C_BaseHLCombatWeapon );
 STUB_WEAPON_CLASS( weapon_citizensuitcase, WeaponCitizenSuitcase, C_WeaponCitizenPackage );
-STUB_WEAPON_CLASS( weapon_camera, WeaponCamera, C_BaseHL2MPCombatWeapon );
-STUB_WEAPON_CLASS( weapon_hax, WeaponHax, C_BaseHLCombatWeapon );
-STUB_WEAPON_CLASS( weapon_multitool, WeaponMultitool, C_BaseHL2MPCombatWeapon );
+
 
 #ifndef HL2MP
 STUB_WEAPON_CLASS( weapon_ar2, WeaponAR2, C_HLMachineGun );

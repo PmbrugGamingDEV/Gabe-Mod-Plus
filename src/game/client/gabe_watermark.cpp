@@ -1,3 +1,7 @@
+﻿//=========================================================
+// Gabe Mod – Minimal HUD Watermark (Top-Right)
+//=========================================================
+
 #include "cbase.h"
 #include "hud.h"
 #include "hudelement.h"
@@ -5,172 +9,122 @@
 #include "iclientmode.h"
 #include "vgui/IScheme.h"
 #include "vgui/ISurface.h"
-#include "vgui/ILocalize.h"
 #include "vgui_controls/Panel.h"
 
-// Memdbgon.h MUST be the last include in a .cpp file!!!!!
+// memdbgon must be last
 #include "tier0/memdbgon.h"
 
 using namespace vgui;
 
-extern IClientMode *g_pClientMode;
+extern IClientMode* g_pClientMode;
 
-#define FONTFLAG_ANTIALIAS 0x010
+//=========================================================
 
-ConVar gabe_watermark_r( "gabe+_watermark_r", "255", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Watermark color Red." );
-ConVar gabe_watermark_g( "gabe+_watermark_g", "255", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Watermark color Green." );
-ConVar gabe_watermark_b( "gabe+_watermark_b", "255", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Watermark color Blue." );
-ConVar gabe_watermark_a( "gabe+_watermark_a", "200", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Watermark alpha." );
-
-// ----------------------------------------------------------------------
-
-class CHudDMWatermark : public CHudElement, public Panel
+class CHudWatermark : public CHudElement, public Panel
 {
 public:
-    DECLARE_CLASS_SIMPLE( CHudDMWatermark, Panel );
+    DECLARE_CLASS_SIMPLE(CHudWatermark, Panel);
 
-    CHudDMWatermark( const char *pElementName );
+    CHudWatermark(const char* pElementName);
 
-    virtual void ApplySchemeSettings( IScheme *pScheme );
-    virtual bool ShouldDraw( void );
-    virtual void Paint( void );
+    virtual void ApplySchemeSettings(IScheme* pScheme);
+    virtual bool ShouldDraw(void);
+    virtual void Paint(void);
 
 private:
-    HFont m_hFontTitle;
-    HFont m_hFontHint;
+    HFont m_hFont;
 };
 
-DECLARE_HUDELEMENT( CHudDMWatermark );
+DECLARE_HUDELEMENT(CHudWatermark);
 
-CHudDMWatermark::CHudDMWatermark( const char *pElementName ) 
-    : CHudElement( pElementName ), Panel( NULL, "HudDMWatermark" )
+//=========================================================
+
+CHudWatermark::CHudWatermark(const char* pElementName)
+    : CHudElement(pElementName), Panel(NULL, "HudWatermark")
 {
-    SetParent( g_pClientMode->GetViewport() );
-    SetHiddenBits( 0 );
-
-    int w, h;
-    surface()->GetScreenSize( w, h );
-    SetPos( 0, 0 );
-    SetSize( w, h );
+    SetParent(g_pClientMode->GetViewport());
+    SetHiddenBits(0);
+    SetPaintBackgroundEnabled(false);
 }
 
-void CHudDMWatermark::ApplySchemeSettings( IScheme *pScheme )
+//=========================================================
+
+void CHudWatermark::ApplySchemeSettings(IScheme* pScheme)
 {
-    BaseClass::ApplySchemeSettings( pScheme );
+    BaseClass::ApplySchemeSettings(pScheme);
 
-    m_hFontTitle = pScheme->GetFont( "Tahoma", true );
-    if ( !m_hFontTitle )
-    {
-        m_hFontTitle = surface()->CreateFont();
-        surface()->SetFontGlyphSet( m_hFontTitle, "Tahoma", 24, 700, 0, 0, FONTFLAG_ANTIALIAS );
-    }
-
-    m_hFontHint = pScheme->GetFont( "Verdana", true );
-    if ( !m_hFontHint )
-    {
-        m_hFontHint = surface()->CreateFont();
-        surface()->SetFontGlyphSet( m_hFontHint, "Verdana", 16, 500, 0, 0, FONTFLAG_ANTIALIAS );
-    }
+    m_hFont = surface()->CreateFont();
+    surface()->SetFontGlyphSet(
+        m_hFont,
+        "Consolas",
+        16,
+        400,
+        0,
+        0,
+        0x010 | 0x200
+    );
 
     int w, h;
-    surface()->GetScreenSize( w, h );
-    SetPos( 0, 0 );
-    SetSize( w, h );
+    surface()->GetScreenSize(w, h);
+    SetPos(0, 0);
+    SetSize(w, h);
 }
 
-bool CHudDMWatermark::ShouldDraw( void )
+//=========================================================
+
+bool CHudWatermark::ShouldDraw(void)
 {
     return true;
 }
 
-void CHudDMWatermark::Paint( void )
+//=========================================================
+
+void CHudWatermark::Paint(void)
 {
-    int screenW, screenH;
-    surface()->GetScreenSize( screenW, screenH );
-
-    wchar_t wszTitle[256];
-    g_pVGuiLocalize->ConvertANSIToUnicode( "Gabe Mod +", wszTitle, sizeof( wszTitle ) );
-
-    wchar_t wszHint[256] = L"";
-    V_wcsncpy(
-        wszHint,
-        L"sites.google.com/view/pmbruggaming",
-        sizeof( wszHint )
-    );
-
-    int r = gabe_watermark_r.GetInt();
-    int g = gabe_watermark_g.GetInt();
-    int b = gabe_watermark_b.GetInt();
-    int a = gabe_watermark_a.GetInt();
-
-    int titleW, titleH;
-    surface()->GetTextSize( m_hFontTitle, wszTitle, titleW, titleH );
-
-    int hintW = 0, hintH = 0;
-    if ( wcslen( wszHint ) > 0 )
-        surface()->GetTextSize( m_hFontHint, wszHint, hintW, hintH );
-
+    const int margin = 8;
     const int padding = 6;
-    const int fadeSize = 8;
 
-    int boxW = max( titleW, hintW ) + padding * 2;
-    int boxH = titleH + ( hintH ? hintH + 2 : 0 ) + padding * 2;
+    const wchar_t* line1 = L"Gabe Mod Eight";
+    const wchar_t* line2 = L"sites.google.com/pmbruggaming";
 
-    int x = screenW - boxW - 10;
-    int y = 10;
+    int sw, sh;
+    surface()->GetScreenSize(sw, sh);
 
-    // --------------------------------------------------
-    // Fade-out edges (UNCHANGED)
-    // --------------------------------------------------
-    for ( int i = fadeSize; i > 0; --i )
-    {
-        int alpha = ( a * i ) / ( fadeSize * 2 );
+    int w1, h1, w2, h2;
+    surface()->GetTextSize(m_hFont, line1, w1, h1);
+    surface()->GetTextSize(m_hFont, line2, w2, h2);
 
-        surface()->DrawSetColor( 0, 0, 0, alpha );
-        surface()->DrawFilledRect(
-            x - i,
-            y - i,
-            x + boxW + i,
-            y + boxH + i
-        );
-    }
+    int boxW = max(w1, w2) + padding * 2;
+    int boxH = h1 + h2 + padding * 2 + 2;
 
-    // --------------------------------------------------
-    // Solid center box (UNCHANGED)
-    // --------------------------------------------------
-    surface()->DrawSetColor( 0, 0, 0, a );
-    surface()->DrawFilledRect(
-        x,
-        y,
-        x + boxW,
-        y + boxH
-    );
+    // ✅ TOP-RIGHT POSITION
+    int boxX = sw - boxW - margin;
+    int boxY = margin;
 
-    // --------------------------------------------------
-    // RIGHT-ALIGNED TEXT POSITIONS
-    // --------------------------------------------------
-    int titleX = x + boxW - padding - titleW;
-    int titleY = y + padding;
+    // Background
+    surface()->DrawSetColor(0, 0, 0, 130);
+    surface()->DrawFilledRect(boxX, boxY, boxX + boxW, boxY + boxH);
 
-    int hintX  = x + boxW - padding - hintW;
-    int hintY  = titleY + titleH + 2;
+    // Outline
+    surface()->DrawSetColor(0, 0, 0, 210);
+    surface()->DrawOutlinedRect(boxX, boxY, boxX + boxW, boxY + boxH);
 
-    // --------------------------------------------------
-    // Title
-    // --------------------------------------------------
-    surface()->DrawSetTextFont( m_hFontTitle );
-    surface()->DrawSetTextColor( r, g, b, a );
-    surface()->DrawSetTextPos( titleX, titleY );
-    surface()->DrawPrintText( wszTitle, wcslen( wszTitle ) );
+    // Top accent line
+    surface()->DrawSetColor(110, 110, 110, 180);
+    surface()->DrawFilledRect(boxX, boxY, boxX + boxW, boxY + 1);
 
-    // --------------------------------------------------
-    // Hint
-    // --------------------------------------------------
-    if ( wcslen( wszHint ) > 0 )
-    {
-        surface()->DrawSetTextFont( m_hFontHint );
-        surface()->DrawSetTextColor( r, g, b, a );
-        surface()->DrawSetTextPos( hintX, hintY );
-		vgui::surface()->DrawPrintText( wszHint, wcslen( wszHint ) );
-    }
+    // Text
+    int x = boxX + padding;
+    int y = boxY + padding;
+
+    surface()->DrawSetTextFont(m_hFont);
+
+    surface()->DrawSetTextColor(230, 230, 230, 210);
+    surface()->DrawSetTextPos(x, y);
+    surface()->DrawPrintText(line1, wcslen(line1));
+    y += h1 + 1;
+
+    surface()->DrawSetTextColor(160, 160, 160, 210);
+    surface()->DrawSetTextPos(x, y);
+    surface()->DrawPrintText(line2, wcslen(line2));
 }

@@ -70,8 +70,13 @@
 #include "ienginevgui.h"
 #endif
 
-//LUA
-#include "gabe_luamanager.h"
+// Lua manager
+#ifdef GE_LUA
+#include "ge_luamanager.h"
+#include "ge_gamelua.h"
+#endif
+
+#include "gabe_events.h"
 
 #include "ragdoll_shared.h"
 #include "toolframework/iserverenginetools.h"
@@ -286,7 +291,6 @@ CAI_Node*		FindPickerAINode( CBasePlayer* pPlayer, NodeType_e nNodeType );
 CAI_Link*		FindPickerAILink( CBasePlayer* pPlayer );
 float			GetFloorZ(const Vector &origin);
 void			UpdateAllClientData( void );
-void			DrawMessageEntities();
 
 #include "ai_network.h"
 
@@ -503,9 +507,6 @@ void DrawAllDebugOverlays( void )
 			ent->EntityText(0, tempstr, 0);
 		}
 	}
-
-	// A hack to draw point_message entities w/o developer required
-	DrawMessageEntities();
 }
 
 CServerGameDLL g_ServerGameDLL;
@@ -555,8 +556,6 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	ConnectTier1Libraries( &appSystemFactory, 1 );
 	ConnectTier2Libraries( &appSystemFactory, 1 );
 	ConnectTier3Libraries( &appSystemFactory, 1 );
-
-	g_GabeLua.Init();
 
 	// Connected in ConnectTier1Libraries
 	if ( cvar == NULL )
@@ -716,6 +715,12 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	gamestatsuploader->InitConnection();
 #endif
 
+#ifdef GE_LUA
+	static CGameLuaHandle s_GameLuaHandle;
+	GELua()->InitDll();
+	GELua()->InitHandles();
+#endif
+
 	return true;
 }
 
@@ -729,6 +734,12 @@ void CServerGameDLL::DLLShutdown( void )
 
 	// Due to dependencies, these are not autogamesystems
 	ModelSoundsCacheShutdown();
+
+#ifdef GE_LUA
+	// Shutdown LUA, close all open gameplays
+	GELua()->ShutdownDll();
+	GELua()->ShutdownHandles();
+#endif
 
 	g_pGameSaveRestoreBlockSet->RemoveBlockHandler( GetAchievementSaveRestoreBlockHandler() );
 	g_pGameSaveRestoreBlockSet->RemoveBlockHandler( GetCommentarySaveRestoreBlockHandler() );
@@ -760,8 +771,6 @@ void CServerGameDLL::DLLShutdown( void )
 		TheNavMesh = NULL;
 	}
 #endif
-
-	g_GabeLua.Shutdown();
 
 	SteamClient()->ReleaseUser( GetHSteamPipe(), GetHSteamUser() );
 	SteamClient()->BReleaseSteamPipe( GetHSteamPipe() );
@@ -1010,6 +1019,21 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	// clear any pending autosavedangerous
 	m_fAutoSaveDangerousTime = 0.0f;
 	m_fAutoSaveDangerousMinHealthToCommit = 0.0f;
+
+	// Print amount of edicts versus available edicts
+	int used = 0;
+	for (int i = 0; i < engine->GetEntityCount(); i++)
+	{
+		if (engine->PEntityOfEntIndex(i))
+			used++;
+	}
+
+	Color clr = used > MAX_EDICTS * 0.5 ? Color(255, 0, 0, 255) : Color(0, 255, 0, 255); // if we're using more than half of our edicts, print in red to warn server ops, else print in green
+	ConColorMsg(clr, "Edicts used up: %d/%d\n", used, MAX_EDICTS);
+
+	/// HACKHACK: UNDONE: We need to redesign the main loop with respect to save/load/server activate
+	// If we're loading a save game, then we don't want to call ServerActivate until after the restore is finished, because ServerActivate iterates through all the entities and calls Activate on them, and some of those entities might decide to remove themselves during Activate, which will cause problems if we're in the middle of restoring an entity that hasn't finished restoring yet.
+
 	return true;
 }
 
@@ -1062,8 +1086,6 @@ void CServerGameDLL::ServerActivate( edict_t *pEdictList, int edictCount, int cl
 		}
 	}
 
-	g_GabeLua.MarkServerReady();
-
 	IGameSystem::LevelInitPostEntityAllSystems();
 	// No more precaching after PostEntityAllSystems!!!
 	CBaseEntity::SetAllowPrecache( false );
@@ -1113,8 +1135,6 @@ void CServerGameDLL::GameFrame( bool simulating )
 		// If we're skipping frames, then the frametime is 2x the normal tick
 		gpGlobals->frametime *= 2.0f;
 	}
-
-	g_GabeLua.Think();
 
 	float oldframetime = gpGlobals->frametime;
 

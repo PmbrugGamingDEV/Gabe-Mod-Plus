@@ -1,129 +1,150 @@
-//========= Copyright Valve Corporation ============//
+//========= Copyright Weapons Expanded, All rights reserved. ============//
 //
-// Camera
+// Purpose: A camera from another project I was working on, taken from there.
+// NOTE: It was BEMod 2.0.5.
 //
-//==================================================
+//=============================================================================
 
 #include "cbase.h"
-#include "weapon_hl2mpbasehlmpcombatweapon.h"
+#include "weapon_camera.h"
+#include "hl2mp_player.h"
+#include "util.h"
+#include "usermessages.h"
+#include <random>
+#include <string>
+#include <in_buttons.h>
+#include"fmtstr.h"
 
-#ifdef CLIENT_DLL
-    #include "c_hl2mp_player.h"
-    #include "iclientmode.h"
-#else
-    #include "hl2mp_player.h"
-#endif
+LINK_ENTITY_TO_CLASS(weapon_camera, CWeaponCamera);
 
-#include "tier0/memdbgon.h"
+PRECACHE_WEAPON_REGISTER(weapon_camera);
 
-// -----------------------------------------------------------------------------
-// Shared weapon class
-// -----------------------------------------------------------------------------
+IMPLEMENT_SERVERCLASS_ST(CWeaponCamera, DT_WeaponCamera)
+END_SEND_TABLE()
 
-class CWeaponCamera : public CBaseHL2MPCombatWeapon
+BEGIN_DATADESC(CWeaponCamera)
+END_DATADESC()
+
+void CWeaponCamera::Precache(void)
 {
-public:
-    DECLARE_CLASS( CWeaponCamera, CBaseHL2MPCombatWeapon );
-    DECLARE_NETWORKCLASS();
-    DECLARE_PREDICTABLE();
+    PrecacheScriptSound("NPC_CScanner.TakePhoto");  
 
-    CWeaponCamera();
-
-    virtual void PrimaryAttack( void );
-    virtual bool Deploy( void );
-};
-
-IMPLEMENT_NETWORKCLASS_ALIASED( WeaponCamera, DT_WeaponCamera )
-
-BEGIN_NETWORK_TABLE( CWeaponCamera, DT_WeaponCamera )
-END_NETWORK_TABLE()
-
-BEGIN_PREDICTION_DATA( CWeaponCamera )
-END_PREDICTION_DATA()
-
-LINK_ENTITY_TO_CLASS( weapon_camera, CWeaponCamera );
-PRECACHE_WEAPON_REGISTER( weapon_camera );
-
-// -----------------------------------------------------------------------------
-// Weapon logic
-// -----------------------------------------------------------------------------
-
-CWeaponCamera::CWeaponCamera()
-{
-    m_fMinRange1 = 0;
-    m_fMaxRange1 = 0;
+    BaseClass::Precache();
 }
-
-bool CWeaponCamera::Deploy()
+void CWeaponCamera::PrimaryAttack(void)
 {
-    return BaseClass::Deploy();
+    TakeScreenshot();
+
+    m_flNextPrimaryAttack = gpGlobals->curtime + 1.0f;
 }
-
-void CWeaponCamera::PrimaryAttack()
+void CWeaponCamera::SecondaryAttack()
 {
-    CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-    if ( !pPlayer )
+    CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+    if (!pPlayer)
         return;
 
-    WeaponSound( SINGLE );
+    float targetFOV = 30.0f;  // Desired zoom level
+    float maxFOV = 140.0f;    // FOV reset threshold
+    float zoomSpeed = 50.0f;  // Speed at which the zoom is applied
+    float currentFOV = pPlayer->GetFOV();
 
-    // Trigger camera capture
-    engine->ClientCommand( pPlayer->edict(), "jpeg\n" );
-    ClientPrint( pPlayer, HUD_PRINTTALK, "Photo captured (.jpg)" );
-
-    m_flNextPrimaryAttack = gpGlobals->curtime + 0.8f;
-}
-
-// -----------------------------------------------------------------------------
-// CLIENT SIDE CAMERA SYSTEM (GMod 6 STYLE)
-// -----------------------------------------------------------------------------
-#ifdef CLIENT_DLL
-
-static bool  g_bCameraActive = false;
-static float g_flCameraRestoreTime = 0.0f;
-
-CON_COMMAND( camera_take, "Internal camera capture (do not call manually)" )
-{
-    if ( g_bCameraActive )
-        return;
-
-    g_bCameraActive = true;
-    g_flCameraRestoreTime = gpGlobals->curtime + 0.1f;
-
-    // Clean frame setup
-    engine->ExecuteClientCmd( "r_drawviewmodel 0" );
-    engine->ExecuteClientCmd( "cl_drawhud 0" );
-    engine->ExecuteClientCmd( "fov 25" );
-
-    // Actual capture (engine handles .tga)
-    engine->ExecuteClientCmd( "screenshot" );
-}
-
-// Called every frame (cheap + safe)
-static void CameraClientThink()
-{
-    if ( !g_bCameraActive )
-        return;
-
-    if ( gpGlobals->curtime >= g_flCameraRestoreTime )
+    // Gradually decrease the FOV to the target FOV
+    if (currentFOV > targetFOV)
     {
-        engine->ExecuteClientCmd( "fov 0" );
-        engine->ExecuteClientCmd( "cl_drawhud 1" );
-        engine->ExecuteClientCmd( "r_drawviewmodel 1" );
-        g_bCameraActive = false;
+        currentFOV -= zoomSpeed * gpGlobals->frametime;  // Apply zoom over time
+        if (currentFOV < targetFOV)
+        {
+            currentFOV = targetFOV;  // Clamp to the target FOV
+        }
+        pPlayer->SetFOV(this, currentFOV);
+
+        // Print the FOV change to the client
+        ClientPrint(pPlayer, HUD_PRINTCENTER, CFmtStr("FOV: %.1f", currentFOV).Access());
     }
+
+    // Check if FOV reaches or exceeds 140, and reset if so
+    if (currentFOV >= maxFOV)
+    {
+        currentFOV = 90.0f;  // Reset to default FOV
+        pPlayer->SetFOV(this, currentFOV);
+
+        // Print the FOV reset to the client
+        ClientPrint(pPlayer, HUD_PRINTTALK, "FOV reset to default.");
+    }
+
+    // Rotate the camera in a circular motion
+    QAngle viewAngles = pPlayer->GetLocalAngles();
+    CUserCmd* cmd = pPlayer->GetCurrentCommand();  // Get the current user command
+    if (cmd)
+    {
+        float angleIncrementX = cmd->mousedy * 0.02f;  // Adjust this value for smoothness
+        float angleIncrementY = cmd->mousedx * 0.02f;  // Adjust this value for smoothness
+
+        // Rotate around the Yaw axis (left/right) and Pitch axis (up/down)
+        viewAngles.y += angleIncrementY;
+        viewAngles.x = cos(angleIncrementY) * viewAngles.x + sin(angleIncrementX) * 5.0f; // Small circular adjustment
+    }
+    pPlayer->SnapEyeAngles(viewAngles);
+
+    m_flNextSecondaryAttack = gpGlobals->curtime + 0.01f;  // Continuous update with a small delay
 }
 
-// Hook into client frame update
-class CCameraThinkHook : public CAutoGameSystem
+
+void CWeaponCamera::ItemPostFrame()
 {
-public:
-    virtual void Update( float frametime )
+    CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+    if (!pPlayer)
+        return;
+
+    if (!(pPlayer->m_nButtons & IN_ATTACK2))  // If the right mouse button is not pressed
     {
-        CameraClientThink();
+        // Reset the FOV to the default value (90 degrees) if R is pressed
+        if (pPlayer->m_afButtonPressed & IN_RELOAD)  // Pressing R
+        {
+            float defaultFOV = 75.0f;
+            pPlayer->SetFOV(this, defaultFOV);
+        }
     }
-};
 
-static CCameraThinkHook g_CameraThinkHook;
+    BaseClass::ItemPostFrame();
+}
 
-#endif
+
+void CWeaponCamera::TakeScreenshot(void)
+{
+    CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+    if (!pPlayer || !pPlayer->IsPlayer())
+        return;
+
+    std::string randomString = GenerateRandomString(10);
+    std::string screenshotFilename = "screenshots/" + randomString + ".tga";
+    std::string screenshotname = randomString;
+    std::string screenshotCommand = "screenshot " + screenshotname;
+
+    engine->ClientCommand(pPlayer->edict(), screenshotCommand.c_str());
+
+    // Construct the message with the filename
+    std::string message = "Screenshot saved: " + screenshotFilename;
+
+    // Print the message to the player's screen
+    ClientPrint(pPlayer, HUD_PRINTCENTER, message.c_str());
+
+    EmitSound("NPC_CScanner.TakePhoto");
+}
+
+std::string CWeaponCamera::GenerateRandomString(size_t length)
+{
+    const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const size_t max_index = (sizeof(charset) - 1);
+    std::random_device rd;
+    std::mt19937 generator(rd());
+    std::uniform_int_distribution<size_t> distribution(0, max_index);
+
+    std::string randomString;
+    for (size_t i = 0; i < length; ++i)
+    {
+        randomString += charset[distribution(generator)];
+    }
+
+    return randomString;
+}

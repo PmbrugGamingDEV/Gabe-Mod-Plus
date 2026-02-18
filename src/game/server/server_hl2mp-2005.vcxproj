@@ -14,6 +14,7 @@
     <ProjectName>Server HL2MP</ProjectName>
     <ProjectGuid>{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}</ProjectGuid>
     <RootNamespace>Server HL2MP</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -55,7 +56,8 @@
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
-    <OutDir>.\Release_hl2mp\</OutDir>
+    <OutDir>D:\Steam\steamapps\sourcemods\gabemodplus\bin</OutDir>
+    <TargetName>server</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
@@ -136,12 +138,10 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying to D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\</Message>
-      <Command>if exist "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\server.dll" attrib -r "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\server.dll"
-if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\server.dll"
-if exist "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\server.pdb" attrib -r "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\server.pdb"
-if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin"
-</Command>
-      <Outputs>D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\server.dll;D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\server.pdb;%(Outputs)</Outputs>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
@@ -150,7 +150,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;.\;..\..\game\shared;..\..\utils\common;..\..\game\shared\hl2;.\hl2;.\hl2mp;..\..\game\shared\hl2mp;C:\GabeModPlus\src\game\shared\lua;..\..\game\shared\Multiplayer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;GAME_DLL;VECTOR;PROTECTED_THINGS_ENABLE;fopen=dont_use_fopen;sprintf=use_Q_snprintf_instead_of_sprintf;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;HL2MP;MP_SDK;HL2_DLL;VERSION_SAFE_STEAM_API_INTERFACES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;GAME_DLL;VECTOR;PROTECTED_THINGS_ENABLE;fopen=dont_use_fopen;sprintf=use_Q_snprintf_instead_of_sprintf;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;HL2MP;MP_SDK;HL2_DLL;VERSION_SAFE_STEAM_API_INTERFACES;ARGG;GE_LUA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling />
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -215,6 +215,11 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClCompile Include="..\shared\achievementmgr.cpp" />
     <ClCompile Include="..\shared\achievements_hlx.cpp" />
     <ClCompile Include="..\shared\activitylist.cpp" />
+    <ClCompile Include="..\shared\gabe_events.cpp" />
+    <ClCompile Include="..\shared\hl2mp\weapon_eattach.cpp" />
+    <ClCompile Include="..\shared\hl2mp\weapon_mp5.cpp" />
+    <ClCompile Include="..\shared\hl2mp\weapon_physgun.cpp" />
+    <ClCompile Include="..\shared\hl2\achievements_hl2.cpp" />
     <ClCompile Include="ai_activity.cpp" />
     <ClCompile Include="ai_baseactor.cpp" />
     <ClCompile Include="ai_basehumanoid.cpp" />
@@ -329,6 +334,10 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClCompile Include="..\shared\death_pose.cpp" />
     <ClCompile Include="..\shared\debugoverlay_shared.cpp" />
     <ClCompile Include="..\shared\decals.cpp" />
+    <ClCompile Include="edictfiller.cpp" />
+    <ClCompile Include="ent_test.cpp" />
+    <ClCompile Include="gabeplus_chaosent.cpp" />
+    <ClCompile Include="gabeplus_debugobjects.cpp" />
     <ClCompile Include="doors.cpp" />
     <ClCompile Include="..\..\public\dt_send.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -410,7 +419,14 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClCompile Include="..\shared\func_ladder.cpp" />
     <ClCompile Include="func_ladder_endpoint.cpp" />
     <ClCompile Include="func_lod.cpp" />
-    <ClCompile Include="gabe_luamanager.cpp" />
+    <ClCompile Include="gabeplus_maxammo.cpp" />
+    <ClCompile Include="gabeplus_npcinfo.cpp" />
+    <ClCompile Include="gabeplus_npc_nextbot.cpp" />
+    <ClCompile Include="gabeplus_shared.cpp" />
+    <ClCompile Include="gabe_effects.cpp" />
+    <ClCompile Include="gabe_effect_carrier.cpp" />
+    <ClCompile Include="ge_gamelua.cpp" />
+    <ClCompile Include="ge_luamanager.cpp" />
     <ClCompile Include="hl2\Func_Monitor.cpp" />
     <ClCompile Include="func_movelinear.cpp" />
     <ClCompile Include="func_occluder.cpp" />
@@ -447,6 +463,8 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClCompile Include="grenadethrown.cpp" />
     <ClCompile Include="guntarget.cpp" />
     <ClCompile Include="hl2\vehicle_jeep.cpp" />
+    <ClCompile Include="hl2\vehicle_jetski.cpp" />
+    <ClCompile Include="hl2\weapon_immolator.cpp" />
     <ClCompile Include="h_ai.cpp" />
     <ClCompile Include="h_cycler.cpp" />
     <ClCompile Include="h_export.cpp">
@@ -490,6 +508,8 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     </ClCompile>
     <ClCompile Include="lightglow.cpp" />
     <ClCompile Include="lights.cpp" />
+    <ClCompile Include="logic_achievement.cpp" />
+    <ClCompile Include="logic_autosave.cpp" />
     <ClCompile Include="logic_measure_movement.cpp" />
     <ClCompile Include="logic_navigation.cpp" />
     <ClCompile Include="logicauto.cpp" />
@@ -501,6 +521,8 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="lua_dbg.cpp" />
+    <ClCompile Include="lua_ents.cpp" />
     <ClCompile Include="lua_test.cpp" />
     <ClCompile Include="mapentities.cpp" />
     <ClCompile Include="..\shared\mapentities_shared.cpp" />
@@ -536,6 +558,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="npc_fastzombie.cpp" />
     <ClCompile Include="npc_vehicledriver.cpp" />
     <ClCompile Include="..\shared\obstacle_pushaway.cpp" />
     <ClCompile Include="particle_light.cpp" />
@@ -675,10 +698,15 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\shared\studio_shared.cpp" />
+    <ClCompile Include="sticky_pellet.cpp" />
     <ClCompile Include="subs.cpp" />
     <ClCompile Include="sun.cpp" />
     <ClCompile Include="..\shared\hl2\survival_gamerules.cpp" />
     <ClCompile Include="..\shared\takedamageinfo.cpp" />
+    <ClCompile Include="weapon_jetpack.cpp" />
+    <ClCompile Include="weapon_multitool_legacy.cpp" />
+    <ClCompile Include="weapon_proplauncher.cpp" />
+    <ClCompile Include="weapon_propspawner.cpp" />
     <ClCompile Include="tanktrain.cpp" />
     <ClCompile Include="team.cpp" />
     <ClCompile Include="team_spawnpoint.cpp" />
@@ -709,6 +737,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClCompile Include="wcedit.cpp" />
     <ClCompile Include="..\shared\weapon_parse.cpp" />
     <ClCompile Include="..\shared\weapon_proficiency.cpp" />
+    <ClCompile Include="weapon_stickylauncher.cpp" />
     <ClCompile Include="weight_button.cpp" />
     <ClCompile Include="world.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -907,7 +936,6 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClCompile Include="..\shared\hl2mp\weapon_stunstick.cpp" />
     <ClCompile Include="playerinfomanager.cpp" />
     <ClCompile Include="..\shared\Multiplayer\multiplayer_animstate.cpp" />
-    <ClCompile Include="physgun.cpp" />
     <ClCompile Include="weapon_camera.cpp" />
     <ClCompile Include="weapon_hax.cpp" />
     <ClCompile Include="weapon_multitool.cpp" />
@@ -919,6 +947,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClInclude Include="..\shared\achievementmgr.h" />
     <ClInclude Include="..\shared\activitylist.h" />
     <ClInclude Include="..\shared\ai_activity.h" />
+    <ClInclude Include="..\shared\gabe_events.h" />
     <ClInclude Include="ai_baseactor.h" />
     <ClInclude Include="ai_basehumanoid.h" />
     <ClInclude Include="ai_basenpc.h" />
@@ -1055,7 +1084,8 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClInclude Include="func_breakablesurf.h" />
     <ClInclude Include="..\shared\func_dust_shared.h" />
     <ClInclude Include="func_movelinear.h" />
-    <ClInclude Include="gabe_luamanager.h" />
+    <ClInclude Include="gabe_effects.h" />
+    <ClInclude Include="gabe_effect_carrier.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameinterface.h" />
     <ClInclude Include="..\shared\gamemovement.h" />
@@ -1064,6 +1094,8 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClInclude Include="..\shared\gamestringpool.h" />
     <ClInclude Include="..\shared\gamevars_shared.h" />
     <ClInclude Include="gameweaponmanager.h" />
+    <ClInclude Include="ge_gamelua.h" />
+    <ClInclude Include="ge_luamanager.h" />
     <ClInclude Include="gib.h" />
     <ClInclude Include="globalstate.h" />
     <ClInclude Include="globalstate_private.h" />
@@ -1094,6 +1126,8 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClInclude Include="lua.hpp" />
     <ClInclude Include="luaconf.h" />
     <ClInclude Include="lualib.h" />
+    <ClInclude Include="lua_dbg.h" />
+    <ClInclude Include="lua_ents.h" />
     <ClInclude Include="maprules.h" />
     <ClInclude Include="..\..\public\MATHLIB.H" />
     <ClInclude Include="..\..\public\model_types.h" />
@@ -1173,6 +1207,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClInclude Include="..\..\public\vphysics\stats.h" />
     <ClInclude Include="..\..\steam\steam_api.h" />
     <ClInclude Include="..\..\public\stringregistry.h" />
+    <ClInclude Include="sticky_pellet.h" />
     <ClInclude Include="team.h" />
     <ClInclude Include="team_spawnpoint.h" />
     <ClInclude Include="..\shared\teamplay_gamerules.h" />
@@ -1191,6 +1226,9 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
     <ClInclude Include="wcedit.h" />
     <ClInclude Include="..\shared\weapon_parse.h" />
     <ClInclude Include="..\shared\weapon_proficiency.h" />
+    <ClInclude Include="weapon_camera.h" />
+    <ClInclude Include="weapon_proplauncher.h" />
+    <ClInclude Include="weapon_stickylauncher.h" />
     <ClInclude Include="world.h" />
     <ClInclude Include="plasma.h" />
     <ClInclude Include="smoke_trail.h" />
@@ -1496,6 +1534,7 @@ if exist "$(TargetDir)"server.pdb copy "$(TargetDir)"server.pdb "D:\Program File
   <ItemGroup>
     <Library Include="..\..\lib\public\choreoobjects.lib" />
     <Library Include="..\..\lib\public\dmxloader.lib" />
+    <Library Include="..\..\lib\public\gabe_lua515.lib" />
     <Library Include="..\..\lib\public\mathlib.lib" />
     <Library Include="..\..\lib\public\particles.lib" />
     <Library Include="..\..\lib\public\steam_api.lib" />

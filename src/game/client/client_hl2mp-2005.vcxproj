@@ -14,6 +14,7 @@
     <ProjectName>Client HL2MP</ProjectName>
     <ProjectGuid>{5FE91DC8-B6DF-4061-984E-36FD36623E72}</ProjectGuid>
     <RootNamespace>Client HL2MP</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -57,7 +58,8 @@
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
-    <OutDir>.\Release_hl2mp\</OutDir>
+    <OutDir>D:\Steam\steamapps\sourcemods\gabemodplus\bin</OutDir>
+    <TargetName>client</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
@@ -139,12 +141,10 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying to D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\</Message>
-      <Command>if exist "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\client.dll" attrib -r "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\client.dll"
-copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin"
-if exist "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\client.pdb" attrib -r "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\client.pdb"
-if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\client.pdb"
-</Command>
-      <Outputs>D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\client.dll;D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\client.pdb;%(Outputs)</Outputs>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
@@ -152,8 +152,8 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>.\;..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;..\..\vgui2\include;..\..\vgui2\controls;..\..\game\shared;.\game_controls;hl2mp\UI;.\hl2mp;..\..\game\shared\hl2mp;.\hl2;.\hl2\elements;..\..\game\shared\hl2;C:\GabeModPlus\src\game\shared\lua;..\..\game\shared\Multiplayer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NO_STRING_T;CLIENT_DLL;VECTOR;PROTECTED_THINGS_ENABLE;fopen=dont_use_fopen;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;ENABLE_HTMLWINDOW;HL2MP;HL2_CLIENT_DLL;VERSION_SAFE_STEAM_API_INTERFACES;MP_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;..\..\vgui2\include;..\..\vgui2\controls;..\..\game\shared;.\game_controls;hl2mp\UI;.\hl2mp;..\..\game\shared\hl2mp;.\hl2;.\hl2\elements;..\..\game\shared\hl2;C:\GabeModPlus\src\game\shared\lua;C:\Program Files %28x86%29\Awesomium Technologies LLC\Awesomium SDK\1.7.5.1\include\;..\..\game\shared\Multiplayer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NO_STRING_T;CLIENT_DLL;VECTOR;PROTECTED_THINGS_ENABLE;fopen=dont_use_fopen;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;ENABLE_HTMLWINDOW;HL2MP;HL2_CLIENT_DLL;VERSION_SAFE_STEAM_API_INTERFACES;MP_SDK;ARGG;GE_LUA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling />
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -181,7 +181,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;kernel32.lib;user32.lib;gabe_lua515.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;kernel32.lib;user32.lib;gabe_lua515.lib;awesomium.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <OutputFile>$(OutDir)Client.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -215,6 +215,11 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\shared\achievements_gabemod.cpp" />
+    <ClCompile Include="..\shared\gabe_events.cpp" />
+    <ClCompile Include="..\shared\hl2mp\weapon_mp5.cpp" />
+    <ClCompile Include="..\shared\hl2mp\weapon_physgun.cpp" />
+    <ClCompile Include="..\shared\hl2\achievements_hl2.cpp" />
     <ClCompile Include="achievement_notification_panel.cpp" />
     <ClCompile Include="..\shared\achievement_saverestore.cpp" />
     <ClCompile Include="..\shared\achievementmgr.cpp" />
@@ -229,6 +234,8 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     <ClCompile Include="..\shared\animation.cpp" />
     <ClCompile Include="..\shared\base_playeranimstate.cpp" />
     <ClCompile Include="..\shared\baseachievement.cpp" />
+    <ClCompile Include="awesomium_init.cpp" />
+    <ClCompile Include="awesomium_testpanel.cpp" />
     <ClCompile Include="baseanimatedtextureproxy.cpp" />
     <ClCompile Include="baseclientrendertargets.cpp" />
     <ClCompile Include="..\shared\basecombatcharacter_shared.cpp" />
@@ -278,6 +285,12 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     <ClCompile Include="c_func_conveyor.cpp" />
     <ClCompile Include="c_func_dust.cpp" />
     <ClCompile Include="c_func_lod.cpp" />
+    <ClCompile Include="c_weapon_proplauncher.cpp" />
+    <ClCompile Include="c_weapon__stubs_gabemod.cpp" />
+    <ClCompile Include="gabeplus_friendslist.cpp" />
+    <ClCompile Include="gabeplus_issues.cpp" />
+    <ClCompile Include="gabeplus_spawnmenu.cpp" />
+    <ClCompile Include="gabeplus_tutorial.cpp" />
     <ClCompile Include="gabe_newgamedialog.cpp" />
     <ClCompile Include="hl2\C_Func_Monitor.cpp" />
     <ClCompile Include="c_func_occluder.cpp" />
@@ -441,6 +454,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     <ClCompile Include="hl2\hud_filmdemo.cpp" />
     <ClCompile Include="hl2\hud_hdrdemo.cpp" />
     <ClCompile Include="hud_hintdisplay.cpp" />
+    <ClCompile Include="hud_killfeed.cpp" />
     <ClCompile Include="hud_lcd.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -488,6 +502,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     <ClCompile Include="lampbeamproxy.cpp" />
     <ClCompile Include="lamphaloproxy.cpp" />
     <ClCompile Include="..\shared\mapentities_shared.cpp" />
+    <ClCompile Include="mapload_background.cpp" />
     <ClCompile Include="mathproxy.cpp" />
     <ClCompile Include="matrixproxy.cpp" />
     <ClCompile Include="..\..\public\tier0\memoverride.cpp">
@@ -646,6 +661,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\shared\vehicle_viewblend_shared.cpp" />
+    <ClCompile Include="VAwesomium.cpp" />
     <ClCompile Include="vgui_avatarimage.cpp" />
     <ClCompile Include="vgui_basepanel.cpp" />
     <ClCompile Include="vgui_bitmapbutton.cpp" />
@@ -659,15 +675,18 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vgui_credits.cpp" />
     <ClCompile Include="vgui_debugoverlaypanel.cpp" />
     <ClCompile Include="vgui_fpspanel.cpp" />
     <ClCompile Include="vgui_game_viewport.cpp" />
     <ClCompile Include="vgui_grid.cpp" />
     <ClCompile Include="vgui_int.cpp" />
+    <ClCompile Include="vgui_keyvalue.cpp" />
     <ClCompile Include="vgui_loadingdiscpanel.cpp" />
     <ClCompile Include="vgui_messagechars.cpp" />
     <ClCompile Include="vgui_netgraphpanel.cpp" />
     <ClCompile Include="vgui_slideshow_display_screen.cpp" />
+    <ClCompile Include="vgui_test.cpp" />
     <ClCompile Include="view.cpp" />
     <ClCompile Include="view_beams.cpp" />
     <ClCompile Include="view_effects.cpp" />
@@ -794,7 +813,6 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     <ClCompile Include="hl2mp\hl2mp_hud_team.cpp" />
     <ClCompile Include="hl2mp\ui\hl2mpclientscoreboard.cpp" />
     <ClCompile Include="hl2mp\ui\hl2mptextwindow.cpp" />
-    <ClCompile Include="hl2mp\hud_deathnotice.cpp" />
     <ClCompile Include="..\shared\hl2\basehlcombatweapon_shared.cpp" />
     <ClCompile Include="hl2\c_antlion_dust.cpp" />
     <ClCompile Include="hl2\c_ar2_explosion.cpp" />
@@ -858,7 +876,6 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     <ClCompile Include="hl2\shieldproxy.cpp" />
     <ClCompile Include="hl2\vgui_rootpanel_hl2.cpp" />
     <ClCompile Include="..\shared\Multiplayer\multiplayer_animstate.cpp" />
-    <ClCompile Include="hl2\c_weapon_gravitygun.cpp" />
     <ClCompile Include="gabe_watermark.cpp" />
     <ClCompile Include="gabeplus_motd.cpp" />
     <ClCompile Include="mp3player.cpp" />
@@ -867,6 +884,13 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     <ClCompile Include="toolframework_client.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\shared\gabe_client.h" />
+    <ClInclude Include="..\shared\gabe_events.h" />
+    <ClInclude Include="..\shared\lauxlib.h" />
+    <ClInclude Include="..\shared\lua.h" />
+    <ClInclude Include="..\shared\lua.hpp" />
+    <ClInclude Include="..\shared\luaconf.h" />
+    <ClInclude Include="..\shared\lualib.h" />
     <ClInclude Include="achievement_notification_panel.h" />
     <ClInclude Include="..\shared\achievement_saverestore.h" />
     <ClInclude Include="..\shared\achievementmgr.h" />
@@ -880,7 +904,12 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     <ClInclude Include="..\shared\particle_property.h" />
     <ClInclude Include="..\shared\point_bonusmaps_accessor.h" />
     <ClInclude Include="..\shared\predicted_viewmodel.h" />
+    <ClInclude Include="c_weapon_proplauncher.h" />
+    <ClInclude Include="hud_killfeed.h" />
+    <ClInclude Include="mapload_background.h" />
+    <ClInclude Include="VAwesomium.h" />
     <ClInclude Include="vgui_avatarimage.h" />
+    <ClInclude Include="vgui_keyvalue.h" />
     <ClInclude Include="viewdebug.h" />
     <ClInclude Include="viewpostprocess.h" />
     <ClInclude Include="game_controls\basemodel_panel.h" />
@@ -1470,6 +1499,7 @@ if exist "$(TargetDir)"client.pdb copy "$(TargetDir)"client.pdb "D:\Program File
     <Library Include="..\..\lib\public\bitmap.lib" />
     <Library Include="..\..\lib\public\choreoobjects.lib" />
     <Library Include="..\..\lib\public\dmxloader.lib" />
+    <Library Include="..\..\lib\public\gabe_lua515.lib" />
     <Library Include="..\..\lib\public\mathlib.lib" />
     <Library Include="..\..\lib\public\matsys_controls.lib" />
     <Library Include="..\..\lib\public\particles.lib" />

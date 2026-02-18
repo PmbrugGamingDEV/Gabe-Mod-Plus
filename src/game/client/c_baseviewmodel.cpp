@@ -395,7 +395,13 @@ void C_BaseViewModel::UpdateAnimationParity( void )
 void C_BaseViewModel::OnDataChanged( DataUpdateType_t updateType )
 {
 	SetPredictionEligible( true );
-	BaseClass::OnDataChanged(updateType);
+	BaseClass::OnDataChanged( updateType );
+
+	// Initialize viewmodel lag reference (REQUIRED for sway)
+	if ( updateType == DATA_UPDATE_CREATED )
+	{
+		AngleVectors( GetLocalAngles(), &m_vecLastFacing );
+	}
 }
 
 void C_BaseViewModel::PostDataUpdate( DataUpdateType_t updateType )

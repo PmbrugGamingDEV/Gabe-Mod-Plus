@@ -42,7 +42,7 @@ CBaseEntity	 *g_pLastRebelSpawn = NULL;
 extern CBaseEntity				*g_pLastSpawn;
 
 ConVar gabeplus_chlogatspawn("gabeplus_chlogatspawn", "1", FCVAR_ARCHIVE, "Should the Changelog/MOTD show at spawn?");
-ConVar gabeplus_deathmatch("gabeplus_deathmatch", "1", FCVAR_ARCHIVE, "If set to 1, players wil spawn with the default HL2DM weapons.");
+ConVar gabeplus_deathmatch("gabeplus_deathmatch", "0", FCVAR_ARCHIVE, "If set to 1, players wil spawn with the default HL2DM weapons.");
 
 #define HL2MP_COMMAND_MAX_RATE 0.3
 
@@ -235,28 +235,13 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_annabelle" );
 	GiveNamedItem( "weapon_flaregun" );
 	GiveNamedItem( "weapon_multitool" );
-
-	GiveNamedItem( "weapon_proplauncher" );
+	GiveNamedItem( "weapon_spawnmenu" );
 
 	GiveNamedItem( "weapon_rpg" );
 
 	GiveNamedItem( "weapon_slam" );
 
 	GiveNamedItem( "weapon_physcannon" );
-
-	const char *szDefaultWeaponName = engine->GetClientConVarValue( engine->IndexOfEdict( edict() ), "cl_defaultweapon" );
-
-	CBaseCombatWeapon *pDefaultWeapon = Weapon_OwnsThisType( szDefaultWeaponName );
-
-	if ( pDefaultWeapon )
-	{
-		Weapon_Switch( pDefaultWeapon );
-	}
-	else
-	{
-		Weapon_Switch( Weapon_OwnsThisType( "weapon_physcannon" ) );
-	}
-	
 }
 
 void CHL2MP_Player::GiveDefaultItems( void )
@@ -283,6 +268,21 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	GiveNamedItem( "weapon_frag" );
 	GiveNamedItem( "weapon_physcannon" );
 }
+
+void CHL2MP_Player::GiveSDKItems(void)
+{
+	EquipSuit();
+
+	GiveNamedItem("sdk_mp5");
+	GiveNamedItem("sdk_grenade");
+	GiveNamedItem("sdk_shotgun");
+}
+
+void CHL2MP_Player::GiveNoItems(void)
+{
+	// Nothing!
+}
+
 
 void CHL2MP_Player::PickDefaultSpawnTeam( void )
 {
@@ -340,6 +340,8 @@ void CHL2MP_Player::HL2MPPushawayThink(void)
 	PerformObstaclePushaway( this );
 	SetNextThink( gpGlobals->curtime + PUSHAWAY_THINK_INTERVAL, HL2MP_PUSHAWAY_THINK_CONTEXT );
 }
+
+ConVar gabeplus_sandbox("gabeplus_sandbox", "1", FCVAR_ARCHIVE, "If set to 1, players will spawn with all weapons and infinite aux power.");
 //-----------------------------------------------------------------------------
 // Purpose: Sets HL2 specific defaults.
 //-----------------------------------------------------------------------------
@@ -386,11 +388,16 @@ void CHL2MP_Player::Spawn(void)
 		GiveDefaultItems(); // Deathmatch
 		engine->ClientCommand( this->edict(), "sv_infinite_aux_power 0" );
 	}
-	else
+	else if (gabeplus_sandbox.GetBool())
 	{
 		GiveAllItems(); // Sandbox
 		engine->ClientCommand( this->edict(), "sv_infinite_aux_power 1" );
 		engine->ClientCommand( this->edict(), "god" );
+	}
+	else
+	{
+		GiveNoItems(); // HL2 Campaign
+		engine->ClientCommand( this->edict(), "sv_infinite_aux_power 0" );
 	}
 
 	if (gabeplus_chlogatspawn.GetBool())
@@ -646,6 +653,17 @@ void CHL2MP_Player::PostThink( void )
 	// Store the eye angles pitch so the client can compute its animation state correctly.
 	m_angEyeAngles = EyeAngles();
     m_PlayerAnimState->Update( m_angEyeAngles[YAW], m_angEyeAngles[PITCH] );
+
+
+	Vector headPos = EyePosition();
+	headPos.z += 10.0f;
+
+	NDebugOverlay::Text(
+		headPos,
+		GetPlayerName(),
+		false,          // view check
+		0.0f            // duration
+	);
 }
 
 void CHL2MP_Player::PlayerDeathThink()
@@ -1019,6 +1037,9 @@ void CHL2MP_Player::CreateRagdollEntity( void )
 		pRagdoll->m_hPlayer = this;
 		pRagdoll->m_vecRagdollOrigin = GetAbsOrigin();
 		pRagdoll->m_vecRagdollVelocity = GetAbsVelocity();
+		pRagdoll->SetMoveType(MOVETYPE_VPHYSICS);
+		pRagdoll->SetSolid(SOLID_VPHYSICS);
+		pRagdoll->VPhysicsInitNormal(SOLID_VPHYSICS, 0, false);
 		pRagdoll->m_nModelIndex = m_nModelIndex;
 		pRagdoll->m_nForceBone = m_nForceBone;
 		pRagdoll->m_vecForce = m_vecTotalBulletForce;
@@ -1040,16 +1061,22 @@ extern ConVar flashlight;
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHL2MP_Player::FlashlightTurnOn( void )
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void CHL2MP_Player::FlashlightTurnOn(void)
 {
+	CHL2_Player::FlashlightTurnOn();
+	DevMsg("%d turned on flashlight\n", entindex());
 }
-
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHL2MP_Player::FlashlightTurnOff( void )
+void CHL2MP_Player::FlashlightTurnOff(void)
 {
+	CHL2_Player::FlashlightTurnOff();
+	DevMsg("%d turned off their flashlight\n", entindex());
 }
+
 
 void CHL2MP_Player::Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector *pvecTarget, const Vector *pVelocity )
 {
@@ -1067,6 +1094,8 @@ void CHL2MP_Player::Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector *pvecT
 			}
 		}
 	}
+
+	DevMsg("%d dropped one of their weapons\n", entindex());
 
 	BaseClass::Weapon_Drop( pWeapon, pvecTarget, pVelocity );
 }
@@ -1108,7 +1137,25 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 		if ( m_hRagdoll )
 		{
 			m_hRagdoll->GetBaseAnimating()->Dissolve( NULL, gpGlobals->curtime, false, ENTITY_DISSOLVE_NORMAL );
+			EmitSound("Player.PlasmaDamage");
 		}
+	}
+
+	else if ( info.GetDamageType() & DMG_BURN )
+	{
+		EmitSound("HL2Player.BurnPain");
+	}
+	else if ( info.GetDamageType() & DMG_FALL )
+	{
+		EmitSound("Player.FallGib");
+	}
+	else if (info.GetDamageType() & DMG_DROWN )
+	{
+		EmitSound("Player.DrownContinue");
+	}
+	else
+	{
+		EmitSound("Player.Death");
 	}
 
 	CBaseEntity *pAttacker = info.GetAttacker();

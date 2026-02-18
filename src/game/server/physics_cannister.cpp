@@ -40,36 +40,73 @@ END_DATADESC()
 
 LINK_ENTITY_TO_CLASS( physics_cannister, CPhysicsCannister );
 
-BEGIN_DATADESC( CPhysicsCannister )
+BEGIN_DATADESC(CPhysicsCannister)
 
-	DEFINE_OUTPUT( m_onActivate, "OnActivate" ),
-	DEFINE_OUTPUT( m_OnAwakened, "OnAwakened" ),
-	DEFINE_FIELD( m_thrustOrigin, FIELD_VECTOR ),	// this is a position, but in local space
-	DEFINE_EMBEDDED( m_thruster ),
-	DEFINE_PHYSPTR( m_pController ),
-	DEFINE_FIELD( m_pJet, FIELD_CLASSPTR ),
-	DEFINE_FIELD( m_active, FIELD_BOOLEAN ),
-	DEFINE_KEYFIELD( m_thrustTime, FIELD_FLOAT, "fuel" ),
-	DEFINE_KEYFIELD( m_damage, FIELD_FLOAT, "expdamage" ),
-	DEFINE_KEYFIELD( m_damageRadius, FIELD_FLOAT, "expradius" ),
-	DEFINE_FIELD( m_activateTime, FIELD_TIME ),
-	DEFINE_KEYFIELD( m_gasSound, FIELD_SOUNDNAME, "gassound" ),
-	DEFINE_FIELD( m_bFired, FIELD_BOOLEAN ),
+DEFINE_OUTPUT(m_onActivate, "OnActivate"),
+DEFINE_OUTPUT(m_OnAwakened, "OnAwakened"),
+DEFINE_FIELD(m_thrustOrigin, FIELD_VECTOR),	// this is a position, but in local space
+DEFINE_EMBEDDED(m_thruster),
+DEFINE_PHYSPTR(m_pController),
+DEFINE_FIELD(m_pJet, FIELD_CLASSPTR),
+DEFINE_FIELD(m_active, FIELD_BOOLEAN),
+DEFINE_KEYFIELD(m_thrustTime, FIELD_FLOAT, "fuel"),
+DEFINE_KEYFIELD(m_damage, FIELD_FLOAT, "expdamage"),
+DEFINE_KEYFIELD(m_damageRadius, FIELD_FLOAT, "expradius"),
+DEFINE_FIELD(m_activateTime, FIELD_TIME),
+DEFINE_KEYFIELD(m_gasSound, FIELD_SOUNDNAME, "gassound"),
+DEFINE_FIELD(m_bFired, FIELD_BOOLEAN),
 
-	// Physics Influence
-	DEFINE_FIELD( m_hPhysicsAttacker, FIELD_EHANDLE ),
-	DEFINE_FIELD( m_flLastPhysicsInfluenceTime, FIELD_TIME ),
-	DEFINE_FIELD( m_hLauncher, FIELD_EHANDLE ),
+// Physics Influence
+DEFINE_FIELD(m_hPhysicsAttacker, FIELD_EHANDLE),
+DEFINE_FIELD(m_flLastPhysicsInfluenceTime, FIELD_TIME),
+DEFINE_FIELD(m_hLauncher, FIELD_EHANDLE),
 
-	DEFINE_INPUTFUNC( FIELD_VOID, "Activate", InputActivate ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "Deactivate", InputDeactivate ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "Explode", InputExplode ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "Wake", InputWake ),
+DEFINE_INPUTFUNC(FIELD_VOID, "Activate", InputActivate),
+DEFINE_INPUTFUNC(FIELD_VOID, "Deactivate", InputDeactivate),
+DEFINE_INPUTFUNC(FIELD_VOID, "Explode", InputExplode),
+DEFINE_INPUTFUNC(FIELD_VOID, "Wake", InputWake),
 
-	DEFINE_THINKFUNC( BeginShutdownThink ),
-	DEFINE_ENTITYFUNC( ExplodeTouch ),
+DEFINE_THINKFUNC(BeginShutdownThink),
+DEFINE_ENTITYFUNC(ExplodeTouch),
 
 END_DATADESC()
+
+class CPhysicsCannister;
+
+static void ForEachCannister(void (*func)(CPhysicsCannister*))
+{
+	CBaseEntity* pEnt = NULL;
+	while ((pEnt = gEntList.FindEntityByClassname(pEnt, "physics_cannister")) != NULL)
+	{
+		CPhysicsCannister* pCan = dynamic_cast<CPhysicsCannister*>(pEnt);
+		if (pCan)
+		{
+			func(pCan);
+		}
+	}
+}
+
+static void ActivateCannister(CPhysicsCannister* pCan)
+{
+	pCan->CannisterActivate(NULL, Vector(0, 0.1f, -0.25f));
+}
+
+static void DeactivateCannister(CPhysicsCannister* pCan)
+{
+	pCan->Deactivate();
+}
+
+CON_COMMAND(gabeplus_cannisters_activate, "Activate all physics cannisters in the world")
+{
+	ForEachCannister(ActivateCannister);
+	Msg("[GabePlus] Activated all physics cannisters\n");
+}
+
+CON_COMMAND(gabeplus_cannisters_deactivate, "Deactivate all physics cannisters in the world")
+{
+	ForEachCannister(DeactivateCannister);
+	Msg("[GabePlus] Deactivated all physics cannisters\n");
+}
 
 void CPhysicsCannister::Spawn( void )
 {

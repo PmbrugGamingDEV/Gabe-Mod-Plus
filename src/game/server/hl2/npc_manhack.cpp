@@ -81,6 +81,8 @@
 ConVar	sk_manhack_health( "sk_manhack_health","0");
 ConVar	sk_manhack_melee_dmg( "sk_manhack_melee_dmg","0");
 ConVar	sk_manhack_v2( "sk_manhack_v2","1");
+ConVar	gabeplus_waterhack( "gabeplus_waterhack", "0", FCVAR_CHEAT, "Make the manhacks watermelon flying machines.");
+ConVar gabeplus_malehack("gabeplus_malehack", "1", FCVAR_CHEAT | FCVAR_NOTIFY, "Make manhacks turn into male_07s");
 
 extern void		SpawnBlood(Vector vecSpot, const Vector &vAttackDir, int bloodColor, float flDamage);
 extern float	GetFloorZ(const Vector &origin);
@@ -2174,9 +2176,11 @@ void CNPC_Manhack::Precache(void)
 	// Model.
 	//
 	PrecacheModel("models/manhack.mdl");
+	PrecacheModel("models/props_junk/watermelon01.mdl");
+	PrecacheModel("models/humans/group01/male_07.mdl");
 	PrecacheModel( MANHACK_GLOW_SPRITE );
 	PropBreakablePrecacheAll( MAKE_STRING("models/manhack.mdl") );
-	
+	PropBreakablePrecacheAll( MAKE_STRING("models/props_junk/watermelon01.mdl") );
 	PrecacheScriptSound( "NPC_Manhack.Die" );
 	PrecacheScriptSound( "NPC_Manhack.Bat" );
 	PrecacheScriptSound( "NPC_Manhack.Grind" );
@@ -2369,7 +2373,19 @@ void CNPC_Manhack::Spawn(void)
 	AddSpawnFlags( SF_NPC_FADE_CORPSE );
 #endif // _XBOX
 
-	SetModel( "models/manhack.mdl" );
+	if (gabeplus_waterhack.GetBool())
+	{
+		SetModel( "models/props_junk/watermelon01.mdl" );
+	}
+	if (gabeplus_malehack.GetBool())
+	{
+		SetModel("models/humans/group01/male_07.mdl");
+	}
+	else
+	{
+		SetModel( "models/manhack.mdl" );
+	}
+
 	SetHullType(HULL_TINY_CENTERED); 
 	SetHullSizeNormal();
 

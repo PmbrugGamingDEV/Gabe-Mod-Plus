@@ -1432,28 +1432,30 @@ bool CBaseCombatCharacter::BecomeRagdollBoogie( CBaseEntity *pKiller, const Vect
 	return true;
 }
 
+ConVar gabeplus_ragdoll_physics("gabeplus_ragdoll_physics", "1", FCVAR_REPLICATED | FCVAR_ARCHIVE | FCVAR_NOTIFY, "If 1, ragdolls will use the physics interface. If 0, they will not be interactive.");
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CBaseCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector )
+bool CBaseCombatCharacter::BecomeRagdoll(const CTakeDamageInfo& info, const Vector& forceVector)
 {
-	if ( (info.GetDamageType() & DMG_VEHICLE) && !g_pGameRules->IsMultiplayer() )
+	if ((info.GetDamageType() & DMG_VEHICLE) && !g_pGameRules->IsMultiplayer())
 	{
 		CTakeDamageInfo info2 = info;
-		info2.SetDamageForce( forceVector );
+		info2.SetDamageForce(forceVector);
 		Vector pos = info2.GetDamagePosition();
 		float flAbsMinsZ = GetAbsOrigin().z + WorldAlignMins().z;
-		if ( (pos.z - flAbsMinsZ) < 24 )
+		if ((pos.z - flAbsMinsZ) < 24)
 		{
 			// HACKHACK: Make sure the vehicle impact is at least 2ft off the ground
 			pos.z = flAbsMinsZ + 24;
-			info2.SetDamagePosition( pos );
+			info2.SetDamagePosition(pos);
 		}
 
-// UNDONE: Put in a real sound cue here, don't do this bogus hack anymore
+		// UNDONE: Put in a real sound cue here, don't do this bogus hack anymore
 #if 0
 		Vector soundOrigin = info.GetDamagePosition();
-		CPASAttenuationFilter filter( soundOrigin );
+		CPASAttenuationFilter filter(soundOrigin);
 
 		EmitSound_t ep;
 		ep.m_nChannel = CHAN_STATIC;
@@ -1462,26 +1464,26 @@ bool CBaseCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vec
 		ep.m_SoundLevel = SNDLVL_NORM;
 		ep.m_pOrigin = &soundOrigin;
 
-		EmitSound( filter, SOUND_FROM_WORLD, ep );
+		EmitSound(filter, SOUND_FROM_WORLD, ep);
 #endif
 		// in single player create ragdolls on the server when the player hits someone
 		// with their vehicle - for more dramatic death/collisions
-		CBaseEntity *pRagdoll = CreateServerRagdoll( this, m_nForceBone, info2, COLLISION_GROUP_INTERACTIVE_DEBRIS, true );
-		FixupBurningServerRagdoll( pRagdoll );
+		CBaseEntity* pRagdoll = CreateServerRagdoll(this, m_nForceBone, info2, COLLISION_GROUP_INTERACTIVE_DEBRIS, true);
+		FixupBurningServerRagdoll(pRagdoll);
 		RemoveDeferred();
 		return true;
 	}
 
 	//Fix up the force applied to server side ragdolls. This fixes magnets not affecting them.
 	CTakeDamageInfo newinfo = info;
-	newinfo.SetDamageForce( forceVector );
+	newinfo.SetDamageForce(forceVector);
 
 #ifdef HL2_EPISODIC
 	// Burning corpses are server-side in episodic, if we're in darkness mode
-	if ( IsOnFire() && HL2GameRules()->IsAlyxInDarknessMode() )
+	if (IsOnFire() && HL2GameRules()->IsAlyxInDarknessMode())
 	{
-		CBaseEntity *pRagdoll = CreateServerRagdoll( this, m_nForceBone, newinfo, COLLISION_GROUP_DEBRIS );
-		FixupBurningServerRagdoll( pRagdoll );
+		CBaseEntity* pRagdoll = CreateServerRagdoll(this, m_nForceBone, newinfo, COLLISION_GROUP_DEBRIS);
+		FixupBurningServerRagdoll(pRagdoll);
 		RemoveDeferred();
 		return true;
 	}
@@ -1489,31 +1491,50 @@ bool CBaseCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vec
 
 #ifdef HL2_DLL	
 	// Mega physgun requires everything to be a server-side ragdoll
-	if ( m_bForceServerRagdoll == true || ( HL2GameRules()->MegaPhyscannonActive() == true ) && !IsPlayer() && Classify() != CLASS_PLAYER_ALLY_VITAL && Classify() != CLASS_PLAYER_ALLY )
+	if (m_bForceServerRagdoll == true || (HL2GameRules()->MegaPhyscannonActive() == true) && !IsPlayer() && Classify() != CLASS_PLAYER_ALLY_VITAL && Classify() != CLASS_PLAYER_ALLY)
 	{
-		if ( CanBecomeServerRagdoll() == false )
+		if (CanBecomeServerRagdoll() == false)
 			return false;
 
 		//FIXME: This is fairly leafy to be here, but time is short!
-		CBaseEntity *pRagdoll = CreateServerRagdoll( this, m_nForceBone, newinfo, COLLISION_GROUP_INTERACTIVE_DEBRIS, true );
-		FixupBurningServerRagdoll( pRagdoll );
-		PhysSetEntityGameFlags( pRagdoll, FVPHYSICS_NO_SELF_COLLISIONS );
+		CBaseEntity* pRagdoll = CreateServerRagdoll(this, m_nForceBone, newinfo, COLLISION_GROUP_INTERACTIVE_DEBRIS, true);
+		FixupBurningServerRagdoll(pRagdoll);
+		PhysSetEntityGameFlags(pRagdoll, FVPHYSICS_NO_SELF_COLLISIONS);
 		RemoveDeferred();
 
 		return true;
 	}
 
-	if( hl2_episodic.GetBool() && Classify() == CLASS_PLAYER_ALLY_VITAL )
+	if (hl2_episodic.GetBool() && Classify() == CLASS_PLAYER_ALLY_VITAL)
 	{
-		CreateServerRagdoll( this, m_nForceBone, newinfo, COLLISION_GROUP_INTERACTIVE_DEBRIS, true );
+		CreateServerRagdoll(this, m_nForceBone, newinfo, COLLISION_GROUP_INTERACTIVE_DEBRIS, true);
 		RemoveDeferred();
 		return true;
 	}
 #endif //HL2_DLL
 
-	return BecomeRagdollOnClient( forceVector );
+	if (gabeplus_ragdoll_physics.GetBool())
+	{
+		if (!IsPlayer())
+		{
+			if (CanBecomeServerRagdoll())
+			{
+				CBaseEntity* pRagdoll = CreateServerRagdoll(this, m_nForceBone, newinfo, COLLISION_GROUP_NONE, true);
+				FixupBurningServerRagdoll(pRagdoll);
+				RemoveDeferred();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	else
+	{
+		return BecomeRagdollOnClient(m_vecForce);
+	}
 }
-
 
 /*
 ============
@@ -1600,6 +1621,33 @@ void CBaseCombatCharacter::Event_Killed( const CTakeDamageInfo &info )
 		{
 			BecomeRagdoll( info, forceVector );
 		}
+	}
+
+	CBaseEntity* pAttacker = info.GetAttacker();
+	CBaseEntity* pVictim = this;
+
+	if (pAttacker && pVictim)
+	{
+		const char* attackerName = nullptr;
+
+		// If attacker is a player, use their player name
+		if (pAttacker->IsPlayer())
+		{
+			attackerName = ToBasePlayer(pAttacker)->GetPlayerName();
+		}
+		else
+		{
+			// fallback to classname for NPCs, props, etc.
+			attackerName = pAttacker->GetClassname();
+		}
+
+		const char* victimName = pVictim->GetClassname();
+
+		CBroadcastRecipientFilter filter;
+		UserMessageBegin(filter, "KillFeed");
+		WRITE_STRING(attackerName);
+		WRITE_STRING(victimName);
+		MessageEnd();
 	}
 }
 
@@ -2283,6 +2331,99 @@ When a NPC is poisoned via an arrow etc it takes all the poison damage at once.
 GLOBALS ASSUMED SET:  g_iSkillLevel
 ============
 */
+
+static CBasePlayer* GetPlayerFromDamageInfo(const CTakeDamageInfo& info)
+{
+	CBaseEntity* pAttacker = info.GetAttacker();
+	if (!pAttacker)
+		return NULL;
+
+	if (pAttacker->IsPlayer())
+		return ToBasePlayer(pAttacker);
+
+	CBaseEntity* pOwner = pAttacker->GetOwnerEntity();
+	if (pOwner && pOwner->IsPlayer())
+		return ToBasePlayer(pOwner);
+
+	CBaseEntity* pInflictor = info.GetInflictor();
+	if (pInflictor)
+	{
+		if (pInflictor->IsPlayer())
+			return ToBasePlayer(pInflictor);
+
+		CBaseEntity* pInflictorOwner = pInflictor->GetOwnerEntity();
+		if (pInflictorOwner && pInflictorOwner->IsPlayer())
+			return ToBasePlayer(pInflictorOwner);
+	}
+
+	return NULL;
+}
+
+const char* DamageTypeToString(int t)
+{
+	if (t & DMG_BULLET)     return "bullet";
+	if (t & DMG_BLAST)      return "blast";
+	if (t & DMG_SLASH)      return "slash";
+	if (t & DMG_BURN)       return "fire";
+	if (t & DMG_SHOCK)      return "shock";
+	if (t & DMG_ENERGYBEAM) return "beam";
+	if (t & DMG_DROWN)      return "drown";
+	if (t & DMG_FALL)       return "fall";
+	if (t & DMG_CRUSH)      return "crush";
+	if (t & DMG_CLUB)       return "club";
+	if (t & DMG_SONIC)      return "sonic";
+	if (t & DMG_RADIATION)  return "radiation";
+	if (t & DMG_ACID)       return "acid";
+	if (t & DMG_NERVEGAS)   return "nerve gas";
+	if (t & DMG_POISON)     return "poison";
+	if (t & DMG_PLASMA)     return "plasma";
+	if (t & DMG_SLOWBURN)   return "slow burn";
+	if (t & DMG_PHYSGUN)    return "physgun";
+	if (t & DMG_VEHICLE)    return "vehicle";
+	if (t & DMG_DIRECT)     return "direct";
+	return "generic";
+}
+
+
+static void SendDamageFeed(const CTakeDamageInfo& info, CBaseEntity* pVictim)
+{
+	if (!pVictim)
+		return;
+
+	CBasePlayer* pPlayer = GetPlayerFromDamageInfo(info);
+	if (!pPlayer)
+		return;
+
+	char attackerName[64];
+	char victimName[64];
+
+	if (info.GetAttacker() && info.GetAttacker()->IsPlayer())
+		Q_strncpy(attackerName, ToBasePlayer(info.GetAttacker())->GetPlayerName(), sizeof(attackerName));
+	else
+		Q_strncpy(attackerName, info.GetAttacker() ? info.GetAttacker()->GetClassname() : "world", sizeof(attackerName));
+
+	if (pVictim->IsPlayer())
+		Q_strncpy(victimName, ToBasePlayer(pVictim)->GetPlayerName(), sizeof(victimName));
+	else
+		Q_strncpy(victimName, pVictim->GetClassname(), sizeof(victimName));
+
+	int dmg = (int)(info.GetDamage() + 0.5f);
+	if (dmg <= 0)
+		return;
+
+	const char* dmgTypeStr = DamageTypeToString(info.GetDamageType());
+
+	CSingleUserRecipientFilter filter(pPlayer);
+	filter.MakeReliable();
+
+	UserMessageBegin(filter, "DamageFeed");
+	WRITE_STRING(attackerName);
+	WRITE_STRING(victimName);
+	WRITE_SHORT(dmg);
+	WRITE_STRING(dmgTypeStr);
+	MessageEnd();
+}
+
 int CBaseCombatCharacter::OnTakeDamage( const CTakeDamageInfo &info )
 {
 	int retVal = 0;
@@ -2379,7 +2520,8 @@ int CBaseCombatCharacter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 		m_iHealth -= flIntegerDamage;
 	}
-
+	SendDamageFeed(info, this);
+	Msg("SendDamageFeed fired: dmg=%f type=%d victim=%s\n", info.GetDamage(), info.GetDamageType(), GetClassname());
 	return 1;
 }
 

@@ -23,17 +23,31 @@ ConVar physgun_beamtex(
     "Material/texture for the physgun beam"
 );
 
-static const char* kPhysgunTipMaterial = "sprites/light_glow02_add.vmt";
-static const float  kPhysgunTipSize    = 36.0f; // Units
+ConVar physgun_tiptex(
+    "gabe+_physgun_tiptex",
+    "sprites/light_glow02_add",
+    FCVAR_ARCHIVE | FCVAR_REPLICATED,
+    "Sprite for the physgun beam tip"
+);
 
-CLIENTEFFECT_REGISTER_BEGIN( PrecacheEffectGravityGun )
+ConVar physgun_tipsize(
+    "gabe+_physgun_tipsize",
+    "36.0f",
+    FCVAR_ARCHIVE | FCVAR_REPLICATED,
+    "Size for the physgun beam tip"
+);
+
+static const char* kPhysgunTipMaterial = physgun_tiptex.GetString();
+static const float  kPhysgunTipSize    = physgun_tipsize.GetFloat(); // Units
+
+CLIENTEFFECT_REGISTER_BEGIN( PrecacheEffectGravityGunOther )
 CLIENTEFFECT_MATERIAL( physgun_beamtex.GetString() )
 CLIENTEFFECT_REGISTER_END()
 
-class C_BeamQuadratic : public CDefaultClientRenderable
+class C_BeamQuadraticOther : public CDefaultClientRenderable
 {
 public:
-	C_BeamQuadratic();
+	C_BeamQuadraticOther();
 	void			Update( C_BaseEntity *pOwner );
 
 	// IClientRenderable
@@ -44,7 +58,7 @@ public:
 	virtual bool					ShouldReceiveProjectedTextures( int flags ) { return false; }
 	virtual int						DrawModel( int flags );
 
-	// In C_BeamQuadratic
+	// In C_BeamQuadraticOther
 	virtual void GetRenderBounds( Vector& mins, Vector& maxs )
 	{
 		// Compute bounds relative to origin
@@ -88,11 +102,11 @@ public:
 };
 
 
-class C_WeaponGravityGun : public C_BaseHLCombatWeapon
+class C_WeaponGravityGunOther : public C_BaseHLCombatWeapon
 {
-	DECLARE_CLASS( C_WeaponGravityGun, C_BaseHLCombatWeapon );
+	DECLARE_CLASS( C_WeaponGravityGunOther, C_BaseHLCombatWeapon );
 public:
-	C_WeaponGravityGun() {}
+	C_WeaponGravityGunOther() {}
 
 	DECLARE_CLIENTCLASS();
 	DECLARE_PREDICTABLE();
@@ -124,14 +138,14 @@ public:
 	}
 
 private:
-	C_WeaponGravityGun( const C_WeaponGravityGun & );
+	C_WeaponGravityGunOther( const C_WeaponGravityGunOther & );
 
-	C_BeamQuadratic	m_beam;
+	C_BeamQuadraticOther	m_beam;
 };
 
-STUB_WEAPON_CLASS_IMPLEMENT( weapon_physgun, C_WeaponGravityGun );
+STUB_WEAPON_CLASS_IMPLEMENT( weapon_physgun, C_WeaponGravityGunOther );
 
-IMPLEMENT_CLIENTCLASS_DT( C_WeaponGravityGun, DT_WeaponGravityGun, CWeaponGravityGun )
+IMPLEMENT_CLIENTCLASS_DT( C_WeaponGravityGunOther, DT_WeaponGravityGunOther, CWeaponGravityGunOther )
 	RecvPropVector( RECVINFO_NAME(m_beam.m_targetPosition,m_targetPosition) ),
 	RecvPropVector( RECVINFO_NAME(m_beam.m_worldPosition, m_worldPosition) ),
 	RecvPropInt( RECVINFO_NAME(m_beam.m_active, m_active) ),
@@ -140,12 +154,12 @@ IMPLEMENT_CLIENTCLASS_DT( C_WeaponGravityGun, DT_WeaponGravityGun, CWeaponGravit
 END_RECV_TABLE()
 
 
-C_BeamQuadratic::C_BeamQuadratic()
+C_BeamQuadraticOther::C_BeamQuadraticOther()
 {
 	m_pOwner = NULL;
 }
 
-void C_BeamQuadratic::Update( C_BaseEntity *pOwner )
+void C_BeamQuadraticOther::Update( C_BaseEntity *pOwner )
 {
 	m_pOwner = pOwner;
 	if ( m_active )
@@ -186,7 +200,7 @@ ConVar physgun_beamwidth(
 	"Width of the beam (In Source Engine Units)" 
 );
 
-int C_BeamQuadratic::DrawModel( int )
+int C_BeamQuadraticOther::DrawModel( int )
 {
 	CMatRenderContextPtr pRenderContext( materials );
 

@@ -15,11 +15,11 @@
 
 #ifdef CLIENT_DLL
 
-	#include "c_sdk_player.h"
+	#include "c_baseplayer.h"
 
 #else
 
-	#include "sdk_player.h"
+	#include "player.h"
 	#include "items.h"
 
 #endif
@@ -94,7 +94,7 @@ bool CBaseSDKGrenade::Holster( CBaseCombatWeapon *pSwitchingTo )
 #ifndef CLIENT_DLL
 	// If they attempt to switch weapons before the throw animation is done, 
 	// allow it, but kill the weapon if we have to.
-	CSDKPlayer *pPlayer = GetPlayerOwner();
+	CBasePlayer *pPlayer = GetPlayerOwner();
 
 	if( pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0 )
 	{
@@ -115,7 +115,7 @@ void CBaseSDKGrenade::PrimaryAttack()
 	if ( m_bRedraw || m_bPinPulled )
 		return;
 
-	CSDKPlayer *pPlayer = GetPlayerOwner();
+	CBasePlayer *pPlayer = GetPlayerOwner();
 	if ( !pPlayer || pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
 		return;
 
@@ -140,7 +140,7 @@ void CBaseSDKGrenade::SecondaryAttack()
 	if ( m_bRedraw )
 		return;
 
-	CSDKPlayer *pPlayer = GetPlayerOwner();
+	CBasePlayer *pPlayer = GetPlayerOwner();
 	
 	if ( pPlayer == NULL )
 		return;
@@ -192,7 +192,7 @@ bool CBaseSDKGrenade::Reload()
 //-----------------------------------------------------------------------------
 void CBaseSDKGrenade::ItemPostFrame()
 {
-	CSDKPlayer *pPlayer = GetPlayerOwner();
+	CBasePlayer *pPlayer = GetPlayerOwner();
 	if ( !pPlayer )
 		return;
 
@@ -203,7 +203,9 @@ void CBaseSDKGrenade::ItemPostFrame()
 	// If they let go of the fire button, they want to throw the grenade.
 	if ( m_bPinPulled && !(pPlayer->m_nButtons & IN_ATTACK) ) 
 	{
-		pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
+		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+		pPlayer->SetAnimation(PLAYER_ATTACK1);
+
 //		if (m_bSecondary)
 //			DropGrenade();
 //		else

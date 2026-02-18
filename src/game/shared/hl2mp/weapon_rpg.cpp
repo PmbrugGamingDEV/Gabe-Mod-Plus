@@ -103,9 +103,6 @@ static RPGLaunchItem g_RPGLaunchItems[] =
     // === Outdoors / city ===
     { "Traffic Cone",    "prop_physics", "models/props_junk/trafficcone001a.mdl",  1100.0f, false },
     { "Trash Bin",       "prop_physics", "models/props_junk/trashbin01a.mdl",       850.0f,  false },
-    { "Mailbox",         "prop_physics", "models/props_c17/mailbox01a.mdl",        900.0f,  false },
-    { "Fire Hydrant",    "prop_physics", "models/props_c17/firehydrant001a.mdl",   750.0f,  false },
-    { "Street Light",    "prop_physics", "models/props_c17/streetlight01.mdl",     600.0f,  false },
 
     // === Vehicles / big ===
     { "Car",             "prop_physics", "models/props_vehicles/car001a_physics.mdl",700.0f, false },
@@ -542,9 +539,6 @@ void CMissile::IgniteThink( void )
 	if ( m_hOwner && m_hOwner->GetOwner() )
 	{
 		CBasePlayer *pPlayer = ToBasePlayer( m_hOwner->GetOwner() );
-
-		color32 white = { 255,225,205,64 };
-		UTIL_ScreenFade( pPlayer, white, 0.1f, 0.0f, FFADE_IN );
 	}
 
 	CreateSmokeTrail();

@@ -189,6 +189,8 @@ void CPropJeep::Precache( void )
 	PrecacheScriptSound( "PropJeep.AmmoClose" );
 	PrecacheScriptSound( "PropJeep.FireCannon" );
 	PrecacheScriptSound( "PropJeep.FireChargedCannon" );
+	PrecacheScriptSound("Airboat_headlight_on");
+	PrecacheScriptSound("Airboat_headlight_off");
 	PrecacheScriptSound( "PropJeep.AmmoOpen" );
 
 	PrecacheScriptSound( "Jeep.GaussCharge" );
@@ -279,6 +281,24 @@ void CPropJeep::DoImpactEffect( trace_t &tr, int nDamageType )
 
 		UTIL_ImpactTrace( &tr, m_nBulletType );
 	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CPropJeep::HeadlightTurnOn()
+{
+	EmitSound("Airboat_headlight_on");
+	m_bHeadlightIsOn = true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CPropJeep::HeadlightTurnOff()
+{
+	EmitSound("Airboat_headlight_off");
+	m_bHeadlightIsOn = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -1348,7 +1368,7 @@ void CPropJeep::DriveVehicle( float flFrameTime, CUserCmd *ucmd, int iButtonsDow
 	int iButtons = ucmd->buttons;
 
 	//Adrian: No headlights on Superfly.
-/*	if ( ucmd->impulse == 100 )
+	if ( ucmd->impulse == 100 )
 	{
 		if (HeadlightIsOn())
 		{
@@ -1358,7 +1378,7 @@ void CPropJeep::DriveVehicle( float flFrameTime, CUserCmd *ucmd, int iButtonsDow
 		{
 			HeadlightTurnOn();
 		}
-	}*/
+	}
 		
 	// Only handle the cannon if the vehicle has one
 	if ( m_bHasGun )
@@ -1494,8 +1514,6 @@ void CPropJeep::EnterVehicle( CBaseCombatCharacter *pPassenger )
 //-----------------------------------------------------------------------------
 void CPropJeep::ExitVehicle( int nRole )
 {
-	HeadlightTurnOff();
-
 	BaseClass::ExitVehicle( nRole );
 
 	//If the player has exited, stop charging

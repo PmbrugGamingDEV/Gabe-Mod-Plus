@@ -37,6 +37,8 @@ extern IGameUIFuncs *gameuifuncs; // for key binding details
 
 #include <stdlib.h> // MAX_PATH define
 
+#include "ienginevgui.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -203,37 +205,43 @@ void CClassMenu::OnCommand( const char *command )
 //-----------------------------------------------------------------------------
 void CClassMenu::ShowPanel(bool bShow)
 {
-	if ( bShow )
+	if (bShow)
 	{
-		Activate();
-		SetMouseInputEnabled( true );
+		// Parent to the engine ingame screen panel
+		VPANEL parent = enginevgui->GetPanel(PANEL_INGAMESCREENS);
+		SetParent(parent);
 
-		// load a default class page
-		for ( int i=0; i<m_mouseoverButtons.Count(); ++i )
+		SetVisible(true);
+		Activate();
+		SetMouseInputEnabled(true);
+
+		MakePopup();
+		MoveToFront();
+		RequestFocus();
+
+		// Load default class page
+		for (int i = 0; i < m_mouseoverButtons.Count(); ++i)
 		{
-			if ( i == 0 )
-			{
-				m_mouseoverButtons[i]->ShowPage();	// Show the first page
-			}
+			if (i == 0)
+				m_mouseoverButtons[i]->ShowPage();
 			else
-			{
-				m_mouseoverButtons[i]->HidePage();	// Hide the rest
-			}
+				m_mouseoverButtons[i]->HidePage();
 		}
-		
-		if ( m_iScoreBoardKey == BUTTON_CODE_INVALID ) 
+
+		if (m_iScoreBoardKey == BUTTON_CODE_INVALID && gameuifuncs)
 		{
-			m_iScoreBoardKey = gameuifuncs->GetButtonCodeForBind( "showscores" );
+			m_iScoreBoardKey = gameuifuncs->GetButtonCodeForBind("showscores");
 		}
 	}
 	else
 	{
-		SetVisible( false );
-		SetMouseInputEnabled( false );
+		SetVisible(false);
+		SetMouseInputEnabled(false);
 	}
-	
-	m_pViewPort->ShowBackGround( bShow );
+
+	m_pViewPort->ShowBackGround(bShow);
 }
+
 
 
 void CClassMenu::SetData(KeyValues *data)
@@ -275,6 +283,22 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	else
 	{
 		BaseClass::OnKeyCodePressed( code );
+	}
+}
+
+CON_COMMAND(show_classmenu, "Open the class selection menu")
+{
+	if (gViewPortInterface)
+	{
+		gViewPortInterface->ShowPanel(PANEL_CLASS, true);
+	}
+}
+
+CON_COMMAND(hide_classmenu, "Close the class selection menu")
+{
+	if (gViewPortInterface)
+	{
+		gViewPortInterface->ShowPanel(PANEL_CLASS, false);
 	}
 }
 

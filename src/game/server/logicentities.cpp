@@ -2255,7 +2255,7 @@ int CLogicBranch::DrawDebugTextOverlays( void )
 
 	return text_offset;
 }
-
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Autosaves when triggered
 //-----------------------------------------------------------------------------
@@ -2423,6 +2423,7 @@ void CLogicAutosave::InputSetMinHitpointsThreshold( inputdata_t &inputdata )
 	m_minHitPoints = setTo;
 }
 
+*/
 // Finds the named physics object.  If no name, returns the world
 // If a name is specified and an object not found - errors are reported
 IPhysicsObject *FindPhysicsObjectByNameOrWorld( string_t name, CBaseEntity *pErrorEntity )

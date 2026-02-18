@@ -238,7 +238,7 @@ void CPropVehicle::Think()
 	// was added to allow prop_vehicle to always think without affecting the derived classes.
 	if( HasSpawnFlags(SF_PROP_VEHICLE_ALWAYSTHINK) )
 	{
-		SetNextThink(gpGlobals->curtime);
+		SetNextThink(gpGlobals->absoluteframetime);
 	}
 }
 

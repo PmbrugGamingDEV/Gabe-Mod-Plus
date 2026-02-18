@@ -25,9 +25,10 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
-#define	CROWBAR_RANGE	75.0f
-#define	CROWBAR_REFIRE	0.4f
+ConVar gabeplus_crowbar_range("gabe+_crowbar_range", "75", FCVAR_REPLICATED, "Control how far the crowbar hits.");
+#define	CROWBAR_RANGE	gabeplus_crowbar_range.GetFloat();
+ConVar gabeplus_crowbar_swingrate("gabe+_crowbar_swingrate", "0.4", FCVAR_REPLICATED, "Control how quickly the crowbar swings.");
+#define	CROWBAR_REFIRE	gabeplus_crowbar_swingrate.GetFloat();
 
 
 //-----------------------------------------------------------------------------
@@ -45,21 +46,11 @@ END_PREDICTION_DATA()
 LINK_ENTITY_TO_CLASS( weapon_crowbar, CWeaponCrowbar );
 PRECACHE_WEAPON_REGISTER( weapon_crowbar );
 
-acttable_t	CWeaponCrowbar::m_acttable[] = 
+acttable_t CWeaponCrowbar::m_acttable[] =
 {
-	{ ACT_MP_STAND_IDLE,				ACT_HL2MP_IDLE_MELEE,					false },
-	{ ACT_MP_CROUCH_IDLE,				ACT_HL2MP_IDLE_CROUCH_MELEE,			false },
-
-	{ ACT_MP_RUN,						ACT_HL2MP_RUN_MELEE,					false },
-	{ ACT_MP_CROUCHWALK,				ACT_HL2MP_WALK_CROUCH_MELEE,			false },
-
-	{ ACT_MP_ATTACK_STAND_PRIMARYFIRE,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
-	{ ACT_MP_ATTACK_CROUCH_PRIMARYFIRE,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
-
-	{ ACT_MP_RELOAD_STAND,				ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },
-	{ ACT_MP_RELOAD_CROUCH,				ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },
-
-	{ ACT_MP_JUMP,						ACT_HL2MP_JUMP_MELEE,					false },
+	{ ACT_MELEE_ATTACK1,	ACT_MELEE_ATTACK_SWING, true },
+	{ ACT_IDLE,				ACT_IDLE_ANGRY_MELEE,	false },
+	{ ACT_IDLE_ANGRY,		ACT_IDLE_ANGRY_MELEE,	false },
 };
 
 IMPLEMENT_ACTTABLE(CWeaponCrowbar);

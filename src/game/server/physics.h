@@ -26,6 +26,7 @@ class IPhysicsSpring;
 class IPhysicsSurfaceProps;
 class CTakeDamageInfo;
 class ConVar;
+class IPhysicsObject;
 
 extern IPhysicsMaterial		*g_Material;
 extern ConVar phys_pushscale;

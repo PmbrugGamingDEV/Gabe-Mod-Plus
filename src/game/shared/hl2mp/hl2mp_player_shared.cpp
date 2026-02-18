@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+ï»¿//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -19,38 +19,39 @@
 
 #include "engine/IEngineSound.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
+#include "igamesystem.h" // Make sure this is included for GAMESTATE_ACTIVE
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 extern ConVar sv_footsteps;
 
-const char *g_ppszPlayerSoundPrefixNames[PLAYER_SOUNDS_MAX] =
+const char* g_ppszPlayerSoundPrefixNames[PLAYER_SOUNDS_MAX] =
 {
 	"NPC_Citizen",
 	"NPC_CombineS",
 	"NPC_MetroPolice",
 };
 
-const char *CHL2MP_Player::GetPlayerModelSoundPrefix( void )
+const char* CHL2MP_Player::GetPlayerModelSoundPrefix(void)
 {
 	return g_ppszPlayerSoundPrefixNames[m_iPlayerSoundType];
 }
 
-void CHL2MP_Player::PrecacheFootStepSounds( void )
+void CHL2MP_Player::PrecacheFootStepSounds(void)
 {
-	int iFootstepSounds = ARRAYSIZE( g_ppszPlayerSoundPrefixNames );
+	int iFootstepSounds = ARRAYSIZE(g_ppszPlayerSoundPrefixNames);
 	int i;
 
-	for ( i = 0; i < iFootstepSounds; ++i )
+	for (i = 0; i < iFootstepSounds; ++i)
 	{
 		char szFootStepName[128];
 
-		Q_snprintf( szFootStepName, sizeof( szFootStepName ), "%s.RunFootstepLeft", g_ppszPlayerSoundPrefixNames[i] );
-		PrecacheScriptSound( szFootStepName );
+		Q_snprintf(szFootStepName, sizeof(szFootStepName), "%s.RunFootstepLeft", g_ppszPlayerSoundPrefixNames[i]);
+		PrecacheScriptSound(szFootStepName);
 
-		Q_snprintf( szFootStepName, sizeof( szFootStepName ), "%s.RunFootstepRight", g_ppszPlayerSoundPrefixNames[i] );
-		PrecacheScriptSound( szFootStepName );
+		Q_snprintf(szFootStepName, sizeof(szFootStepName), "%s.RunFootstepRight", g_ppszPlayerSoundPrefixNames[i]);
+		PrecacheScriptSound(szFootStepName);
 	}
 }
 
@@ -59,11 +60,11 @@ void CHL2MP_Player::PrecacheFootStepSounds( void )
 // the weapon, and the status of the target. Use this information to determine
 // how accurately to shoot at the target.
 //-----------------------------------------------------------------------------
-Vector CHL2MP_Player::GetAttackSpread( CBaseCombatWeapon *pWeapon, CBaseEntity *pTarget )
+Vector CHL2MP_Player::GetAttackSpread(CBaseCombatWeapon* pWeapon, CBaseEntity* pTarget)
 {
-	if ( pWeapon )
-		return pWeapon->GetBulletSpread( WEAPON_PROFICIENCY_PERFECT );
-	
+	if (pWeapon)
+		return pWeapon->GetBulletSpread(WEAPON_PROFICIENCY_PERFECT);
+
 	return VECTOR_CONE_15DEGREES;
 }
 
@@ -73,57 +74,67 @@ Vector CHL2MP_Player::GetAttackSpread( CBaseCombatWeapon *pWeapon, CBaseEntity *
 //			fvol - 
 //			force - force sound to play
 //-----------------------------------------------------------------------------
-void CHL2MP_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force )
+
+void CHL2MP_Player::PlayStepSound(Vector& vecOrigin, surfacedata_t* psurface, float fvol, bool force)
 {
-	if ( gpGlobals->maxClients > 1 && !sv_footsteps.GetFloat() )
-		return;
+    // Respect sv_footsteps in multiplayer
+    if (gpGlobals->maxClients > 1 && !sv_footsteps.GetFloat())
+        return;
 
 #if defined( CLIENT_DLL )
-	// during prediction play footstep sounds only once
-	if ( !prediction->IsFirstTimePredicted() )
-		return;
+    // During prediction, only play once
+    if (!prediction->IsFirstTimePredicted())
+        return;
 #endif
 
-	if ( GetFlags() & FL_DUCKING )
-		return;
+    // No crouch footsteps (HL2 behavior)
+    if (GetFlags() & FL_DUCKING)
+        return;
 
-	m_Local.m_nStepside = !m_Local.m_nStepside;
+    if (!psurface)
+        return;
 
-	char szStepSound[128];
+    // Alternate left/right steps
+    int nSide = m_Local.m_nStepside;
+    m_Local.m_nStepside = !nSide;
 
-	if ( m_Local.m_nStepside )
-	{
-		Q_snprintf( szStepSound, sizeof( szStepSound ), "%s.RunFootstepLeft", g_ppszPlayerSoundPrefixNames[m_iPlayerSoundType] );
-	}
-	else
-	{
-		Q_snprintf( szStepSound, sizeof( szStepSound ), "%s.RunFootstepRight", g_ppszPlayerSoundPrefixNames[m_iPlayerSoundType] );
-	}
+    // Get surface-defined step sound
+    unsigned short stepSoundName = nSide ? psurface->sounds.stepleft : psurface->sounds.stepright;
+    if (!stepSoundName)
+        return;
 
-	CSoundParameters params;
-	if ( GetParametersForSound( szStepSound, params, NULL ) == false )
-		return;
+    IPhysicsSurfaceProps* physprops = MoveHelper()->GetSurfaceProps();
+    const char* pSoundName = physprops->GetString(stepSoundName);
+    if (!pSoundName || !pSoundName[0])
+        return;
 
-	CRecipientFilter filter;
-	filter.AddRecipientsByPAS( vecOrigin );
+    CSoundParameters params;
+    if (!GetParametersForSound(pSoundName, params, NULL))
+        return;
+
+    // Build recipient filter
+    CRecipientFilter filter;
+    filter.AddRecipientsByPAS(vecOrigin);
 
 #ifndef CLIENT_DLL
-	// im MP, server removed all players in origins PVS, these players 
-	// generate the footsteps clientside
-	if ( gpGlobals->maxClients > 1 )
-		filter.RemoveRecipientsByPVS( vecOrigin );
+    // In MP, server excludes players in PVS
+    // Local players predict footsteps clientside
+    if (gpGlobals->maxClients > 1)
+    {
+        filter.RemoveRecipientsByPVS(vecOrigin);
+    }
 #endif
 
-	EmitSound_t ep;
-	ep.m_nChannel = CHAN_BODY;
-	ep.m_pSoundName = params.soundname;
-	ep.m_flVolume = fvol;
-	ep.m_SoundLevel = params.soundlevel;
-	ep.m_nFlags = 0;
-	ep.m_nPitch = params.pitch;
-	ep.m_pOrigin = &vecOrigin;
+    EmitSound_t ep;
+    ep.m_nChannel = CHAN_BODY;
+    ep.m_pSoundName = params.soundname;
+    ep.m_flVolume = fvol;
+    ep.m_SoundLevel = params.soundlevel;
+    ep.m_nFlags = 0;
+    ep.m_nPitch = params.pitch;
+    ep.m_pOrigin = &vecOrigin;
 
-	EmitSound( filter, entindex(), ep );
+    EmitSound(filter, entindex(), ep);
 }
 
 //-----------------------------------------------------------------------------
@@ -131,27 +142,26 @@ void CHL2MP_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, f
 // Input  : collisionGroup - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CHL2MP_Player::ShouldCollide( int collisionGroup, int contentsMask ) const
+bool CHL2MP_Player::ShouldCollide(int collisionGroup, int contentsMask) const
 {
-	if ( HL2MPRules()->IsTeamplay() )
+	if (HL2MPRules()->IsTeamplay())
 	{
-		if ( collisionGroup == COLLISION_GROUP_PLAYER_MOVEMENT || collisionGroup == COLLISION_GROUP_PROJECTILE )
+		if (collisionGroup == COLLISION_GROUP_PLAYER_MOVEMENT || collisionGroup == COLLISION_GROUP_PROJECTILE)
 		{
-			switch( GetTeamNumber() )
+			switch (GetTeamNumber())
 			{
 			case TEAM_REBELS:
-				if ( !( contentsMask & CONTENTS_TEAM2 ) )
+				if (!(contentsMask & CONTENTS_TEAM2))
 					return false;
 				break;
 
 			case TEAM_COMBINE:
-				if ( !( contentsMask & CONTENTS_TEAM1 ) )
+				if (!(contentsMask & CONTENTS_TEAM1))
 					return false;
 				break;
 			}
 		}
 	}
 
-	return BaseClass::ShouldCollide( collisionGroup, contentsMask );
+	return BaseClass::ShouldCollide(collisionGroup, contentsMask);
 }
-

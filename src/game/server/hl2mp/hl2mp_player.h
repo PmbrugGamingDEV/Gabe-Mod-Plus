@@ -94,6 +94,10 @@ public:
 	void GiveAllItems( void );
 	void GiveDefaultItems( void );
 
+	void GiveSDKItems(void);
+
+	void GiveNoItems(void);
+
 	void NoteWeaponFired( void );
 
 	void SetAnimation( PLAYER_ANIM playerAnim );
@@ -148,6 +152,10 @@ public:
     void TryPickup();
     void UpdateHeldObject();
     void DropHeldObject( bool bThrow );
+
+	void IntroTipThink(void);
+
+	int m_iIntroStage;
 
 private:
 

@@ -113,7 +113,7 @@ void CFPSPanel::ComputeSize( void )
 	int wide, tall;
 	vgui::ipanel()->GetSize(GetVParent(), wide, tall );
 
-	int x = wide - FPS_PANEL_WIDTH;
+	int x = wide / 2;
 	int y = 0;
 	if ( IsX360() )
 	{
@@ -128,7 +128,7 @@ void CFPSPanel::ApplySchemeSettings(vgui::IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
-	m_hFont = pScheme->GetFont( "DefaultFixedOutline" );
+	m_hFont = pScheme->GetFont( "Default" );
 	Assert( m_hFont );
 
 	ComputeSize();

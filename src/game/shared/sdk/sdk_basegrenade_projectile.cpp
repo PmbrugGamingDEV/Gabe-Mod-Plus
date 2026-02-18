@@ -12,7 +12,7 @@ extern ConVar sv_gravity;
 
 #ifdef CLIENT_DLL
 
-	#include "c_sdk_player.h"
+	#include "c_baseplayer.h"
 
 #else
 

@@ -35,6 +35,9 @@ public:
 	DECLARE_PREDICTABLE();
 
 	virtual	void	Spawn( void );
+#ifndef CLIENT_DLL
+	int		CapabilitiesGet(void) { return bits_CAP_WEAPON_MELEE_ATTACK1; }
+#endif
 	virtual	void	Precache( void );
 	
 	//Attack functions

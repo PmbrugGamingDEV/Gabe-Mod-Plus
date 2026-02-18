@@ -47,6 +47,12 @@ public:
 	virtual void	ThrowGrenade();
 	virtual void	DropGrenade();
 
+	Activity GetDeployActivity(void)
+	{
+		return ACT_VM_DRAW;
+	}
+
+
 	bool IsPinPulled() const;
 
 #ifndef CLIENT_DLL

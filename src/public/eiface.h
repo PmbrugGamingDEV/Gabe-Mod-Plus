@@ -16,6 +16,7 @@
 #include "convar.h"
 #include "icvar.h"
 #include "edict.h"
+#include "terrainmod.h"
 #include "mathlib/vplane.h"
 #include "iserverentity.h"
 #include "engine/ivmodelinfo.h"

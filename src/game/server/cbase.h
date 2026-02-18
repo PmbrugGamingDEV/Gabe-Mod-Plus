@@ -103,6 +103,10 @@ extern void FireTargets( const char *targetName, CBaseEntity *pActivator, CBaseE
 
 // used by suit voice to indicate damage sustained and repaired type to player
 
+#define MIN min
+#define MAX max
+#define OVERRIDE override
+
 enum
 {
 	itbd_Paralyze = 0,

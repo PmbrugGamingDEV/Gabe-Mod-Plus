@@ -26,6 +26,8 @@
 #include "team.h"
 #include "viewport_panel_names.h"
 
+#include "fmtstr.h"
+
 #include "tier0/vprof.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -60,18 +62,52 @@ void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 	{
 		ClientPrint( pPlayer, HUD_PRINTTALK, "You are on team %s1\n", pPlayer->GetTeam()->GetName() );
 	}
+}
 
-	/* const ConVar *hostname = cvar->FindVar( "hostname" );
-	const char *title = (hostname) ? hostname->GetString() : "MESSAGE OF THE DAY";
+/* I know I readded this for the fifth version, but I removed this for something special.
+CON_COMMAND(show_motd, "Show MOTD")
+{
+	CBasePlayer* pPlayer = UTIL_GetCommandClient();
 
-	KeyValues *data = new KeyValues("data");
-	data->SetString( "title", title );		// info panel title
-	data->SetString( "type", "1" );			// show userdata from stringtable entry
-	data->SetString( "msg",	"motd" );		// use this stringtable entry
+	const ConVar* hostname = cvar->FindVar("hostname");
+	const char* title = (hostname) ? hostname->GetString() : "MESSAGE OF THE DAY"; // this is where you customize the window title btw
 
-	pPlayer->ShowViewPortPanel( PANEL_INFO, true, data );
+	KeyValues* data = new KeyValues("data");
+	data->SetString("title", title);		// info panel title
+	data->SetString("type", "1");			// show userdata from stringtable entry
+	data->SetString("msg", "motd");		// use this stringtable entry
 
-	data->deleteThis(); */
+	pPlayer->ShowViewPortPanel(PANEL_INFO, true, data);
+
+	data->deleteThis();
+}
+*/
+void CHL2MP_Player::IntroTipThink(void)
+{
+	CFmtStr msg;
+
+	switch (m_iIntroStage)
+	{
+	case 0:
+		msg.sprintf("\x04TIP:\x01 Press Q to open the spawnmenu\n");
+		break;
+
+	case 1:
+		msg.sprintf("\x04PHYSGUN:\x01 Rotate objects while holding the E key.\n");
+		break;
+
+	case 2:
+		msg.sprintf("\x04Have Fun!\n");
+		ClientPrint(this, HUD_PRINTTALK, msg.Access());
+		return;
+	}
+
+	ClientPrint(this, HUD_PRINTTALK, msg.Access());
+
+	m_iIntroStage++;
+	SetContextThink(&CHL2MP_Player::IntroTipThink,
+		gpGlobals->curtime + 2.0f,
+		"IntroTipThink");
 }
 
 /*
@@ -81,13 +117,14 @@ ClientPutInServer
 called each time a player is spawned into the game
 ============
 */
-void ClientPutInServer( edict_t *pEdict, const char *playername )
+void ClientPutInServer(edict_t* pEdict, const char* playername)
 {
-	// Allocate a CBaseTFPlayer for pev, and call spawn
-	CHL2MP_Player *pPlayer = CHL2MP_Player::CreatePlayer( "player", pEdict );
-	pPlayer->SetPlayerName( playername );
-}
+	CHL2MP_Player* pPlayer = CHL2MP_Player::CreatePlayer("player", pEdict);
+	pPlayer->SetPlayerName(playername);
 
+	pPlayer->m_iIntroStage = 0;
+	pPlayer->SetContextThink(&CHL2MP_Player::IntroTipThink, gpGlobals->curtime + 2.0f, "IntroTipThink");
+}
 
 void ClientActive( edict_t *pEdict, bool bLoadGame )
 {

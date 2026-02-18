@@ -24,7 +24,6 @@
 	#include "c_baseplayer.h"
 #else
 	#include "player.h"
-	#include "sdk_player.h"
 	#include "utlqueue.h"
 	#include "playerclass_info_parse.h"
 
@@ -124,7 +123,6 @@ public:
 	
 	CSDKGameRules();
 	virtual ~CSDKGameRules();
-	virtual const char *GetGameDescription( void ) { return SDK_GAME_DESCRIPTION; } 
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
 	virtual void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrcIn, float flRadius, int iClassIgnore );
 	virtual void Think();

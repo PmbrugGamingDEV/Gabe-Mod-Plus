@@ -1,0 +1,58 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\gabe_newgamedialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\hl2mp\\hl2mp_player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "gabe_newgamedialog.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp",
+              "RelativeDocumentMoniker": "game\\client\\gabe_newgamedialog.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp",
+              "RelativeToolTip": "game\\client\\gabe_newgamedialog.cpp",
+              "ViewState": "AgIAAE8BAAAAAAAAAAAqwF0BAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-18T00:06:52.249Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "hl2mp_player.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp",
+              "RelativeDocumentMoniker": "game\\server\\hl2mp\\hl2mp_player.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp",
+              "RelativeToolTip": "game\\server\\hl2mp\\hl2mp_player.cpp",
+              "ViewState": "AgIAAIkBAAAAAAAAAAAuwJABAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-18T00:05:29.43Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

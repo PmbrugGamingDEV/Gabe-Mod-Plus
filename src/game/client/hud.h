@@ -190,6 +190,8 @@ public:
 public:
 
 	int							m_iKeyBits;
+	bool						m_bSkipClear;
+
 #ifndef _XBOX
 	float						m_flMouseSensitivity;
 	float						m_flMouseSensitivityFactor;

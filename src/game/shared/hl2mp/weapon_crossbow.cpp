@@ -19,6 +19,7 @@
 	#include "Sprite.h"
 	#include "SpriteTrail.h"
 	#include "beam_shared.h"
+	#include "explode.h"
 #endif
 
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
@@ -30,8 +31,25 @@
 //#define BOLT_MODEL			"models/crossbow_bolt.mdl"
 #define BOLT_MODEL	"models/weapons/w_missile_closed.mdl"
 
-#define BOLT_AIR_VELOCITY	3500
-#define BOLT_WATER_VELOCITY	1500
+// Gabe Plus Crossbow Settings
+ConVar gabeplus_crossbow_airvelocity("gabeplus_crossbow_airvel", "3500", FCVAR_ARCHIVE | FCVAR_REPLICATED | FCVAR_NOTIFY, "Air Velocity of crossbow bolts fired from the crossbow.");
+ConVar gabeplus_crossbow_watervelocity("gabeplus_crossbow_watervel", "1500", FCVAR_ARCHIVE | FCVAR_REPLICATED | FCVAR_NOTIFY, "Water Velocity of crossbow bolts fired from the crossbow.");
+ConVar gabeplus_crossbow_firerate(
+	"gabeplus_crossbow_firerate",
+	"0.05",
+	FCVAR_ARCHIVE | FCVAR_REPLICATED | FCVAR_NOTIFY,
+	"Seconds between crossbow shots"
+);
+ConVar gabeplus_crossbow_explode(
+	"gabeplus_crossbow_explode",
+	"1",
+	FCVAR_ARCHIVE | FCVAR_REPLICATED | FCVAR_NOTIFY,
+	"Whether crossbow bolts explode on impact (1 = true, 0 = false)"
+);
+
+#define BOLT_AIR_VELOCITY	gabeplus_crossbow_airvelocity.GetInt()
+#define BOLT_WATER_VELOCITY	gabeplus_crossbow_watervelocity.GetInt()
+#define BOLT_FIRE_RATE gabeplus_crossbow_firerate.GetFloat()
 #define	BOLT_SKIN_NORMAL	0
 #define BOLT_SKIN_GLOW		1
 
@@ -61,6 +79,7 @@ public:
 	void Precache( void );
 	void BubbleThink( void );
 	void BoltTouch( CBaseEntity *pOther );
+	virtual bool ShouldCollide(int collisionGroup, int contentsMask) const;
 	bool CreateVPhysics( void );
 	unsigned int PhysicsSolidMaskForEntity() const;
 	static CCrossbowBolt *BoltCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, CBasePlayer *pentOwner = NULL );
@@ -168,6 +187,7 @@ void CCrossbowBolt::Spawn( void )
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_CUSTOM );
 	UTIL_SetSize( this, -Vector(1,1,1), Vector(1,1,1) );
 	SetSolid( SOLID_BBOX );
+	SetCollisionGroup(COLLISION_GROUP_PROJECTILE);
 	SetGravity( 0.05f );
 	
 	// Make sure we're updated if we're underwater
@@ -195,6 +215,16 @@ void CCrossbowBolt::Precache( void )
 	PrecacheModel( "sprites/light_glow02_noz.vmt" );
 }
 
+bool CCrossbowBolt::ShouldCollide(int collisionGroup, int contentsMask) const
+{
+	// Never collide with other projectiles (including other bolts)
+	if (collisionGroup == COLLISION_GROUP_PROJECTILE)
+		return false;
+
+	return BaseClass::ShouldCollide(collisionGroup, contentsMask);
+}
+
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : *pOther - 
@@ -202,6 +232,10 @@ void CCrossbowBolt::Precache( void )
 void CCrossbowBolt::BoltTouch( CBaseEntity *pOther )
 {
 	if ( !pOther->IsSolid() || pOther->IsSolidFlagSet(FSOLID_VOLUME_CONTENTS) )
+		return;
+
+	// Ignore other crossbow bolts
+	if (pOther->ClassMatches("crossbow_bolt"))
 		return;
 
 	if ( pOther->m_takedamage != DAMAGE_NO )
@@ -353,6 +387,24 @@ void CCrossbowBolt::BoltTouch( CBaseEntity *pOther )
 			UTIL_Remove( this );
 		}
 	}
+#ifndef CLIENT_DLL
+	// Bolts explode if convar is enabled
+	if ( gabeplus_crossbow_explode.GetBool() )
+	{
+		ExplosionCreate(
+			GetAbsOrigin(),     // center
+			QAngle(0, 0, 0),  // angles
+			this,               // inflictor
+			150,                // magnitude
+			256,                // radius
+			true,               // doDamage
+			500.0f,
+			false,
+			false,
+			DMG_BLAST
+		);
+	}
+#endif
 
 	if ( g_pGameRules->IsMultiplayer() )
 	{
@@ -401,6 +453,11 @@ public:
 	virtual void	SecondaryAttack( void );
 	virtual bool	Deploy( void );
 	virtual bool	Holster( CBaseCombatWeapon *pSwitchingTo = NULL );
+	virtual float GetFireRate()
+	{
+		return max(gabeplus_crossbow_firerate.GetFloat(), 0.001f);
+	}
+
 	virtual bool	Reload( void );
 	virtual void	ItemPostFrame( void );
 	virtual void	ItemBusyFrame( void );
@@ -496,12 +553,12 @@ IMPLEMENT_ACTTABLE(CWeaponCrossbow);
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-CWeaponCrossbow::CWeaponCrossbow( void )
+CWeaponCrossbow::CWeaponCrossbow(void)
 {
-	m_bReloadsSingly	= true;
-	m_bFiresUnderwater	= true;
-	m_bInZoom			= false;
-	m_bMustReload		= false;
+	m_bReloadsSingly = false;
+	m_bFiresUnderwater = true;
+	m_bInZoom = false;
+	m_bMustReload = false;
 }
 
 #define	CROSSBOW_GLOW_SPRITE	"sprites/light_glow02_noz.vmt"
@@ -542,7 +599,7 @@ void CWeaponCrossbow::PrimaryAttack( void )
 	}
 
 	// Signal a reload
-	m_bMustReload = true;
+	m_bMustReload = false;
 
 	SetWeaponIdleTime( gpGlobals->curtime + SequenceDuration( ACT_VM_PRIMARYATTACK ) );
 }
@@ -561,12 +618,6 @@ void CWeaponCrossbow::SecondaryAttack( void )
 //-----------------------------------------------------------------------------
 bool CWeaponCrossbow::Reload( void )
 {
-	if ( BaseClass::Reload() )
-	{
-		m_bMustReload = false;
-		return true;
-	}
-
 	return false;
 }
 
@@ -600,10 +651,10 @@ void CWeaponCrossbow::ItemPostFrame( void )
 	// Allow zoom toggling
 	CheckZoomToggle();
 
-	if ( m_bMustReload && HasWeaponIdleTimeElapsed() )
+	/* if (m_bMustReload && HasWeaponIdleTimeElapsed())
 	{
 		Reload();
-	}
+	} */// Nope, crossbow doesn't reload
 
 	BaseClass::ItemPostFrame();
 }
@@ -613,21 +664,6 @@ void CWeaponCrossbow::ItemPostFrame( void )
 //-----------------------------------------------------------------------------
 void CWeaponCrossbow::FireBolt( void )
 {
-	if ( m_iClip1 <= 0 )
-	{
-		if ( !m_bFireOnEmpty )
-		{
-			Reload();
-		}
-		else
-		{
-			WeaponSound( EMPTY );
-			m_flNextPrimaryAttack = 0.15;
-		}
-
-		return;
-	}
-
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 	
 	if ( pOwner == NULL )
@@ -653,22 +689,14 @@ void CWeaponCrossbow::FireBolt( void )
 
 #endif
 
-	m_iClip1--;
-
-	pOwner->ViewPunch( QAngle( -2, 0, 0 ) );
+	//m_iClip1--;
 
 	WeaponSound( SINGLE );
 	WeaponSound( SPECIAL2 );
 
 	SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 
-	if ( !m_iClip1 && pOwner->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
-	{
-		// HEV suit - indicate out of ammo condition
-		pOwner->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
-	}
-
-	m_flNextPrimaryAttack = m_flNextSecondaryAttack	= gpGlobals->curtime + 0.75;
+	m_flNextPrimaryAttack = gpGlobals->curtime + GetFireRate();
 
 	DoLoadEffect();
 	SetChargerState( CHARGER_STATE_DISCHARGE );

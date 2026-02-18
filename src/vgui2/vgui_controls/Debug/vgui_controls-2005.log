@@ -1,0 +1,39 @@
+﻿Build started 1/11/2026 4:44:01 PM.
+     1>Project "C:\GabeModPlus\src\vgui2\vgui_controls\vgui_controls-2005.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         D:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I..\..\common /I..\..\public /I..\..\public\tier0 /I..\..\public\tier1 /ZI /nologo /W4 /WX- /Od /Oy- /D WIN32 /D _WIN32 /D _DEBUG /D DEBUG /D _LIB /D _CRT_SECURE_NO_DEPRECATE /D _CRT_NONSTDC_NO_DEPRECATE /D _MBCS /GF /Gm /RTC1 /MTd /GS- /fp:fast /Zc:wchar_t /Zc:forScope /GR /openmp- /Fo".\Debug\\" /Fd".\Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt MapTile.cpp MapTileGrid.cpp
+         MapTile.cpp
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptile.cpp(53): error C2027: use of undefined type 'vgui::ILocalize'
+                 c:\gabemodplus\src\public\tier3\tier3.h(37) : see declaration of 'vgui::ILocalize'
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptile.cpp(53): error C2227: left of '->ConvertANSIToUnicode' must point to class/struct/union/generic type
+         Generating Code...
+         Compiling...
+         MapTileGrid.cpp
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(17): warning C4150: deletion of pointer to incomplete type 'MapTile'; no destructor called
+                 c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.h(7) : see declaration of 'MapTile'
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(26): error C2872: 'MapTile' : ambiguous symbol
+                 could be 'c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.h(7) : MapTile'
+                 or       'c:\gabemodplus\src\vgui2\vgui_controls\maptile.h(6) : vgui::MapTile'
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(26): error C2514: 'MapTile' : class has no constructors
+                 c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.h(7) : see declaration of 'MapTile'
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(33): error C2027: use of undefined type 'MapTile'
+                 c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.h(7) : see declaration of 'MapTile'
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(33): error C2227: left of '->GetMapName' must point to class/struct/union/generic type
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(49): error C2027: use of undefined type 'MapTile'
+                 c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.h(7) : see declaration of 'MapTile'
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(49): error C2227: left of '->SetPos' must point to class/struct/union/generic type
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(50): error C2027: use of undefined type 'MapTile'
+                 c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.h(7) : see declaration of 'MapTile'
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(50): error C2227: left of '->SetSize' must point to class/struct/union/generic type
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(72): error C2027: use of undefined type 'MapTile'
+                 c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.h(7) : see declaration of 'MapTile'
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(72): error C2227: left of '->GetMapName' must point to class/struct/union/generic type
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(73): error C2027: use of undefined type 'MapTile'
+                 c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.h(7) : see declaration of 'MapTile'
+     1>c:\gabemodplus\src\vgui2\vgui_controls\maptilegrid.cpp(73): error C2227: left of '->SetSelected' must point to class/struct/union/generic type
+         Generating Code...
+     1>Done Building Project "C:\GabeModPlus\src\vgui2\vgui_controls\vgui_controls-2005.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.58

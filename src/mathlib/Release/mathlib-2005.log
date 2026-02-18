@@ -1,0 +1,23 @@
+﻿  3dnow.cpp
+  anorms.cpp
+  bumpvects.cpp
+  color_conversion.cpp
+  halton.cpp
+  IceKey.cpp
+  imagequant.cpp
+  lightdesc.cpp
+  mathlib_base.cpp
+  polyhedron.cpp
+  powsse.cpp
+  quantize.cpp
+  randsse.cpp
+  simdvectormatrix.cpp
+  sparse_convolution_noise.cpp
+  sse.cpp
+  sseconst.cpp
+  ssenoise.cpp
+  vector.cpp
+  vmatrix.cpp
+  Generating Code...
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1299,5): warning MSB8012: TargetPath(C:\GabeModPlus\src\mathlib\.\Release\mathlib.lib) does not match the Library's OutputFile property value (C:\GabeModPlus\src\lib\public\mathlib.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+  mathlib-2005.vcxproj -> C:\GabeModPlus\src\mathlib\.\Release\mathlib.lib

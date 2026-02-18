@@ -1,0 +1,3 @@
+﻿bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
+bitmap.lib(S3_quant.obj) : error LNK2026: module unsafe for SAFESEH image.
+.\Release\vtfdiff.exe : fatal error LNK1281: Unable to generate SAFESEH image.

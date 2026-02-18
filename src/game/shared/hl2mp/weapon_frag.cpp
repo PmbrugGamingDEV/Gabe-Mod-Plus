@@ -84,21 +84,10 @@ private:
 	CWeaponFrag( const CWeaponFrag & );
 	DECLARE_ACTTABLE();
 };
-acttable_t	CWeaponFrag::m_acttable[] = 
+
+acttable_t	CWeaponFrag::m_acttable[] =
 {
-	{ ACT_MP_STAND_IDLE,				ACT_HL2MP_IDLE_GRENADE,					false },
-	{ ACT_MP_CROUCH_IDLE,				ACT_HL2MP_IDLE_CROUCH_GRENADE,			false },
-
-	{ ACT_MP_RUN,						ACT_HL2MP_RUN_GRENADE,					false },
-	{ ACT_MP_CROUCHWALK,				ACT_HL2MP_WALK_CROUCH_GRENADE,			false },
-
-	{ ACT_MP_ATTACK_STAND_PRIMARYFIRE,	ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE,	false },
-	{ ACT_MP_ATTACK_CROUCH_PRIMARYFIRE,	ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE,	false },
-
-	{ ACT_MP_RELOAD_STAND,				ACT_HL2MP_GESTURE_RELOAD_GRENADE,		false },
-	{ ACT_MP_RELOAD_CROUCH,				ACT_HL2MP_GESTURE_RELOAD_GRENADE,		false },
-
-	{ ACT_MP_JUMP,						ACT_HL2MP_JUMP_GRENADE,					false },
+	{ ACT_RANGE_ATTACK1, ACT_RANGE_ATTACK_SLAM, true },
 };
 
 IMPLEMENT_ACTTABLE(CWeaponFrag);
@@ -157,46 +146,63 @@ void CWeaponFrag::Precache( void )
 // Input  : *pEvent - 
 //			*pOperator - 
 //-----------------------------------------------------------------------------
-void CWeaponFrag::Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator )
+void CWeaponFrag::Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator)
 {
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
 	bool fThrewGrenade = false;
 
-	switch( pEvent->event )
+	switch (pEvent->event)
 	{
-		case EVENT_WEAPON_SEQUENCE_FINISHED:
-			m_fDrawbackFinished = true;
-			break;
+	case EVENT_WEAPON_SEQUENCE_FINISHED:
+		m_fDrawbackFinished = true;
+		break;
 
-		case EVENT_WEAPON_THROW:
-			ThrowGrenade( pOwner );
-			DecrementAmmo( pOwner );
-			fThrewGrenade = true;
-			break;
+	case EVENT_WEAPON_THROW:
+		ThrowGrenade(pOwner);
+		DecrementAmmo(pOwner);
+		fThrewGrenade = true;
+		break;
 
-		case EVENT_WEAPON_THROW2:
-			RollGrenade( pOwner );
-			DecrementAmmo( pOwner );
-			fThrewGrenade = true;
-			break;
+	case EVENT_WEAPON_THROW2:
+		RollGrenade(pOwner);
+		DecrementAmmo(pOwner);
+		fThrewGrenade = true;
+		break;
 
-		case EVENT_WEAPON_THROW3:
-			LobGrenade( pOwner );
-			DecrementAmmo( pOwner );
-			fThrewGrenade = true;
-			break;
+	case EVENT_WEAPON_THROW3:
+		LobGrenade(pOwner);
+		DecrementAmmo(pOwner);
+		fThrewGrenade = true;
+		break;
 
-		default:
-			BaseClass::Operator_HandleAnimEvent( pEvent, pOperator );
-			break;
+	default:
+		BaseClass::Operator_HandleAnimEvent(pEvent, pOperator);
+		break;
 	}
 
 #define RETHROW_DELAY	0.5
-	if( fThrewGrenade )
+	if (fThrewGrenade)
 	{
-		m_flNextPrimaryAttack	= gpGlobals->curtime + RETHROW_DELAY;
-		m_flNextSecondaryAttack	= gpGlobals->curtime + RETHROW_DELAY;
+		m_flNextPrimaryAttack = gpGlobals->curtime + RETHROW_DELAY;
+		m_flNextSecondaryAttack = gpGlobals->curtime + RETHROW_DELAY;
 		m_flTimeWeaponIdle = FLT_MAX; //NOTE: This is set once the animation has finished up!
+
+		// Make a sound designed to scare snipers back into their holes!
+		CBaseCombatCharacter* pOwner = GetOwner();
+
+		if (pOwner)
+		{
+			Vector vecSrc = pOwner->Weapon_ShootPosition();
+			Vector	vecDir;
+
+			AngleVectors(pOwner->EyeAngles(), &vecDir);
+
+			trace_t tr;
+
+			UTIL_TraceLine(vecSrc, vecSrc + vecDir * 1024, MASK_SOLID_BRUSHONLY, pOwner, COLLISION_GROUP_NONE, &tr);
+
+			CSoundEnt::InsertSound(SOUND_DANGER_SNIPERONLY, tr.endpos, 384, 0.2, pOwner);
+		}
 	}
 }
 

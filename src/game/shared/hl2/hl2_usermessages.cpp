@@ -24,6 +24,8 @@ void RegisterUserMessages( void )
 	usermessages->Register( "ResetHUD", 1);		// called every respawn
 	usermessages->Register( "GameTitle", 0 );
 	usermessages->Register( "ItemPickup", -1 );
+	usermessages->Register("KillFeed", -1);
+	usermessages->Register("DamageFeed", -1);
 	usermessages->Register( "ShowMenu", -1 );
 	usermessages->Register( "Shake", 13 );
 	usermessages->Register( "Fade", 10 );

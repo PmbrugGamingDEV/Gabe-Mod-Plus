@@ -1,0 +1,2 @@
+﻿  StdAfx.cpp
+c:\gabemodplus\src\utils\qc_eyes\stdafx.h(15): fatal error C1083: Cannot open include file: 'afxwin.h': No such file or directory

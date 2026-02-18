@@ -1,0 +1,818 @@
+
+
+
+materialPath: D:\Steam\steamapps\SourceMods\gabemodplus\materials
+Loading C:\GabeModPlus\mapsrc\gabe_grasssquare.vmf
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing C:\GabeModPlus\mapsrc\gabe_grasssquare.prt...Building visibility clusters...
+done (0)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day01_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day01_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (0) (11295 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Compacting texture/material tables...
+Reduced 134 texinfos to 68
+Reduced 6 texdatas to 6 (137 bytes to 137)
+Writing C:\GabeModPlus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+12 threads
+reading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+reading c:\gabemodplus\mapsrc\gabe_grasssquare.prt
+  13 portalclusters
+  21 numportals
+0...1...2...3...4...5...6...7...8...9...10Optimized: 0 visible clusters (0.00%)
+Total clusters visible: 169
+Average clusters visible: 13
+Building PAS...
+Average clusters audible: 13
+visdatasize:160  compressed from 208
+writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[45 texlights parsed from 'lights.rad']
+
+Loading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+147 faces
+75758 square feet [10909204.00 square inches]
+0 Displacements
+0 Square Feet [0.00 Square Inches]
+147 patches before subdivision
+3583 patches after subdivision
+0 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 191259, max 211
+transfer lists:   1.5 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0004 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                  12/1024          576/49152    ( 1.2%) 
+brushes                 26/8192          312/98304    ( 0.3%) 
+brushsides             176/65536        1408/524288   ( 0.3%) 
+planes                 248/65536        4960/1310720  ( 0.4%) 
+vertexes               223/65536        2676/786432   ( 0.3%) 
+nodes                  122/65536        3904/2097152  ( 0.2%) 
+texinfos                68/12288        4896/884736   ( 0.6%) 
+texdata                  6/2048          192/65536    ( 0.3%) 
+dispinfos                0/0               0/0        ( 0.0%) 
+disp_verts               0/0               0/0        ( 0.0%) 
+disp_tris                0/0               0/0        ( 0.0%) 
+disp_lmsamples           0/0               0/0        ( 0.0%) 
+faces                  147/65536        8232/3670016  ( 0.2%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces               84/65536        4704/3670016  ( 0.1%) 
+leaves                 135/65536        4320/2097152  ( 0.2%) 
+leaffaces              156/65536         312/131072   ( 0.2%) 
+leafbrushes             89/65536         178/131072   ( 0.1%) 
+areas                    2/256            16/2048     ( 0.8%) 
+surfedges              970/512000       3880/2048000  ( 0.2%) 
+edges                  514/256000       2056/1024000  ( 0.2%) 
+LDR worldlights          0/8192            0/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            0/32768           0/393216   ( 0.0%) 
+waterstrips              3/32768          30/327680   ( 0.0%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices            42/65536          84/131072   ( 0.1%) 
+cubemapsamples           0/1024            0/16384    ( 0.0%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]      100260/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]         160/16777216 ( 0.0%) 
+entdata               [variable]       20690/393216   ( 5.3%) 
+LDR ambient table      135/65536         540/262144   ( 0.2%) 
+HDR ambient table      135/65536         540/262144   ( 0.2%) 
+LDR leaf ambient        79/65536        2212/1835008  ( 0.1%) 
+HDR leaf ambient       135/65536        3780/1835008  ( 0.2%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/868      ( 0.1%) 
+pakfile               [variable]      105695/0        ( 0.0%) 
+physics               [variable]       11295/4194304  ( 0.3%) 
+physics terrain       [variable]           2/1048576  ( 0.0%) 
+
+Level flags = 0
+
+Total triangle count: 340
+Writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[45 texlights parsed from 'lights.rad']
+
+Loading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+147 faces
+75758 square feet [10909204.00 square inches]
+0 Displacements
+0 Square Feet [0.00 Square Inches]
+147 patches before subdivision
+3583 patches after subdivision
+0 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 191259, max 211
+transfer lists:   1.5 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0005 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                  12/1024          576/49152    ( 1.2%) 
+brushes                 26/8192          312/98304    ( 0.3%) 
+brushsides             176/65536        1408/524288   ( 0.3%) 
+planes                 248/65536        4960/1310720  ( 0.4%) 
+vertexes               223/65536        2676/786432   ( 0.3%) 
+nodes                  122/65536        3904/2097152  ( 0.2%) 
+texinfos                68/12288        4896/884736   ( 0.6%) 
+texdata                  6/2048          192/65536    ( 0.3%) 
+dispinfos                0/0               0/0        ( 0.0%) 
+disp_verts               0/0               0/0        ( 0.0%) 
+disp_tris                0/0               0/0        ( 0.0%) 
+disp_lmsamples           0/0               0/0        ( 0.0%) 
+faces                  147/65536        8232/3670016  ( 0.2%) 
+hdr faces              147/65536        8232/3670016  ( 0.2%) 
+origfaces               84/65536        4704/3670016  ( 0.1%) 
+leaves                 135/65536        4320/2097152  ( 0.2%) 
+leaffaces              156/65536         312/131072   ( 0.2%) 
+leafbrushes             89/65536         178/131072   ( 0.1%) 
+areas                    2/256            16/2048     ( 0.8%) 
+surfedges              970/512000       3880/2048000  ( 0.2%) 
+edges                  514/256000       2056/1024000  ( 0.2%) 
+LDR worldlights          0/8192            0/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            0/32768           0/393216   ( 0.0%) 
+waterstrips              3/32768          30/327680   ( 0.0%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices            42/65536          84/131072   ( 0.1%) 
+cubemapsamples           0/1024            0/16384    ( 0.0%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]      100260/0        ( 0.0%) 
+HDR lightdata         [variable]      100260/0        ( 0.0%) 
+visdata               [variable]         160/16777216 ( 0.0%) 
+entdata               [variable]       20690/393216   ( 5.3%) 
+LDR ambient table      135/65536         540/262144   ( 0.2%) 
+HDR ambient table      135/65536         540/262144   ( 0.2%) 
+LDR leaf ambient        79/65536        2212/1835008  ( 0.1%) 
+HDR leaf ambient        79/65536        2212/1835008  ( 0.1%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/868      ( 0.1%) 
+pakfile               [variable]      105695/0        ( 0.0%) 
+physics               [variable]       11295/4194304  ( 0.3%) 
+physics terrain       [variable]           2/1048576  ( 0.0%) 
+
+Level flags = 0
+
+Total triangle count: 340
+Writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+materialPath: D:\Steam\steamapps\SourceMods\gabemodplus\materials
+Loading C:\GabeModPlus\mapsrc\gabe_grasssquare.vmf
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing C:\GabeModPlus\mapsrc\gabe_grasssquare.prt...Building visibility clusters...
+done (0)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day01_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day01_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (0) (11655 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Water found with no water_lod_control entity, creating a default one.
+Compacting texture/material tables...
+Reduced 144 texinfos to 78
+Reduced 10 texdatas to 8 (304 bytes to 208)
+Writing C:\GabeModPlus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+12 threads
+reading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+reading c:\gabemodplus\mapsrc\gabe_grasssquare.prt
+  36 portalclusters
+  80 numportals
+0...1...2...3...4...5...6...7...8...9...10Optimized: 4 visible clusters (0.00%)
+Total clusters visible: 1232
+Average clusters visible: 34
+Building PAS...
+Average clusters audible: 36
+visdatasize:652  compressed from 576
+writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[45 texlights parsed from 'lights.rad']
+
+Loading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+226 faces
+121921 square feet [17556700.00 square inches]
+1 Displacements
+15709 Square Feet [2262238.50 Square Inches]
+226 patches before subdivision
+3372 patches after subdivision
+0 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 123965, max 155
+transfer lists:   0.9 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0005 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                  12/1024          576/49152    ( 1.2%) 
+brushes                 26/8192          312/98304    ( 0.3%) 
+brushsides             176/65536        1408/524288   ( 0.3%) 
+planes                 254/65536        5080/1310720  ( 0.4%) 
+vertexes               298/65536        3576/786432   ( 0.5%) 
+nodes                  162/65536        5184/2097152  ( 0.2%) 
+texinfos                78/12288        5616/884736   ( 0.6%) 
+texdata                  8/2048          256/65536    ( 0.4%) 
+dispinfos                1/0             176/0        ( 0.0%) 
+disp_verts              81/0            1620/0        ( 0.0%) 
+disp_tris              128/0             256/0        ( 0.0%) 
+disp_lmsamples       36848/0           36848/0        ( 0.0%) 
+faces                  226/65536       12656/3670016  ( 0.3%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces              101/65536        5656/3670016  ( 0.2%) 
+leaves                 175/65536        5600/2097152  ( 0.3%) 
+leaffaces              246/65536         492/131072   ( 0.4%) 
+leafbrushes             93/65536         186/131072   ( 0.1%) 
+areas                    2/256            16/2048     ( 0.8%) 
+surfedges             1420/512000       5680/2048000  ( 0.3%) 
+edges                  747/256000       2988/1024000  ( 0.3%) 
+LDR worldlights          0/8192            0/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            1/32768          12/393216   ( 0.0%) 
+waterstrips             14/32768         140/327680   ( 0.0%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices           195/65536         390/131072   ( 0.3%) 
+cubemapsamples           1/1024           16/16384    ( 0.1%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]      112064/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]         652/16777216 ( 0.0%) 
+entdata               [variable]       21034/393216   ( 5.3%) 
+LDR ambient table      175/65536         700/262144   ( 0.3%) 
+HDR ambient table      175/65536         700/262144   ( 0.3%) 
+LDR leaf ambient       102/65536        2856/1835008  ( 0.2%) 
+HDR leaf ambient       175/65536        4900/1835008  ( 0.3%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/868      ( 0.1%) 
+pakfile               [variable]      212081/0        ( 0.0%) 
+physics               [variable]       11655/4194304  ( 0.3%) 
+physics terrain       [variable]         307/1048576  ( 0.0%) 
+
+Level flags = 0
+
+Total triangle count: 564
+Writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[45 texlights parsed from 'lights.rad']
+
+Loading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+226 faces
+121921 square feet [17556700.00 square inches]
+1 Displacements
+15709 Square Feet [2262238.50 Square Inches]
+226 patches before subdivision
+3372 patches after subdivision
+0 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 123965, max 155
+transfer lists:   0.9 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0005 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                  12/1024          576/49152    ( 1.2%) 
+brushes                 26/8192          312/98304    ( 0.3%) 
+brushsides             176/65536        1408/524288   ( 0.3%) 
+planes                 254/65536        5080/1310720  ( 0.4%) 
+vertexes               298/65536        3576/786432   ( 0.5%) 
+nodes                  162/65536        5184/2097152  ( 0.2%) 
+texinfos                78/12288        5616/884736   ( 0.6%) 
+texdata                  8/2048          256/65536    ( 0.4%) 
+dispinfos                1/0             176/0        ( 0.0%) 
+disp_verts              81/0            1620/0        ( 0.0%) 
+disp_tris              128/0             256/0        ( 0.0%) 
+disp_lmsamples       36848/0           36848/0        ( 0.0%) 
+faces                  226/65536       12656/3670016  ( 0.3%) 
+hdr faces              226/65536       12656/3670016  ( 0.3%) 
+origfaces              101/65536        5656/3670016  ( 0.2%) 
+leaves                 175/65536        5600/2097152  ( 0.3%) 
+leaffaces              246/65536         492/131072   ( 0.4%) 
+leafbrushes             93/65536         186/131072   ( 0.1%) 
+areas                    2/256            16/2048     ( 0.8%) 
+surfedges             1420/512000       5680/2048000  ( 0.3%) 
+edges                  747/256000       2988/1024000  ( 0.3%) 
+LDR worldlights          0/8192            0/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            1/32768          12/393216   ( 0.0%) 
+waterstrips             14/32768         140/327680   ( 0.0%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices           195/65536         390/131072   ( 0.3%) 
+cubemapsamples           1/1024           16/16384    ( 0.1%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]      112064/0        ( 0.0%) 
+HDR lightdata         [variable]      112064/0        ( 0.0%) 
+visdata               [variable]         652/16777216 ( 0.0%) 
+entdata               [variable]       21034/393216   ( 5.3%) 
+LDR ambient table      175/65536         700/262144   ( 0.3%) 
+HDR ambient table      175/65536         700/262144   ( 0.3%) 
+LDR leaf ambient       102/65536        2856/1835008  ( 0.2%) 
+HDR leaf ambient       102/65536        2856/1835008  ( 0.2%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/868      ( 0.1%) 
+pakfile               [variable]      212081/0        ( 0.0%) 
+physics               [variable]       11655/4194304  ( 0.3%) 
+physics terrain       [variable]         307/1048576  ( 0.0%) 
+
+Level flags = 0
+
+Total triangle count: 564
+Writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+materialPath: D:\Steam\steamapps\SourceMods\gabemodplus\materials
+Loading C:\GabeModPlus\mapsrc\gabe_grasssquare.vmf
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing C:\GabeModPlus\mapsrc\gabe_grasssquare.prt...Building visibility clusters...
+done (0)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day01_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day01_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (0) (11655 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Water found with no water_lod_control entity, creating a default one.
+Compacting texture/material tables...
+Reduced 144 texinfos to 78
+Reduced 10 texdatas to 8 (304 bytes to 208)
+Writing C:\GabeModPlus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+12 threads
+reading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+reading c:\gabemodplus\mapsrc\gabe_grasssquare.prt
+  36 portalclusters
+  80 numportals
+0...1...2...3...4...5...6...7...8...9...10Optimized: 4 visible clusters (0.00%)
+Total clusters visible: 1232
+Average clusters visible: 34
+Building PAS...
+Average clusters audible: 36
+visdatasize:652  compressed from 576
+writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[45 texlights parsed from 'lights.rad']
+
+Loading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+226 faces
+121921 square feet [17556700.00 square inches]
+1 Displacements
+15709 Square Feet [2262238.50 Square Inches]
+226 patches before subdivision
+3372 patches after subdivision
+2 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 123965, max 155
+transfer lists:   0.9 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(532, 450, 230)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(30, 18, 7)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(2, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0005 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                  12/1024          576/49152    ( 1.2%) 
+brushes                 26/8192          312/98304    ( 0.3%) 
+brushsides             176/65536        1408/524288   ( 0.3%) 
+planes                 254/65536        5080/1310720  ( 0.4%) 
+vertexes               298/65536        3576/786432   ( 0.5%) 
+nodes                  162/65536        5184/2097152  ( 0.2%) 
+texinfos                78/12288        5616/884736   ( 0.6%) 
+texdata                  8/2048          256/65536    ( 0.4%) 
+dispinfos                1/0             176/0        ( 0.0%) 
+disp_verts              81/0            1620/0        ( 0.0%) 
+disp_tris              128/0             256/0        ( 0.0%) 
+disp_lmsamples       36848/0           36848/0        ( 0.0%) 
+faces                  226/65536       12656/3670016  ( 0.3%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces              101/65536        5656/3670016  ( 0.2%) 
+leaves                 175/65536        5600/2097152  ( 0.3%) 
+leaffaces              246/65536         492/131072   ( 0.4%) 
+leafbrushes             93/65536         186/131072   ( 0.1%) 
+areas                    2/256            16/2048     ( 0.8%) 
+surfedges             1420/512000       5680/2048000  ( 0.3%) 
+edges                  747/256000       2988/1024000  ( 0.3%) 
+LDR worldlights          2/8192          176/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            1/32768          12/393216   ( 0.0%) 
+waterstrips             14/32768         140/327680   ( 0.0%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices           195/65536         390/131072   ( 0.3%) 
+cubemapsamples           1/1024           16/16384    ( 0.1%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]      112064/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]         652/16777216 ( 0.0%) 
+entdata               [variable]       21002/393216   ( 5.3%) 
+LDR ambient table      175/65536         700/262144   ( 0.3%) 
+HDR ambient table      175/65536         700/262144   ( 0.3%) 
+LDR leaf ambient       416/65536       11648/1835008  ( 0.6%) 
+HDR leaf ambient       175/65536        4900/1835008  ( 0.3%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/868      ( 0.1%) 
+pakfile               [variable]      212081/0        ( 0.0%) 
+physics               [variable]       11655/4194304  ( 0.3%) 
+physics terrain       [variable]         307/1048576  ( 0.0%) 
+
+Level flags = 0
+
+Total triangle count: 564
+Writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[45 texlights parsed from 'lights.rad']
+
+Loading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+226 faces
+121921 square feet [17556700.00 square inches]
+1 Displacements
+15709 Square Feet [2262238.50 Square Inches]
+226 patches before subdivision
+3372 patches after subdivision
+2 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 123965, max 155
+transfer lists:   0.9 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(532, 450, 230)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(30, 18, 7)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(2, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0005 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                  12/1024          576/49152    ( 1.2%) 
+brushes                 26/8192          312/98304    ( 0.3%) 
+brushsides             176/65536        1408/524288   ( 0.3%) 
+planes                 254/65536        5080/1310720  ( 0.4%) 
+vertexes               298/65536        3576/786432   ( 0.5%) 
+nodes                  162/65536        5184/2097152  ( 0.2%) 
+texinfos                78/12288        5616/884736   ( 0.6%) 
+texdata                  8/2048          256/65536    ( 0.4%) 
+dispinfos                1/0             176/0        ( 0.0%) 
+disp_verts              81/0            1620/0        ( 0.0%) 
+disp_tris              128/0             256/0        ( 0.0%) 
+disp_lmsamples       36848/0           36848/0        ( 0.0%) 
+faces                  226/65536       12656/3670016  ( 0.3%) 
+hdr faces              226/65536       12656/3670016  ( 0.3%) 
+origfaces              101/65536        5656/3670016  ( 0.2%) 
+leaves                 175/65536        5600/2097152  ( 0.3%) 
+leaffaces              246/65536         492/131072   ( 0.4%) 
+leafbrushes             93/65536         186/131072   ( 0.1%) 
+areas                    2/256            16/2048     ( 0.8%) 
+surfedges             1420/512000       5680/2048000  ( 0.3%) 
+edges                  747/256000       2988/1024000  ( 0.3%) 
+LDR worldlights          2/8192          176/720896   ( 0.0%) 
+HDR worldlights          2/8192          176/720896   ( 0.0%) 
+leafwaterdata            1/32768          12/393216   ( 0.0%) 
+waterstrips             14/32768         140/327680   ( 0.0%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices           195/65536         390/131072   ( 0.3%) 
+cubemapsamples           1/1024           16/16384    ( 0.1%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]      112064/0        ( 0.0%) 
+HDR lightdata         [variable]      112064/0        ( 0.0%) 
+visdata               [variable]         652/16777216 ( 0.0%) 
+entdata               [variable]       21002/393216   ( 5.3%) 
+LDR ambient table      175/65536         700/262144   ( 0.3%) 
+HDR ambient table      175/65536         700/262144   ( 0.3%) 
+LDR leaf ambient       416/65536       11648/1835008  ( 0.6%) 
+HDR leaf ambient       416/65536       11648/1835008  ( 0.6%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/868      ( 0.1%) 
+pakfile               [variable]      212081/0        ( 0.0%) 
+physics               [variable]       11655/4194304  ( 0.3%) 
+physics terrain       [variable]         307/1048576  ( 0.0%) 
+
+Level flags = 0
+
+Total triangle count: 564
+Writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+materialPath: D:\Steam\steamapps\SourceMods\gabemodplus\materials
+Loading C:\GabeModPlus\mapsrc\gabe_grasssquare.vmf
+Patching WVT material: maps/gabe_grasssquare/nature/blendsandgrass008a_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing C:\GabeModPlus\mapsrc\gabe_grasssquare.prt...Building visibility clusters...
+done (0)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day01_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day01_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (0) (11655 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Water found with no water_lod_control entity, creating a default one.
+Compacting texture/material tables...
+Reduced 146 texinfos to 78
+Reduced 12 texdatas to 8 (388 bytes to 212)
+Writing C:\GabeModPlus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+12 threads
+reading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+reading c:\gabemodplus\mapsrc\gabe_grasssquare.prt
+  36 portalclusters
+  80 numportals
+0...1...2...3...4...5...6...7...8...9...10Optimized: 4 visible clusters (0.00%)
+Total clusters visible: 1232
+Average clusters visible: 34
+Building PAS...
+Average clusters audible: 36
+visdatasize:652  compressed from 576
+writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[45 texlights parsed from 'lights.rad']
+
+Loading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+226 faces
+121921 square feet [17556700.00 square inches]
+1 Displacements
+15709 Square Feet [2262238.50 Square Inches]
+226 patches before subdivision
+3372 patches after subdivision
+2 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 123965, max 155
+transfer lists:   0.9 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(1440, 1183, 770)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(95, 50, 26)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(10, 4, 2)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(1, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0005 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                  12/1024          576/49152    ( 1.2%) 
+brushes                 26/8192          312/98304    ( 0.3%) 
+brushsides             176/65536        1408/524288   ( 0.3%) 
+planes                 254/65536        5080/1310720  ( 0.4%) 
+vertexes               298/65536        3576/786432   ( 0.5%) 
+nodes                  162/65536        5184/2097152  ( 0.2%) 
+texinfos                78/12288        5616/884736   ( 0.6%) 
+texdata                  8/2048          256/65536    ( 0.4%) 
+dispinfos                1/0             176/0        ( 0.0%) 
+disp_verts              81/0            1620/0        ( 0.0%) 
+disp_tris              128/0             256/0        ( 0.0%) 
+disp_lmsamples       36848/0           36848/0        ( 0.0%) 
+faces                  226/65536       12656/3670016  ( 0.3%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces              101/65536        5656/3670016  ( 0.2%) 
+leaves                 175/65536        5600/2097152  ( 0.3%) 
+leaffaces              246/65536         492/131072   ( 0.4%) 
+leafbrushes             93/65536         186/131072   ( 0.1%) 
+areas                    2/256            16/2048     ( 0.8%) 
+surfedges             1420/512000       5680/2048000  ( 0.3%) 
+edges                  747/256000       2988/1024000  ( 0.3%) 
+LDR worldlights          2/8192          176/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            1/32768          12/393216   ( 0.0%) 
+waterstrips             14/32768         140/327680   ( 0.0%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices           195/65536         390/131072   ( 0.3%) 
+cubemapsamples           1/1024           16/16384    ( 0.1%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]      112064/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]         652/16777216 ( 0.0%) 
+entdata               [variable]       21002/393216   ( 5.3%) 
+LDR ambient table      175/65536         700/262144   ( 0.3%) 
+HDR ambient table      175/65536         700/262144   ( 0.3%) 
+LDR leaf ambient       399/65536       11172/1835008  ( 0.6%) 
+HDR leaf ambient       175/65536        4900/1835008  ( 0.3%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/31372    ( 0.0%) 
+dtl prp lght          [variable]           1/4        (25.0%) 
+HDR dtl prp lght      [variable]           1/4        (25.0%) 
+static props          [variable]           1/868      ( 0.1%) 
+pakfile               [variable]      212708/0        ( 0.0%) 
+physics               [variable]       11655/4194304  ( 0.3%) 
+physics terrain       [variable]         307/1048576  ( 0.0%) 
+
+Level flags = 0
+
+Total triangle count: 564
+Writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[45 texlights parsed from 'lights.rad']
+
+Loading c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+226 faces
+121921 square feet [17556700.00 square inches]
+1 Displacements
+15709 Square Feet [2262238.50 Square Inches]
+226 patches before subdivision
+3372 patches after subdivision
+2 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 123965, max 155
+transfer lists:   0.9 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(1440, 1183, 770)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(95, 50, 26)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(10, 4, 2)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(1, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0005 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                  12/1024          576/49152    ( 1.2%) 
+brushes                 26/8192          312/98304    ( 0.3%) 
+brushsides             176/65536        1408/524288   ( 0.3%) 
+planes                 254/65536        5080/1310720  ( 0.4%) 
+vertexes               298/65536        3576/786432   ( 0.5%) 
+nodes                  162/65536        5184/2097152  ( 0.2%) 
+texinfos                78/12288        5616/884736   ( 0.6%) 
+texdata                  8/2048          256/65536    ( 0.4%) 
+dispinfos                1/0             176/0        ( 0.0%) 
+disp_verts              81/0            1620/0        ( 0.0%) 
+disp_tris              128/0             256/0        ( 0.0%) 
+disp_lmsamples       36848/0           36848/0        ( 0.0%) 
+faces                  226/65536       12656/3670016  ( 0.3%) 
+hdr faces              226/65536       12656/3670016  ( 0.3%) 
+origfaces              101/65536        5656/3670016  ( 0.2%) 
+leaves                 175/65536        5600/2097152  ( 0.3%) 
+leaffaces              246/65536         492/131072   ( 0.4%) 
+leafbrushes             93/65536         186/131072   ( 0.1%) 
+areas                    2/256            16/2048     ( 0.8%) 
+surfedges             1420/512000       5680/2048000  ( 0.3%) 
+edges                  747/256000       2988/1024000  ( 0.3%) 
+LDR worldlights          2/8192          176/720896   ( 0.0%) 
+HDR worldlights          2/8192          176/720896   ( 0.0%) 
+leafwaterdata            1/32768          12/393216   ( 0.0%) 
+waterstrips             14/32768         140/327680   ( 0.0%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices           195/65536         390/131072   ( 0.3%) 
+cubemapsamples           1/1024           16/16384    ( 0.1%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]      112064/0        ( 0.0%) 
+HDR lightdata         [variable]      112064/0        ( 0.0%) 
+visdata               [variable]         652/16777216 ( 0.0%) 
+entdata               [variable]       21002/393216   ( 5.3%) 
+LDR ambient table      175/65536         700/262144   ( 0.3%) 
+HDR ambient table      175/65536         700/262144   ( 0.3%) 
+LDR leaf ambient       399/65536       11172/1835008  ( 0.6%) 
+HDR leaf ambient       399/65536       11172/1835008  ( 0.6%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/31372    ( 0.0%) 
+dtl prp lght          [variable]           1/4        (25.0%) 
+HDR dtl prp lght      [variable]           1/4        (25.0%) 
+static props          [variable]           1/868      ( 0.1%) 
+pakfile               [variable]      212708/0        ( 0.0%) 
+physics               [variable]       11655/4194304  ( 0.3%) 
+physics terrain       [variable]         307/1048576  ( 0.0%) 
+
+Level flags = 0
+
+Total triangle count: 564
+Writing c:\gabemodplus\mapsrc\gabe_grasssquare.bsp
+0 seconds elapsed

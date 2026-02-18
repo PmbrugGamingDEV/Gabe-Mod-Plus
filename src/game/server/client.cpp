@@ -30,6 +30,8 @@
 #include "tier1/strtools.h"
 #include "te_effect_dispatch.h"
 #include "globals.h"
+#include "soundemittersystem/isoundemittersystembase.h"
+#include "soundenvelope.h"
 #include "nav_mesh.h"
 #include "team.h"
 #include "datacache/imdlcache.h"

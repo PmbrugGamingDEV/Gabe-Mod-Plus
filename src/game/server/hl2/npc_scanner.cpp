@@ -1951,6 +1951,7 @@ void CNPC_CScanner::AttackFlash(void)
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::BlindFlashTarget( CBaseEntity *pTarget )
 {
+	/*
 	// Tell all the striders this person is here!
 	CAI_BaseNPC **	ppAIs 	= g_AI_Manager.AccessAIs();
 	int 			nAIs 	= g_AI_Manager.NumAIs();
@@ -1988,17 +1989,18 @@ void CNPC_CScanner::BlindFlashTarget( CBaseEntity *pTarget )
 
 		if ( tr.startsolid == false && tr.fraction == 1.0)
 		{
-			color32 white = { 255, 255, 255, SCANNER_FLASH_MAX_VALUE * dotPr };
+			color32 red = { 255, 0, 0, SCANNER_FLASH_MAX_VALUE * dotPr };
 
 			if ( ( g_pMaterialSystemHardwareConfig != NULL ) && ( g_pMaterialSystemHardwareConfig->GetHDRType() != HDR_TYPE_NONE ) )
 			{
-				white.a = ( byte )( ( float )white.a * 0.9f );
+				red.a = ( byte )( ( float )red.a * 0.9f );
 			}
 
 			float flFadeTime = ( IsX360() ) ? 0.5f : 3.0f;
-			UTIL_ScreenFade( pTarget, white, flFadeTime, 0.5, FFADE_IN );
+			UTIL_ScreenFade( pTarget, red, flFadeTime, 0.5, FFADE_IN );
 		}
 	}
+	*/ // don't flash player, very annoying.
 }
 
 //------------------------------------------------------------------------------

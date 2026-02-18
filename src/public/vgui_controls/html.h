@@ -17,6 +17,8 @@
 #include <vgui/IImage.h>
 #include <vgui_controls/Panel.h>
 #include <vgui_controls/PHandle.h>
+#include "utlvector.h"
+#include "utlstring.h"
 
 namespace vgui
 {
@@ -39,6 +41,13 @@ public:
 	// start and stop the HTML control repainting itself periodically
 	void StartAnimate(int time);
 	void StopAnimate();
+
+	// Gabe Mod + Utility Functions: Go Back a Website
+    void GoBack();
+	/// Gabe Mod + Utility Functions: Go Forward A Website
+    void GoForward();
+    bool CanGoBack() const;
+    bool CanGoForward() const;
 
 	// IHTML pass through functions
 	virtual void OpenURL(const char *URL, bool force = false); // force means ignore the offline mod override
@@ -121,6 +130,9 @@ private:
 	int	m_iScrollbarSize;
 	bool m_bNewWindowsOnly;
 	bool m_bSetVisibleOnPerformLayout;
+
+    CUtlVector<CUtlString> m_History;
+    int m_iHistoryPos;
 
 	struct CustomURLHandler_t
 	{
