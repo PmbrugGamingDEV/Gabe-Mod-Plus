@@ -3,3 +3,4 @@ Source Code for Gabe Mod, a partially ai-coded sandbox mod that acts as a legacy
 Credits (source-code):
 - Half-Life 2: Sandbox team and Adnan Zafar (base physics gun code)
 - TheMaster974: Autojump fix
+- alanedwardes: VAwesomium
