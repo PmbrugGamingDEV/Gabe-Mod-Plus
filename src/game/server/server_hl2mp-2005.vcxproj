@@ -464,6 +464,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="globalstate.cpp" />
     <ClCompile Include="grenadethrown.cpp" />
     <ClCompile Include="guntarget.cpp" />
+    <ClCompile Include="hl2\npc_antliongrub.cpp" />
     <ClCompile Include="hl2\vehicle_jeep.cpp" />
     <ClCompile Include="hl2\vehicle_jetski.cpp" />
     <ClCompile Include="hl2\weapon_immolator.cpp" />
@@ -707,6 +708,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="sun.cpp" />
     <ClCompile Include="..\shared\hl2\survival_gamerules.cpp" />
     <ClCompile Include="..\shared\takedamageinfo.cpp" />
+    <ClCompile Include="test.cpp" />
     <ClCompile Include="weapon_jetpack.cpp" />
     <ClCompile Include="weapon_multitool_legacy.cpp" />
     <ClCompile Include="weapon_proplauncher.cpp" />
@@ -1105,6 +1107,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="globalstate.h" />
     <ClInclude Include="globalstate_private.h" />
     <ClInclude Include="grenadethrown.h" />
+    <ClInclude Include="hl2\npc_antliongrub.h" />
     <ClInclude Include="hl2\vehicle_jeep.h" />
     <ClInclude Include="h_cycler.h" />
     <ClInclude Include="hierarchy.h" />

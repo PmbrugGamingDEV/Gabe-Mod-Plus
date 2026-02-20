@@ -12,6 +12,7 @@
 #include <vgui_controls/Button.h>
 #include <vgui_controls/ListPanel.h>
 #include <vgui_controls/CheckButton.h>
+#include <vgui_controls/MessageBox.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/Slider.h>
 #include "vgui_controls/imagelist.h"
@@ -31,6 +32,8 @@ extern IVEngineClient* engine;
 using namespace vgui;
 
 ConVar gabeplus_newgame_useampmclock("gabeplus_newgame_useampmclock", "1", FCVAR_ARCHIVE, "If set to 1, use the 12-hour clock (AM/PM)");
+
+class CGamePadUIMapTab;
 
 static void StripExtensionInPlace(char* p)
 {
@@ -83,10 +86,7 @@ static const char* GetMapLastPlayed(const char* map)
 }
 
 // ------------------------------------------------------------
-// Map selection tab (Large columns + icons - FULL VERSION)
-// ------------------------------------------------------------
-// ------------------------------------------------------------
-// Map selection tab (2007-compatible: large columns + icons)
+// Map selection tab
 // ------------------------------------------------------------
 class CGamepadUIMapTab : public Panel
 {
@@ -112,6 +112,8 @@ public:
 		m_pMapList->SetMultiselectEnabled(false);
 		m_pMapList->SetEmptyListText("No maps found.");
 
+		m_pMapList->AddActionSignalTarget(this);
+
 		m_pFilter = new TextEntry(this, "Filter");
 		m_pFilterLabel = new Label(this, "FilterLabel", "Filter:");
 
@@ -129,6 +131,33 @@ public:
 			delete m_pImageList;
 			m_pImageList = NULL;
 		}
+	}
+
+	virtual void OnMessage(KeyValues* params, VPANEL fromPanel)
+	{
+		Msg("Signal received: %s\n", params->GetName());
+
+		if (!Q_stricmp(params->GetName(), "OpenContextMenu"))
+		{
+			int itemID = params->GetInt("itemID", -1);
+
+			if (itemID >= 0)
+			{
+				KeyValues* kv = m_pMapList->GetItem(itemID);
+				if (kv)
+				{
+					const char* map = kv->GetString("map", "");
+					if (map && map[0])
+					{
+						ShowMapInfo(map);
+					}
+				}
+			}
+
+			return; // swallow the message
+		}
+
+		BaseClass::OnMessage(params, fromPanel);
 	}
 
 	virtual void PerformLayout()
@@ -149,8 +178,46 @@ public:
 
 		m_pMapList->SetPos(pad, pad + filterH + 8);
 		m_pMapList->SetSize(w - pad * 2, h - (pad + filterH + 8) - pad);
+	}
 
-		// 2007: no dynamic column resizing API here, so we leave widths fixed.
+	void ShowMapInfo(const char* map)
+	{
+		char path[256];
+		Q_snprintf(path, sizeof(path), "maps/%s.txt", map);
+
+		char author[128] = "Unknown";
+		char description[512] = "No description provided.";
+
+		KeyValues* kv = new KeyValues(map);
+
+		if (kv->LoadFromFile(g_pFullFileSystem, path, "GAME"))
+		{
+			KeyValues* sub = kv->FindKey(map);
+			if (sub)
+			{
+				const char* a = sub->GetString("author", "");
+				const char* d = sub->GetString("description", "");
+
+				if (a[0])
+					Q_strncpy(author, a, sizeof(author));
+
+				if (d[0])
+					Q_strncpy(description, d, sizeof(description));
+			}
+		}
+
+		kv->deleteThis();
+
+		char message[768];
+		Q_snprintf(message, sizeof(message),
+			"Map: %s\n\nAuthor: %s\n\nDescription:\n%s",
+			map,
+			author,
+			description
+		);
+
+		MessageBox* box = new MessageBox("Map Information", message, this);
+		box->DoModal();
 	}
 
 	virtual void OnThink()
@@ -353,11 +420,21 @@ private:
 			}
 
 			// Try loading a per-map thumbnail: materials/vgui/maps/<map>.vmt
-			// If it doesn't exist, it will fall back to error, but still works.
 			char matPath[256];
 			Q_snprintf(matPath, sizeof(matPath), "maps/%s", map);
 
-			IImage* img = scheme()->GetImage(matPath, true);
+			// Build real disk path for existence check
+			char vmtPath[256];
+			Q_snprintf(vmtPath, sizeof(vmtPath),
+				"materials/vgui/maps/%s.vmt", map);
+
+			// Let filesystem search normally
+			bool exists = g_pFullFileSystem->FileExists(vmtPath);
+
+			// If missing, use fallback logo (no .vmt extension here)
+			const char* finalMat = exists ? matPath : "maps/missing";
+
+			IImage* img = scheme()->GetImage(finalMat, true);
 			int imageIndex = m_pImageList->AddImage(img);
 
 			KeyValues* kv = new KeyValues("item");
@@ -691,7 +768,7 @@ public:
 	{
 		SetParent(parent); // 2007-correct parenting
 
-		SetTitle("CREATE A NEW GAME", true);
+		SetTitle("NEW GAME", true);
 		SetSizeable(false);
 		SetMoveable(true);
 		SetCloseButtonVisible(true);
@@ -709,7 +786,7 @@ public:
 		m_pServerInfoTab = new CGamepadUIServerInfoTab(m_pSheet);
 		m_pSheet->AddPage(m_pServerInfoTab, "Server Info");
 
-		SetSize(1050, 1050);
+		SetSize(780, 600);
 		CenterOnScreen();
 		InvalidateLayout(true, true);
 	}
@@ -747,7 +824,7 @@ public:
 		if (!Q_stricmp(command, "StartServer"))
 		{
 			StartServer();
-			return;
+			return;																																																
 		}
 
 		BaseClass::OnCommand(command);
@@ -846,8 +923,6 @@ private:
 		const bool lanOnly = m_pServerInfoTab->IsLANOnly();
 		const bool publicServer = m_pServerInfoTab->IsPublic();
 
-		engine->ClientCmd_Unrestricted("disconnect\n");
-
 		{
 			char cmd[512];
 
@@ -902,6 +977,7 @@ private:
 			m_pMapTab->Refresh();
 
 			char cmd[256];
+			engine->ClientCmd_Unrestricted("disconnect\n");
 			Q_snprintf(cmd, sizeof(cmd), "map %s\n", mapCopy);
 			engine->ClientCmd_Unrestricted(cmd);
 		}

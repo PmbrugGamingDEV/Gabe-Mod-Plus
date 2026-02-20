@@ -253,6 +253,7 @@ public:
 	public:
 		void SetRowHeight(int tall);
 		int  GetRowHeight() const;
+		int GetRowFromPoint(int x, int y);
 
 private:
 	int  m_iRowHeightOverride;

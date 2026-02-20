@@ -565,6 +565,8 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	g_SteamAPIContext.Init();
 #endif
 
+	SteamAPI_InitSafe(); // Starting the game
+
 	// init each (seperated for ease of debugging)
 	if ( (engine = (IVEngineServer*)appSystemFactory(INTERFACEVERSION_VENGINESERVER, NULL)) == NULL )
 		return false;
@@ -775,12 +777,12 @@ void CServerGameDLL::DLLShutdown( void )
 	SteamClient()->ReleaseUser( GetHSteamPipe(), GetHSteamUser() );
 	SteamClient()->BReleaseSteamPipe( GetHSteamPipe() );
 
+	SteamAPI_Shutdown();
+
 	DisconnectTier3Libraries();
 	DisconnectTier2Libraries();
 	ConVar_Unregister();
 	DisconnectTier1Libraries();
-
-	exit(0);
 }
 
 

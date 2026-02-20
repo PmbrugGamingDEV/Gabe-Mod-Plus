@@ -1854,6 +1854,12 @@
     <ClCompile Include="gabe_constraints.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\Multitool Files</Filter>
     </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\npc_antliongrub.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\achievement_saverestore.h">
@@ -3619,6 +3625,9 @@
     </ClInclude>
     <ClInclude Include="gabe_constraints.h">
       <Filter>Source Files\Gabe Mod + Stuff\Multitool Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\npc_antliongrub.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

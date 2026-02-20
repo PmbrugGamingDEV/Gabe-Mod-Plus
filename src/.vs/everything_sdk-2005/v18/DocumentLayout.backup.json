@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{B6572CBE-7C7F-4FFF-94DE-AFBBBAB11C64}|utils\\serverplugin_sample\\serverplugin_empty-2005.vcxproj|C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_empty.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{B6572CBE-7C7F-4FFF-94DE-AFBBBAB11C64}|utils\\serverplugin_sample\\serverplugin_empty-2005.vcxproj|solutionrelative:utils\\serverplugin_sample\\serverplugin_empty.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B6572CBE-7C7F-4FFF-94DE-AFBBBAB11C64}|utils\\serverplugin_sample\\serverplugin_empty-2005.vcxproj|C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_bot.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{B6572CBE-7C7F-4FFF-94DE-AFBBBAB11C64}|utils\\serverplugin_sample\\serverplugin_empty-2005.vcxproj|solutionrelative:utils\\serverplugin_sample\\serverplugin_bot.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_empty.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:utils\\serverplugin_sample\\serverplugin_empty.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BF3EDBF5-ED65-4567-B348-504C1310A1BB}|vgui2\\vgui_controls\\vgui_controls-2005.vcxproj|C:\\GabeModPlus\\src\\vgui2\\vgui_controls\\consoledialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{BF3EDBF5-ED65-4567-B348-504C1310A1BB}|vgui2\\vgui_controls\\vgui_controls-2005.vcxproj|solutionrelative:vgui2\\vgui_controls\\consoledialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_bot.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:utils\\serverplugin_sample\\serverplugin_bot.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,11 +22,15 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Document",
@@ -36,14 +40,12 @@
               "RelativeDocumentMoniker": "utils\\serverplugin_sample\\serverplugin_empty.cpp",
               "ToolTip": "C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_empty.cpp",
               "RelativeToolTip": "utils\\serverplugin_sample\\serverplugin_empty.cpp",
-              "ViewState": "AgIAAOkAAAAAAAAAAAD4v/QAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-11T00:11:02.523Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-11T00:11:02.523Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "serverplugin_bot.cpp",
               "DocumentMoniker": "C:\\GabeModPlus\\src\\utils\\serverplugin_sample\\serverplugin_bot.cpp",
               "RelativeDocumentMoniker": "utils\\serverplugin_sample\\serverplugin_bot.cpp",
@@ -51,12 +53,11 @@
               "RelativeToolTip": "utils\\serverplugin_sample\\serverplugin_bot.cpp",
               "ViewState": "AgIAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-11T00:10:59.41Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-11T00:10:59.41Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "consoledialog.cpp",
               "DocumentMoniker": "C:\\GabeModPlus\\src\\vgui2\\vgui_controls\\consoledialog.cpp",
               "RelativeDocumentMoniker": "vgui2\\vgui_controls\\consoledialog.cpp",
@@ -64,8 +65,7 @@
               "RelativeToolTip": "vgui2\\vgui_controls\\consoledialog.cpp",
               "ViewState": "AgIAAF0AAAAAAAAAAAAkwGoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-08T01:04:11.248Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-08T01:04:11.248Z"
             }
           ]
         }

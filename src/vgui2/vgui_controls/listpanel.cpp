@@ -1254,6 +1254,27 @@ void ListPanel::DeleteAllItems()
 	RemoveAll();
 }
 
+int ListPanel::GetRowFromPoint(int x, int y)
+{
+	// convert to local space
+	ScreenToLocal(x, y);
+
+	// adjust for table start
+	y -= m_iHeaderHeight + 1;
+
+	if (y < 0)
+		return -1;
+
+	int startItem = GetStartItem();
+
+	int row = startItem + (y / m_iRowHeight);
+
+	if (row < 0 || row >= m_VisibleItems.Count())
+		return -1;
+
+	return row;
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------

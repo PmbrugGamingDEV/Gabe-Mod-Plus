@@ -36,7 +36,7 @@ ConVar hud_showemptyweaponslots( "hud_showemptyweaponslots", "1", FCVAR_ARCHIVE,
 #define CAROUSEL_SMALL_DISPLAY_ALPHA	200.0f
 #define FASTSWITCH_SMALL_DISPLAY_ALPHA	160.0f
 
-#define MAX_CAROUSEL_SLOTS				5
+#define MAX_CAROUSEL_SLOTS				8
 
 //-----------------------------------------------------------------------------
 // Purpose: hl2 weapon selection hud element
