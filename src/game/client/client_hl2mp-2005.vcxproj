@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>Client HL2MP</ProjectName>
+    <ProjectName>Client</ProjectName>
     <ProjectGuid>{5FE91DC8-B6DF-4061-984E-36FD36623E72}</ProjectGuid>
     <RootNamespace>Client HL2MP</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -41,7 +41,7 @@
     <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>.\Debug_hl2mp\</OutDir>
+    <OutDir>D:\Steam\steamapps\sourcemods\gabemodplus\bin</OutDir>
     <IntDir>.\Debug_hl2mp\</IntDir>
     <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
     <PreLinkEventUseInBuild>true</PreLinkEventUseInBuild>

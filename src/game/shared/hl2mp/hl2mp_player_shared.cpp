@@ -75,59 +75,111 @@ Vector CHL2MP_Player::GetAttackSpread(CBaseCombatWeapon* pWeapon, CBaseEntity* p
 //			force - force sound to play
 //-----------------------------------------------------------------------------
 
-void CHL2MP_Player::PlayStepSound(Vector& vecOrigin, surfacedata_t* psurface, float fvol, bool force)
+ConVar gabeplus_permaterialfootsteps(
+    "gabeplus_permaterialfootsteps",
+    "1",
+    FCVAR_REPLICATED | FCVAR_ARCHIVE,
+    "0 = team-based footsteps, 1 = per-material footsteps"
+);
+
+void CHL2MP_Player::PlayStepSound(
+    Vector& vecOrigin,
+    surfacedata_t* psurface,
+    float fvol,
+    bool force)
 {
-    // Respect sv_footsteps in multiplayer
     if (gpGlobals->maxClients > 1 && !sv_footsteps.GetFloat())
         return;
 
-#if defined( CLIENT_DLL )
-    // During prediction, only play once
+#if defined(CLIENT_DLL)
     if (!prediction->IsFirstTimePredicted())
         return;
 #endif
 
-    // No crouch footsteps (HL2 behavior)
     if (GetFlags() & FL_DUCKING)
         return;
 
-    if (!psurface)
-        return;
-
-    // Alternate left/right steps
-    int nSide = m_Local.m_nStepside;
-    m_Local.m_nStepside = !nSide;
-
-    // Get surface-defined step sound
-    unsigned short stepSoundName = nSide ? psurface->sounds.stepleft : psurface->sounds.stepright;
-    if (!stepSoundName)
-        return;
-
-    IPhysicsSurfaceProps* physprops = MoveHelper()->GetSurfaceProps();
-    const char* pSoundName = physprops->GetString(stepSoundName);
-    if (!pSoundName || !pSoundName[0])
-        return;
+    m_Local.m_nStepside = ~m_Local.m_nStepside;
 
     CSoundParameters params;
-    if (!GetParametersForSound(pSoundName, params, NULL))
-        return;
+    const char* pFinalSound = NULL;
 
-    // Build recipient filter
+    // --------------------------------------------------
+    // MODE 1: Surface-based footsteps
+    // --------------------------------------------------
+    if (gabeplus_permaterialfootsteps.GetInt() == 1)
+    {
+        if (!psurface)
+            return;
+
+        int nSide = m_Local.m_nStepside;
+
+        unsigned short stepSoundName =
+            nSide ? psurface->sounds.stepleft
+            : psurface->sounds.stepright;
+
+        if (!stepSoundName)
+            return;
+
+        IPhysicsSurfaceProps* physprops =
+            MoveHelper()->GetSurfaceProps();
+
+        const char* pSoundName =
+            physprops->GetString(stepSoundName);
+
+        if (!pSoundName || !pSoundName[0])
+            return;
+
+        if (!GetParametersForSound(pSoundName, params, NULL))
+            return;
+
+        pFinalSound = params.soundname;
+    }
+    // --------------------------------------------------
+    // MODE 0: Team-based footsteps
+    // --------------------------------------------------
+    else
+    {
+        char szStepSound[128];
+
+        if (m_Local.m_nStepside)
+        {
+            Q_snprintf(
+                szStepSound,
+                sizeof(szStepSound),
+                "%s.RunFootstepLeft",
+                g_ppszPlayerSoundPrefixNames[m_iPlayerSoundType]);
+        }
+        else
+        {
+            Q_snprintf(
+                szStepSound,
+                sizeof(szStepSound),
+                "%s.RunFootstepRight",
+                g_ppszPlayerSoundPrefixNames[m_iPlayerSoundType]);
+        }
+
+        if (!GetParametersForSound(szStepSound, params, NULL))
+            return;
+
+        pFinalSound = params.soundname;
+    }
+
+    // --------------------------------------------------
+    // Emit sound
+    // --------------------------------------------------
+
     CRecipientFilter filter;
     filter.AddRecipientsByPAS(vecOrigin);
 
 #ifndef CLIENT_DLL
-    // In MP, server excludes players in PVS
-    // Local players predict footsteps clientside
     if (gpGlobals->maxClients > 1)
-    {
         filter.RemoveRecipientsByPVS(vecOrigin);
-    }
 #endif
 
     EmitSound_t ep;
     ep.m_nChannel = CHAN_BODY;
-    ep.m_pSoundName = params.soundname;
+    ep.m_pSoundName = pFinalSound;
     ep.m_flVolume = fvol;
     ep.m_SoundLevel = params.soundlevel;
     ep.m_nFlags = 0;

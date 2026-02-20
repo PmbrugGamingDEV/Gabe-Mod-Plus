@@ -1506,6 +1506,9 @@ static void VectorToColor32(const Vector& in, color32& out)
 	out.a = 255;
 }
 
+ConVar gabeplus_physgun_beamwidth("gabe+_physgun_beamwidth", "1", FCVAR_ARCHIVE);
+ConVar gabeplus_physgun_spritesize("gabe+_physgun_spritesize", "1", FCVAR_ARCHIVE);
+
 //-----------------------------------------------------------------------------
 // Purpose: Third-person function call to render world model
 //-----------------------------------------------------------------------------
@@ -1540,59 +1543,38 @@ int CWeaponGravityGun::DrawModel(int flags)
 			pObject->EntityToWorldSpace(m_worldPosition, &points[2]);
 		}
 
-		Vector forward, right, up;
-		AngleVectors(pOwner->EyeAngles(), &forward, &right, &up);
+		Vector forward;
+		AngleVectors(pOwner->EyeAngles(), &forward);
 
-		// Beam control point
-		if (!pObject)
-		{
-			Vector dir = points[2] - points[0];
-			VectorNormalize(dir);
-			points[1] = points[0] + 0.5f * (dir * points[2].DistTo(points[0]));
-		}
-		else
-		{
-			Vector src = pOwner->Weapon_ShootPosition();
-			points[1] = src + 0.5f * (forward * points[2].DistTo(points[0]));
-		}
+		// Beam control
+		Vector vecSrc = pOwner->Weapon_ShootPosition();
+		points[1] = vecSrc + 0.5f * (forward * points[2].DistTo(points[0]));
 
-		// -------------------------------------------------
 		// Shared color
-		// -------------------------------------------------
 		Vector colorVec;
 		GetPhysgunColorVector(colorVec);
 
-		// -------------------------------------------------
-		// Beam
-		// -------------------------------------------------
+		// Beam material
 		IMaterial* pMat = materials->FindMaterial(
 			pObject ? "sprites/physbeam" : "sprites/physbeam1",
 			TEXTURE_GROUP_CLIENT_EFFECTS
 		);
 
-		float baseWidth = pObject ? (13.0f / 3.0f) : (13.0f / 5.0f);
+		float beamMul = clamp(gabeplus_physgun_beamwidth.GetFloat(), 0.1f, 10.0f);
+		float baseWidth = 13.0f * beamMul;
+
 		float scroll = gpGlobals->curtime - (int)gpGlobals->curtime;
 
 		CMatRenderContextPtr ctx(materials);
 		ctx->Bind(pMat);
 
-		DrawBeamQuadratic(
-			points[0], points[1], points[2],
-			baseWidth,
-			colorVec,
-			scroll
-		);
+		DrawBeamQuadratic(points[0], points[1], points[2],
+			baseWidth, colorVec, scroll);
 
-		DrawBeamQuadratic(
-			points[0], points[1], points[2],
-			baseWidth,
-			colorVec,
-			-scroll
-		);
+		DrawBeamQuadratic(points[0], points[1], points[2],
+			baseWidth, colorVec, -scroll);
 
-		// -------------------------------------------------
-		// Sprite glow
-		// -------------------------------------------------
+		// Glow sprite
 		IMaterial* pGlow = materials->FindMaterial(
 			"sprites/physglow",
 			TEXTURE_GROUP_CLIENT_EFFECTS
@@ -1601,7 +1583,8 @@ int CWeaponGravityGun::DrawModel(int flags)
 		color32 spriteClr;
 		VectorToColor32(colorVec, spriteClr);
 
-		float scale = random->RandomFloat(6, 9);
+		float spriteMul = clamp(gabeplus_physgun_spritesize.GetFloat(), 0.1f, 10.0f);
+		float scale = random->RandomFloat(6.0f, 9.0f) * spriteMul;
 
 		ctx->Bind(pGlow);
 
@@ -1624,9 +1607,7 @@ void CWeaponGravityGun::ViewModelDrawn(C_BaseViewModel* pBaseViewModel)
 	if (!m_active)
 		return;
 
-	// Render our effects
 	C_BasePlayer* pOwner = ToBasePlayer(GetOwner());
-
 	if (!pOwner)
 		return;
 
@@ -1634,16 +1615,11 @@ void CWeaponGravityGun::ViewModelDrawn(C_BaseViewModel* pBaseViewModel)
 	QAngle tmpAngle;
 
 	C_BaseEntity* pObject = m_hObject;
-	//if ( pObject == NULL )
-	//	return;
 
 	pBaseViewModel->GetAttachment(1, points[0], tmpAngle);
 
-	// a little noise 11t & 13t should be somewhat non-periodic looking
-	//points[1].z += 4*sin( gpGlobals->curtime*11 ) + 5*cos( gpGlobals->curtime*13 );
-	if (pObject == NULL)
+	if (!pObject)
 	{
-		//points[2] = m_targetPosition;
 		trace_t tr;
 		TraceLine(&tr);
 		points[2] = tr.endpos;
@@ -1653,61 +1629,64 @@ void CWeaponGravityGun::ViewModelDrawn(C_BaseViewModel* pBaseViewModel)
 		pObject->EntityToWorldSpace(m_worldPosition, &points[2]);
 	}
 
-	Vector forward, right, up;
-	QAngle playerAngles = pOwner->EyeAngles();
-	AngleVectors(playerAngles, &forward, &right, &up);
+	Vector forward;
+	AngleVectors(pOwner->EyeAngles(), &forward);
+
 	Vector vecSrc = pOwner->Weapon_ShootPosition();
 	points[1] = vecSrc + 0.5f * (forward * points[2].DistTo(points[0]));
 
-	IMaterial* pMat = materials->FindMaterial("sprites/physbeam1", TEXTURE_GROUP_CLIENT_EFFECTS);
-	if (pObject)
-		pMat = materials->FindMaterial("sprites/physbeam", TEXTURE_GROUP_CLIENT_EFFECTS);
-	Vector color;
-	color.Init(1, 1, 1);
+	// Shared color
+	Vector colorVec;
+	GetPhysgunColorVector(colorVec);
 
-	// Now draw it.
+	IMaterial* pMat = materials->FindMaterial(
+		pObject ? "sprites/physbeam" : "sprites/physbeam1",
+		TEXTURE_GROUP_CLIENT_EFFECTS
+	);
+
+	float beamMul = clamp(gabeplus_physgun_beamwidth.GetFloat(), 0.1f, 10.0f);
+	float baseWidth = 13.0f * beamMul;
+
+	float scroll = gpGlobals->curtime - (int)gpGlobals->curtime;
+
 	CViewSetup beamView = *view->GetPlayerViewSetup();
-
 	Frustum dummyFrustum;
 	render->Push3DView(beamView, 0, NULL, dummyFrustum);
 
-	float scrollOffset = gpGlobals->curtime - (int)gpGlobals->curtime;
-	CMatRenderContextPtr pRenderContext(materials);
-	pRenderContext->Bind(pMat);
-#if 1
-	// HACK HACK:  Munge the depth range to prevent view model from poking into walls, etc.
-	// Force clipped down range
-	pRenderContext->DepthRange(0.1f, 0.2f);
-#endif
-	DrawBeamQuadratic(points[0], points[1], points[2], pObject ? 13 / 3.0f : 13 / 5.0f, color, scrollOffset);
-	DrawBeamQuadratic(points[0], points[1], points[2], pObject ? 13 / 3.0f : 13 / 5.0f, color, -scrollOffset);
+	CMatRenderContextPtr ctx(materials);
+	ctx->Bind(pMat);
 
-	IMaterial* pMaterial = materials->FindMaterial("sprites/physglow", TEXTURE_GROUP_CLIENT_EFFECTS);
+	ctx->DepthRange(0.1f, 0.2f);
 
-	color32 clr = { 0,64,255,255 };
-	if (pObject)
-	{
-		clr.r = 186;
-		clr.g = 253;
-		clr.b = 247;
-		clr.a = 255;
-	}
+	DrawBeamQuadratic(points[0], points[1], points[2],
+		baseWidth, colorVec, scroll);
 
-	float scale = random->RandomFloat(3, 5) * (pObject ? 3 : 2);
+	DrawBeamQuadratic(points[0], points[1], points[2],
+		baseWidth, colorVec, -scroll);
 
-	// Draw the sprite
-	pRenderContext->Bind(pMaterial);
+	// Glow sprite
+	IMaterial* pGlow = materials->FindMaterial(
+		"sprites/physglow",
+		TEXTURE_GROUP_CLIENT_EFFECTS
+	);
+
+	color32 spriteClr;
+	VectorToColor32(colorVec, spriteClr);
+
+	float spriteMul = clamp(gabeplus_physgun_spritesize.GetFloat(), 0.1f, 10.0f);
+	float scale = random->RandomFloat(3.0f, 5.0f) * 5.0f * spriteMul;
+
+	ctx->Bind(pGlow);
+
 	for (int i = 0; i < 3; i++)
 	{
-		DrawSprite(points[2], scale, scale, clr);
+		DrawSprite(points[2], scale, scale, spriteClr);
 	}
-#if 1
-	pRenderContext->DepthRange(0.0f, 1.0f);
-#endif
+
+	ctx->DepthRange(0.0f, 1.0f);
 
 	render->PopView(dummyFrustum);
 
-	// Pass this back up
 	BaseClass::ViewModelDrawn(pBaseViewModel);
 }
 

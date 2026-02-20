@@ -448,6 +448,7 @@ ListPanel::ListPanel(Panel *parent, const char *panelName) : Panel(parent, panel
 
 	m_iHeaderHeight = 20;
 	m_iRowHeight = 20;
+	m_iRowHeightOverride = -1; // Override
 	m_bCanSelectIndividualCells = false;
 	m_iSelectedColumn = -1;
 	m_bAllowUserAddDeleteColumns = false;
@@ -510,6 +511,23 @@ ListPanel::~ListPanel()
 	}
 
 	delete m_pEmptyListText;
+}
+
+void ListPanel::SetRowHeight(int tall)
+{
+	if (tall < 8)
+		tall = 8;
+
+	m_iRowHeightOverride = tall;
+	m_iRowHeight = tall;
+
+	InvalidateLayout();
+	Repaint();
+}
+
+int ListPanel::GetRowHeight() const
+{
+	return m_iRowHeight;
 }
 
 //-----------------------------------------------------------------------------
@@ -1555,33 +1573,20 @@ Panel *ListPanel::GetCellRenderer(int itemID, int col)
 		
 		return m_pLabel;
 	}
-	else 	// if its an Image Panel
+	else  // Image column
 	{
-		if ( m_SelectedItems.HasElement(itemID) && ( !m_bCanSelectIndividualCells || col == m_iSelectedColumn ) )
-		{
-            VPANEL focus = input()->GetFocus();
-            // if one of the children of the SectionedListPanel has focus, then 'we have focus' if we're selected
-            if (HasFocus() || (focus && ipanel()->HasParent(focus, GetVParent())))
-            {
-                m_pLabel->SetBgColor(GetSchemeColor("ListPanel.SelectedBgColor", pScheme));
-    			// selection
-            }
-            else
-            {
-                m_pLabel->SetBgColor(GetSchemeColor("ListPanel.SelectedOutOfFocusBgColor", pScheme));
-            }
-			// selection
-			m_pLabel->SetPaintBackgroundEnabled(true);
-		}
-		else
-		{
-			m_pLabel->SetPaintBackgroundEnabled(false);
-		}
+		IImage* pImage = GetCellImage(itemID, col);
+		if (!pImage)
+			return NULL;
 
-		IImage *pIImage = GetCellImage(itemID, col);
-		m_pLabel->SetImageAtIndex(0, pIImage, 0);
+		int targetSize = m_iRowHeight - 8;
 
-		return m_pLabel;
+		// Use dedicated image panel instead of label
+		m_pImagePanel->SetImage(pImage);
+		m_pImagePanel->SetShouldScaleImage(true);
+		m_pImagePanel->SetSize(targetSize, targetSize);
+
+		return m_pImagePanel;
 	}
 }
 
@@ -2648,12 +2653,18 @@ void ListPanel::SortList( void )
 //-----------------------------------------------------------------------------
 void ListPanel::SetFont(HFont font)
 {
-	Assert( font );
-	if ( !font )
+	Assert(font);
+	if (!font)
 		return;
 
 	m_pTextImage->SetFont(font);
-	m_iRowHeight = surface()->GetFontTall(font) + 2;
+
+	// Only auto-calculate row height if user hasn't overridden it
+	if (m_iRowHeightOverride < 0)
+	{
+		Warning("[Gabe Mod Plus] Row height not set for list, auto-calculating...\n");
+		m_iRowHeight = surface()->GetFontTall(font) + 2;
+	}
 }
 
 //-----------------------------------------------------------------------------

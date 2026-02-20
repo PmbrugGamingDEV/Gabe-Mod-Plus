@@ -284,6 +284,9 @@ private:
 
 	int m_nMaterialIndex;
 
+	CUtlVector<IPhysicsConstraint*> m_Constraints;
+	CUtlVector<EHANDLE> m_CreatedRopes;
+
 
 	struct DupedRagdollBone_t
 	{
@@ -458,13 +461,19 @@ void CWeaponMultitool::SecondaryAttack()
 
 	CBaseEntity* pEnt = FindEntityInFront();
 
+	if (!pEnt)
+	{
+		Warning("[Duplicator] could not copy whatever's in-front!\n");
+		return;
+	}
+
 	if (pEnt->GetClassname() && (Q_stricmp(pEnt->GetClassname(), "prop_vehicle_jeep") == 0 || Q_stricmp(pEnt->GetClassname(), "prop_vehicle_airboat") == 0))
 	{
 		NDebugOverlay::EntityTextAtPosition(pEnt->GetAbsOrigin(), 0, "Cannot dupe vehicles, sorry!", 2.0f, 255, 0, 0, 255);
 		return;
 	}
 
-	if (!pEnt || pEnt->IsWorld())
+	if (pEnt->IsWorld())
 	{
 		HudText(pPlayer, "Nothing to copy.", 255, 100, 100);
 		return;
@@ -895,7 +904,11 @@ void CWeaponMultitool::ApplyToolAction(CBaseEntity* pEnt)
 				ballsocket.InitWithCurrentObjectState(pPhys1, pPhys2, anchor);
 				IPhysicsConstraint* pConstraint = physenv->CreateBallsocketConstraint(pPhys1, pPhys2, NULL, ballsocket);
 				if (pConstraint)
+				{
+					m_Constraints.AddToTail(pConstraint);
 					HudText(pPlayer, "BallSocket constraint created.", 100, 255, 100);
+				}
+
 				break;
 			}
 			case 1: // Weld
@@ -905,7 +918,10 @@ void CWeaponMultitool::ApplyToolAction(CBaseEntity* pEnt)
 				weld.InitWithCurrentObjectState(pPhys1, pPhys2);
 				IPhysicsConstraint* pConstraint = physenv->CreateFixedConstraint(pPhys1, pPhys2, NULL, weld);
 				if (pConstraint)
+				{
+					m_Constraints.AddToTail(pConstraint);
 					HudText(pPlayer, "Weld constraint created.", 100, 255, 100);
+				}
 				break;
 			}
 			case 2: // Rope
@@ -921,13 +937,20 @@ void CWeaponMultitool::ApplyToolAction(CBaseEntity* pEnt)
 					rope.totalLength = (origin1 - origin2).Length();
 					IPhysicsConstraint* pConstraint = physenv->CreateLengthConstraint(pPhys1, pPhys2, NULL, rope);
 					if (pConstraint)
+					{
+						m_Constraints.AddToTail(pConstraint);
 						HudText(pPlayer, "Rope constraint created.", 100, 255, 100);
+					}
 					else
 						HudText(pPlayer, "Rope visual OK, physics constraint failed.", 255, 200, 100);
 				}
+				if (pRope)
+				{
+					m_CreatedRopes.AddToTail(pRope);
+				}
 				else
 				{
-					HudText(pPlayer, "Failed to create visual rope.", 255, 100, 100);
+					HudText(pPlayer, "Failed to create rope.", 255, 100, 100);
 				}
 				break;
 			}
@@ -1244,39 +1267,35 @@ void CWeaponMultitool::ItemPostFrame()
 			HudText(pPlayer, UTIL_VarArgs("Constraint Type: %s", g_szConstraintTypes[m_nConstraintType]), 255, 255, 255);
 		}
 
-		if ((pPlayer->m_nButtons & IN_USE) && (pPlayer->m_afButtonPressed & IN_USE))
+		if ((pPlayer->m_nButtons & IN_USE) &&
+			(pPlayer->m_afButtonPressed & IN_USE))
 		{
 			int removed = 0;
-			CBaseEntity* pEnt = NULL;
 
-			// Remove ropes
-			while ((pEnt = gEntList.FindEntityByClassname(pEnt, "move_rope")) != NULL)
+			// Destroy physics constraints
+			for (int i = 0; i < m_Constraints.Count(); i++)
 			{
-				UTIL_Remove(pEnt);
-				removed++;
-			}
-			pEnt = NULL;
-			while ((pEnt = gEntList.FindEntityByClassname(pEnt, "keyframe_rope")) != NULL)
-			{
-				UTIL_Remove(pEnt);
-				removed++;
+				if (m_Constraints[i])
+				{
+					physenv->DestroyConstraint(m_Constraints[i]);
+					removed++;
+				}
 			}
 
-			// Remove physics constraints
-			pEnt = NULL;
-			while ((pEnt = gEntList.FindEntityByClassname(pEnt, "phys_constraint")) != NULL)
+			m_Constraints.RemoveAll();
+
+			// Remove only ropes created by this tool
+			for (int i = 0; i < m_CreatedRopes.Count(); i++)
 			{
-				UTIL_Remove(pEnt);
-				removed++;
-			}
-			pEnt = NULL;
-			while ((pEnt = gEntList.FindEntityByClassname(pEnt, "phys_constraintsystem")) != NULL)
-			{
-				UTIL_Remove(pEnt);
-				removed++;
+				if (m_CreatedRopes[i])
+					UTIL_Remove(m_CreatedRopes[i]);
 			}
 
-			HudText(pPlayer, UTIL_VarArgs("Removed %d constraints.", removed), 255, 100, 100);
+			m_CreatedRopes.RemoveAll();
+
+			HudText(pPlayer,
+				UTIL_VarArgs("Removed %d constraints.", removed),
+				255, 100, 100);
 		}
 	}
 

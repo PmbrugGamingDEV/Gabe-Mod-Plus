@@ -3,24 +3,12 @@
   "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\shared\\basecombatweapon_shared.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\shared\\basecombatweapon_shared.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\gabe_newgamedialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\hl2\\vehicle_crane.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\hl2\\vehicle_crane.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\basecombatweapon.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\basecombatweapon.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\weapon_smg1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\shared\\hl2mp\\weapon_smg1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\weapon_pistol.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\shared\\hl2mp\\weapon_pistol.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{BF3EDBF5-ED65-4567-B348-504C1310A1BB}|vgui2\\vgui_controls\\vgui_controls-2005.vcxproj|C:\\GabeModPlus\\src\\vgui2\\vgui_controls\\ListPanel.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BF3EDBF5-ED65-4567-B348-504C1310A1BB}|vgui2\\vgui_controls\\vgui_controls-2005.vcxproj|solutionrelative:vgui2\\vgui_controls\\ListPanel.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -43,66 +31,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "vehicle_crane.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\hl2\\vehicle_crane.cpp",
-              "RelativeDocumentMoniker": "game\\server\\hl2\\vehicle_crane.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\hl2\\vehicle_crane.cpp",
-              "RelativeToolTip": "game\\server\\hl2\\vehicle_crane.cpp",
-              "ViewState": "AgIAAPYDAAAAAAAAAAAUwAcEAAABAAAAAAAAAA==",
+              "Title": "ListPanel.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\vgui2\\vgui_controls\\listpanel.cpp",
+              "RelativeDocumentMoniker": "vgui2\\vgui_controls\\listpanel.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\vgui2\\vgui_controls\\listpanel.cpp",
+              "RelativeToolTip": "vgui2\\vgui_controls\\listpanel.cpp",
+              "ViewState": "AgIAAFgKAAAAAAAAAAAvwGgKAABNAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-18T23:48:02.273Z",
+              "WhenOpened": "2026-02-20T00:57:39.586Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "basecombatweapon_shared.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\shared\\basecombatweapon_shared.cpp",
-              "RelativeDocumentMoniker": "game\\shared\\basecombatweapon_shared.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\shared\\basecombatweapon_shared.cpp",
-              "RelativeToolTip": "game\\shared\\basecombatweapon_shared.cpp",
-              "ViewState": "AgIAAEwFAAAAAAAAAAAEwF4FAAABAAAAAAAAAA==",
+              "Title": "gabe_newgamedialog.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp",
+              "RelativeDocumentMoniker": "game\\client\\gabe_newgamedialog.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp",
+              "RelativeToolTip": "game\\client\\gabe_newgamedialog.cpp",
+              "ViewState": "AgIAAFIBAAAAAAAAAAAvwGcBAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-18T23:39:46.93Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "basecombatweapon.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\basecombatweapon.cpp",
-              "RelativeDocumentMoniker": "game\\server\\basecombatweapon.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\basecombatweapon.cpp",
-              "RelativeToolTip": "game\\server\\basecombatweapon.cpp",
-              "ViewState": "AgIAABsAAAAAAAAAAAAEwCkAAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-18T23:39:29.124Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "weapon_smg1.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\WEAPON_SMG1.CPP",
-              "RelativeDocumentMoniker": "game\\shared\\hl2mp\\WEAPON_SMG1.CPP",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\WEAPON_SMG1.CPP",
-              "RelativeToolTip": "game\\shared\\hl2mp\\WEAPON_SMG1.CPP",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAAB4AAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-18T22:51:10.577Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "weapon_pistol.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\WEAPON_PISTOL.CPP",
-              "RelativeDocumentMoniker": "game\\shared\\hl2mp\\WEAPON_PISTOL.CPP",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\WEAPON_PISTOL.CPP",
-              "RelativeToolTip": "game\\shared\\hl2mp\\WEAPON_PISTOL.CPP",
-              "ViewState": "AgIAAJIBAAAAAAAAAAAIwJ8BAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-18T22:26:17.44Z",
+              "WhenOpened": "2026-02-19T23:37:07.215Z",
               "EditorCaption": ""
             }
           ]

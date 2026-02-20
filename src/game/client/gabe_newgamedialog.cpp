@@ -14,6 +14,7 @@
 #include <vgui_controls/CheckButton.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/Slider.h>
+#include "vgui_controls/imagelist.h"
 #include <vgui_controls/Label.h>
 #include <vgui_controls/TextEntry.h>
 #include <time.h>
@@ -82,19 +83,31 @@ static const char* GetMapLastPlayed(const char* map)
 }
 
 // ------------------------------------------------------------
-// Map selection tab
+// Map selection tab (Large columns + icons - FULL VERSION)
+// ------------------------------------------------------------
+// ------------------------------------------------------------
+// Map selection tab (2007-compatible: large columns + icons)
 // ------------------------------------------------------------
 class CGamepadUIMapTab : public Panel
 {
 	DECLARE_CLASS_SIMPLE(CGamepadUIMapTab, Panel);
+
 public:
 	CGamepadUIMapTab(Panel* parent)
 		: BaseClass(parent, "GamepadUIMapTab")
 	{
 		m_pMapList = new ListPanel(this, "MapList");
-		m_pMapList->AddColumnHeader(0, "map", "Map", 256, 0);
-		m_pMapList->AddColumnHeader(1, "category", "Category", 128, 0);
-		m_pMapList->AddColumnHeader(2, "lastplayed", "Last Played", 140, 0);
+
+		// Create image list for thumbnails/icons
+		m_pImageList = new ImageList(false);
+		m_pMapList->SetImageList(m_pImageList, false);
+		
+		m_pMapList->AddColumnHeader(0, "icon", "", 256, ListPanel::COLUMN_IMAGE);
+		m_pMapList->AddColumnHeader(1, "map", "Map", 176, 0);
+		m_pMapList->AddColumnHeader(2, "category", "Category", 108, 0);
+		m_pMapList->AddColumnHeader(3, "lastplayed", "Last Played", 240, 0);
+
+		m_pMapList->SetRowHeight(128);
 
 		m_pMapList->SetMultiselectEnabled(false);
 		m_pMapList->SetEmptyListText("No maps found.");
@@ -106,6 +119,16 @@ public:
 
 		LoadMaps();
 		ApplyFilter();
+	}
+
+	virtual ~CGamepadUIMapTab()
+	{
+		// 2007-safe cleanup
+		if (m_pImageList)
+		{
+			delete m_pImageList;
+			m_pImageList = NULL;
+		}
 	}
 
 	virtual void PerformLayout()
@@ -126,6 +149,8 @@ public:
 
 		m_pMapList->SetPos(pad, pad + filterH + 8);
 		m_pMapList->SetSize(w - pad * 2, h - (pad + filterH + 8) - pad);
+
+		// 2007: no dynamic column resizing API here, so we leave widths fixed.
 	}
 
 	virtual void OnThink()
@@ -173,19 +198,16 @@ public:
 	}
 
 private:
-
 	const char* GetMapCategory(const char* map) const
 	{
 		if (!map || !map[0])
 			return "Misc";
 
-		// ===== Deathmatch =====
 		if (!Q_strnicmp(map, "dm_", 3) ||
 			!Q_strnicmp(map, "ffa_", 4) ||
 			!Q_strnicmp(map, "arena_", 6))
 			return "Deathmatch";
 
-		// ===== Team Modes =====
 		if (!Q_strnicmp(map, "ctf_", 4))
 			return "Capture The Flag";
 
@@ -199,14 +221,12 @@ private:
 			!Q_strnicmp(map, "pl_", 3))
 			return "Payload";
 
-		// ===== Sandbox =====
 		if (!Q_strnicmp(map, "build_", 6) ||
 			!Q_strnicmp(map, "gabe_", 5) ||
 			!Q_strnicmp(map, "sandbox", 7) ||
 			!Q_strnicmp(map, "sb_", 3))
 			return "Sandbox";
 
-		// ===== Half-Life 2 Campaign =====
 		if (!Q_strnicmp(map, "d1_", 3) ||
 			!Q_strnicmp(map, "d2_", 3) ||
 			!Q_strnicmp(map, "d3_", 3))
@@ -221,12 +241,10 @@ private:
 		if (!Q_strnicmp(map, "lostcoast", 9))
 			return "Lostcoast";
 
-		// ===== Portal =====
 		if (!Q_strnicmp(map, "testchmb_", 9) ||
 			!Q_strnicmp(map, "portal_", 7))
 			return "Portal";
 
-		// ===== Counter-Strike Style =====
 		if (!Q_strnicmp(map, "de_", 3))
 			return "Bomb Defusal";
 
@@ -245,11 +263,8 @@ private:
 		if (!Q_strnicmp(map, "jail_", 5))
 			return "Jailbreak";
 
-		// ===== Zombie / Survival =====
-		if (!Q_strnicmp(map, "zm_", 3))
-			return "Zombie Survival";
-
-		if (!Q_strnicmp(map, "zs_", 3))
+		if (!Q_strnicmp(map, "zm_", 3) ||
+			!Q_strnicmp(map, "zs_", 3))
 			return "Zombie Survival";
 
 		if (!Q_strnicmp(map, "coop_", 5))
@@ -258,7 +273,6 @@ private:
 		if (!Q_strnicmp(map, "survival_", 9))
 			return "Survival";
 
-		// ===== Training / Dev =====
 		if (!Q_strnicmp(map, "background", 10))
 			return "Background Maps";
 
@@ -267,7 +281,6 @@ private:
 			!Q_strnicmp(map, "test_", 5))
 			return "Source SDK";
 
-		// ===== Experimental / Custom =====
 		if (!Q_strnicmp(map, "phys_", 5))
 			return "Physics";
 
@@ -300,13 +313,26 @@ private:
 
 			pFile = g_pFullFileSystem->FindNext(fh);
 		}
-
 		g_pFullFileSystem->FindClose(fh);
+	}
+
+	void RebuildImageList()
+	{
+		// 2007: no RemoveAllImages() so recreate the ImageList
+		if (m_pImageList)
+		{
+			delete m_pImageList;
+			m_pImageList = NULL;
+		}
+
+		m_pImageList = new ImageList(false);
+		m_pMapList->SetImageList(m_pImageList, false);
 	}
 
 	void ApplyFilter()
 	{
 		m_pMapList->DeleteAllItems();
+		RebuildImageList();
 
 		char filter[256];
 		m_pFilter->GetText(filter, sizeof(filter));
@@ -326,7 +352,16 @@ private:
 					continue;
 			}
 
+			// Try loading a per-map thumbnail: materials/vgui/maps/<map>.vmt
+			// If it doesn't exist, it will fall back to error, but still works.
+			char matPath[256];
+			Q_snprintf(matPath, sizeof(matPath), "maps/%s", map);
+
+			IImage* img = scheme()->GetImage(matPath, true);
+			int imageIndex = m_pImageList->AddImage(img);
+
 			KeyValues* kv = new KeyValues("item");
+			kv->SetInt("icon", imageIndex);
 			kv->SetString("map", map);
 			kv->SetString("category", GetMapCategory(map));
 			kv->SetString("lastplayed", GetMapLastPlayed(map));
@@ -342,6 +377,8 @@ private:
 
 private:
 	ListPanel* m_pMapList;
+	ImageList* m_pImageList;
+
 	TextEntry* m_pFilter;
 	Label* m_pFilterLabel;
 
@@ -672,7 +709,7 @@ public:
 		m_pServerInfoTab = new CGamepadUIServerInfoTab(m_pSheet);
 		m_pSheet->AddPage(m_pServerInfoTab, "Server Info");
 
-		SetSize(750, 500);
+		SetSize(1050, 1050);
 		CenterOnScreen();
 		InvalidateLayout(true, true);
 	}

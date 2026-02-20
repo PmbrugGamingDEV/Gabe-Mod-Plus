@@ -1338,13 +1338,11 @@ bool CBaseCombatWeapon::DefaultDeploy(char* szViewModel, char* szWeaponModel, in
 
 		SetViewModel();
 		SendWeaponAnim(iActivity);
-
-		pOwner->SetNextAttack(gpGlobals->curtime + SequenceDuration());
 	}
 
 	// Can't shoot again until we've finished deploying
-	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
-	m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
+	m_flNextPrimaryAttack = gpGlobals->curtime;
+	m_flNextSecondaryAttack = gpGlobals->curtime;
 	m_flHudHintMinDisplayTime = 0;
 
 	m_bAltFireHudHintDisplayed = false;
@@ -1376,7 +1374,7 @@ bool CBaseCombatWeapon::Deploy()
 
 Activity CBaseCombatWeapon::GetDrawActivity(void)
 {
-	return ACT_VM_DRAW;
+	return ACT_VM_IDLE;
 }
 
 //-----------------------------------------------------------------------------

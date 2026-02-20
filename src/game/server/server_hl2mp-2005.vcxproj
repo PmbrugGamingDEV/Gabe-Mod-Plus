@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>Server HL2MP</ProjectName>
+    <ProjectName>Server</ProjectName>
     <ProjectGuid>{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}</ProjectGuid>
     <RootNamespace>Server HL2MP</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -41,7 +41,7 @@
     <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>.\Debug_hl2mp\</OutDir>
+    <OutDir>D:\Steam\steamapps\sourcemods\gabemodplus\bin</OutDir>
     <IntDir>.\Debug_hl2mp\</IntDir>
     <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
     <PreLinkEventUseInBuild>true</PreLinkEventUseInBuild>
@@ -424,6 +424,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="gabeplus_npcinfo.cpp" />
     <ClCompile Include="gabeplus_npc_nextbot.cpp" />
     <ClCompile Include="gabeplus_shared.cpp" />
+    <ClCompile Include="gabe_constraints.cpp" />
     <ClCompile Include="gabe_effects.cpp" />
     <ClCompile Include="gabe_effect_carrier.cpp" />
     <ClCompile Include="ge_gamelua.cpp" />
@@ -1087,6 +1088,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="func_breakablesurf.h" />
     <ClInclude Include="..\shared\func_dust_shared.h" />
     <ClInclude Include="func_movelinear.h" />
+    <ClInclude Include="gabe_constraints.h" />
     <ClInclude Include="gabe_effects.h" />
     <ClInclude Include="gabe_effect_carrier.h" />
     <ClInclude Include="game.h" />

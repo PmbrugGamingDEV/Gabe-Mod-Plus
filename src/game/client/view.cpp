@@ -92,7 +92,7 @@ static ConVar v_centerspeed( "v_centerspeed","500" );
 
 // 54 degrees approximates a 35mm camera - we determined that this makes the viewmodels
 // and motions look the most natural.
-ConVar v_viewmodel_fov( "viewmodel_fov", "62", FCVAR_CHEAT );
+ConVar v_viewmodel_fov( "viewmodel_fov", "58", FCVAR_CHEAT );
 static ConVar mat_viewportscale( "mat_viewportscale", "1.0", FCVAR_CHEAT, "Scale down the main viewport (to reduce GPU impact on CPU profiling)",
 								  true, (1.0f / 640.0f), true, 1.0f );
 ConVar cl_leveloverview( "cl_leveloverview", "0", FCVAR_CHEAT );

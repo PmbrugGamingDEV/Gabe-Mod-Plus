@@ -12,6 +12,8 @@
 	#include "c_hl2mp_player.h"
 #else
 	#include "hl2mp_player.h"
+	#include "util.h" // For UTIL_HudHintText
+	#include "gabeplus_shared.h"
 #endif
 
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
@@ -46,6 +48,7 @@ public:
 	void	ItemPreFrame( void );
 	void	ItemBusyFrame( void );
 	void	FireSingleBullet( void );
+	bool	Deploy(void);
 	void	PrimaryAttack( void );
 	void	SecondaryAttack(void);
 	void	AddViewKick( void );
@@ -332,6 +335,19 @@ void CWeaponPistol::FireSingleBullet( void )
 	pOwner->FireBullets(info);
 	pOwner->DoMuzzleFlash();
 	AddViewKick();
+}
+
+bool CWeaponPistol::Deploy(void)
+{
+#ifndef CLIENT_DLL
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
+		return false;
+
+	HudText(pPlayer, "TIP: Hold right mouse button to fire a burst of bullets.");
+#endif
+
+	return BaseClass::Deploy();
 }
 
 //-----------------------------------------------------------------------------

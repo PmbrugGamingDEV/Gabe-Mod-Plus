@@ -70,6 +70,9 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\Saves">
       <UniqueIdentifier>{c707ae3a-8c71-45d0-8f63-5bcd729c4b7b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Multitool Files">
+      <UniqueIdentifier>{16007308-931a-4c37-bfee-4e60e0a89ff6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\achievement_saverestore.cpp">
@@ -1743,9 +1746,6 @@
     <ClCompile Include="weapon_hax.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
-    <ClCompile Include="weapon_multitool.cpp">
-      <Filter>Source Files\Gabe Mod + Stuff</Filter>
-    </ClCompile>
     <ClCompile Include="entity_tools_server.cpp">
       <Filter>Tools Framework</Filter>
     </ClCompile>
@@ -1847,6 +1847,12 @@
     </ClCompile>
     <ClCompile Include="logic_achievement.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_multitool.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Multitool Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gabe_constraints.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Multitool Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3610,6 +3616,9 @@
     </ClInclude>
     <ClInclude Include="..\shared\gabe_events.h">
       <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="gabe_constraints.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Multitool Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

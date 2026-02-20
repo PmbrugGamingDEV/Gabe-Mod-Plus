@@ -97,7 +97,6 @@ void CHudWatermark::Paint(void)
     int boxW = max(w1, w2) + padding * 2;
     int boxH = h1 + h2 + padding * 2 + 2;
 
-    // ✅ TOP-RIGHT POSITION
     int boxX = sw - boxW - margin;
     int boxY = margin;
 

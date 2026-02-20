@@ -249,7 +249,14 @@ public:
 	virtual void SetSortColumnEx( int iPrimarySortColumn, int iSecondarySortColumn, bool bSortAscending );
 	void GetSortColumnEx( int &iPrimarySortColumn, int &iSecondarySortColumn, bool &bSortAscending ) const;
 
+
+	public:
+		void SetRowHeight(int tall);
+		int  GetRowHeight() const;
+
 private:
+	int  m_iRowHeightOverride;
+
 	// Cleans up allocations associated with a particular item
 	void CleanupItem( FastSortListPanelItem *data );
 
