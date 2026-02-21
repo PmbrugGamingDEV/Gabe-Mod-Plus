@@ -116,6 +116,8 @@ public:
 #define HUD_PRINTTALK		3
 #define HUD_PRINTCENTER		4
 
+#define MAX_INVENTORY 31 // Add 1 to the maximum size of your inventory. It's required because count begins from 0 (0-30).
+
 //===================================================================================================================
 // Close caption flags
 #define CLOSE_CAPTION_WARNIFMISSING	( 1<<0 )

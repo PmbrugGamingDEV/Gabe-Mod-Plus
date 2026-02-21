@@ -17,6 +17,7 @@
 #include "iclientmode.h"
 #include "in_buttons.h"
 #include "engine/IEngineSound.h"
+#include "usermessages.h"
 #include "c_soundscape.h"
 #include "usercmd.h"
 #include "c_playerresource.h"
@@ -246,6 +247,8 @@ END_RECV_TABLE()
 		RecvPropInt		(RECVINFO(m_iDefaultFOV)),
 		RecvPropEHandle (RECVINFO(m_hZoomOwner)),
 
+		RecvPropArray3(RECVINFO_ARRAY(m_iInventory), RecvPropInt(RECVINFO(m_iInventory[0]))), /// Receives our array.
+
 		RecvPropEHandle( RECVINFO(m_hVehicle) ),
 		RecvPropEHandle( RECVINFO(m_hUseEntity) ),
 
@@ -378,6 +381,15 @@ END_PREDICTION_DATA()
 LINK_ENTITY_TO_CLASS( player, C_BasePlayer );
 #endif
 
+void __MsgFunc_EntityNames(bf_read& msg) // The function for our usermessage
+{
+	int iPlayer = msg.ReadShort(); // Reads the entindex and saves it into iPlayer.
+	C_BasePlayer* pPlayer = dynamic_cast<C_BasePlayer*>(C_BaseEntity::Instance(iPlayer)); // A dynamic_cast that uses the entindex to create a pointer to the c_sdk_player
+	char Str[254]; // A Buffer for our Entity name.
+	msg.ReadString(Str, 254); // Gets the name and saves it into the buffer.
+	pPlayer->AddEntityVectorElement(Str); // Adds the name into our Entity Vector
+}
+
 // -------------------------------------------------------------------------------- //
 // Functions.
 // -------------------------------------------------------------------------------- //
@@ -400,6 +412,8 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset( "C_BasePlayer::m_iv_vecViewOf
 	m_bWasFrozen = false;
 
 	m_bResampleWaterSurface = true;
+
+	usermessages->HookMessage("EntityNames", __MsgFunc_EntityNames);
 	
 	ResetObserverMode();
 
@@ -427,6 +441,26 @@ C_BasePlayer::~C_BasePlayer()
 	{
 		delete m_pFlashlight;
 	}
+}
+
+const char* C_BasePlayer::GetEntityVectorElement(int position)
+{
+	return m_EntityName.Element(position); // Returns a element.
+}
+
+void C_BasePlayer::AddEntityVectorElement(char* Element)
+{
+	char* _string = new char[Q_strlen(Element) + 1]; // Allocates just that what is needed.
+	Q_strcpy(_string, Element); // Copies the element.
+	m_EntityName.AddToTail(_string); // Adds the element into the vector.
+	Msg("_string:%s\n", _string);
+}
+
+void C_BasePlayer::ClearEntityVector()
+{
+	for (int i = 0; i < m_EntityName.Count(); i++) // Starts a for from 0 to "element count".
+		delete[] m_EntityName[i]; // Deletes every single element.
+	m_EntityName.Purge(); // Purges the vector.
 }
 
 

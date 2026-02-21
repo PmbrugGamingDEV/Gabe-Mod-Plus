@@ -27,6 +27,7 @@
 #include "ai_utils.h"
 #include "ai_moveshoot.h"
 #include "entityoutput.h"
+#include <string>
 #include "utlvector.h"
 #include "activitylist.h"
 #include "bitstring.h"
@@ -698,6 +699,9 @@ public:
 	virtual int			GetLocalTaskId( int globalTaskId)			{ return GetClassScheduleIdSpace()->TaskGlobalToLocal( globalTaskId ); }
 
 	virtual const char *GetSchedulingErrorName()					{ return "CAI_BaseNPC"; }
+
+	std::string			m_strDisplayName;
+	bool				m_bNameGenerated;
 
 protected:
 	static bool			LoadSchedules(void);

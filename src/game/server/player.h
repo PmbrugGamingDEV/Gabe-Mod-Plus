@@ -16,6 +16,7 @@
 #include "PlayerState.h"
 #include "game/server/iplayerinfo.h"
 #include "hintsystem.h"
+#include "shareddefs.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 
 // For queuing and processing usercmds
@@ -291,6 +292,29 @@ public:
 	const char				*GetTracerType( void );
 	void					MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int iTracerType );
 	void					DoImpactEffect( trace_t &tr, int nDamageType );
+
+	const char* GetEntityVectorElement(int position);
+
+	void AddEntityVectorElement(char* Element);
+
+	void ClearEntityVector();
+
+	virtual void InitEntityList(void); // The Entities gets added here.
+	virtual void InventoryAddItem(int EntityID); // This will add an item to the players inventory.
+	virtual void InventoryRemoveItem(int Position); // This will remove an item from the players inventory.
+	virtual void Think(void); // This one is required to delay the inventory init.
+	int GetItemCount()
+	{
+		int ItemCount;
+		for (int i = 0; i < MAX_INVENTORY; i++)
+		{
+			if (!m_iInventory.Get(i))
+				break;
+			else
+				ItemCount++;
+		}
+		return ItemCount;
+	} // Gets All Items from the Inventory.
 
 #if !defined( NO_ENTITY_PREDICTION )
 	void					AddToPlayerSimulationList( CBaseEntity *other );
@@ -754,6 +778,9 @@ private:
 
 	int					DetermineSimulationTicks( void );
 	void				AdjustPlayerTimeBase( int simulation_ticks );
+
+	CNetworkArray(int, m_iInventory, MAX_INVENTORY); // A Array for our Inventory with the size of MAX_INVENTORY.
+	CUtlVector<char*> m_EntitySpawnName; // The Vector for our EntitySpawnNames
 
 public:
 	

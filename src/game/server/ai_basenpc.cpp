@@ -54,6 +54,7 @@
 #include "sceneentity.h"
 #include "ndebugoverlay.h"
 #include "mathlib/mathlib.h"
+#include <string>
 #include "bone_setup.h"
 #include "IEffects.h"
 #include "vstdlib/random.h"
@@ -79,6 +80,7 @@
 #include "in_buttons.h"
 #include "eventlist.h"
 #include "globalstate.h"
+#include "debugoverlay_shared.h"
 #include "physics_prop_ragdoll.h"
 #include "vphysics/friction.h"
 #include "physics_npc_solver.h"
@@ -222,6 +224,146 @@ CFastTimer g_AIMaintainScheduleTimer;
 //-----------------------------------------------------------------------------
 
 CAI_Manager g_AI_Manager;
+
+static const char* g_MaleFirstNames[] =
+{
+	"John", "David", "Michael", "Robert",
+	"Daniel", "Marcus", "Ethan", "Victor"
+};
+
+static const char* g_FemaleFirstNames[] =
+{
+	"Anna", "Sarah", "Maya", "Elena",
+	"Laura", "Nina", "Claire", "Olivia"
+};
+
+static const char* g_LastNames[] =
+{
+	"Smith", "Turner", "Brooks", "Walker",
+	"Cole", "Bishop", "Reed", "Miller"
+};
+
+static bool CitizenIsFemale(CAI_BaseNPC* pNPC)
+{
+	const char* model = STRING(pNPC->GetModelName());
+	if (!model)
+		return false;
+
+	return (Q_stristr(model, "female_") != NULL);
+}
+
+static std::string GenerateCitizenName(CAI_BaseNPC* pNPC)
+{
+	bool female = CitizenIsFemale(pNPC);
+
+	const char** firstPool = female ? g_FemaleFirstNames : g_MaleFirstNames;
+
+	int first = random->RandomInt(0,
+		female ? ARRAYSIZE(g_FemaleFirstNames) - 1
+		: ARRAYSIZE(g_MaleFirstNames) - 1);
+
+	int last = random->RandomInt(0, ARRAYSIZE(g_LastNames) - 1);
+
+	return std::string(firstPool[first]) + " " + g_LastNames[last];
+}
+
+static const char* GetPrettyNPCName(CAI_BaseNPC* pNPC)
+{
+	const char* cls = pNPC->GetClassname();
+
+	// =========================================================
+	// STORY NPCs
+	// =========================================================
+	if (FStrEq(cls, "npc_kleiner"))        return "Dr. Isaac Kleiner";
+	if (FStrEq(cls, "npc_alyx"))           return "Alyx Vance";
+	if (FStrEq(cls, "npc_barney"))         return "Barney Calhoun";
+	if (FStrEq(cls, "npc_eli"))            return "Dr. Eli Vance";
+	if (FStrEq(cls, "npc_magnusson"))      return "Dr. Magnusson";
+	if (FStrEq(cls, "npc_breen"))          return "Dr. Wallace Breen";
+	if (FStrEq(cls, "npc_monk"))           return "Father Grigori";
+	if (FStrEq(cls, "npc_dog"))            return "Dog";
+	if (FStrEq(cls, "npc_gman"))           return "G-Man";
+
+	// =========================================================
+	// CITIZENS (Generated)
+	// =========================================================
+	if (FStrEq(cls, "npc_citizen"))
+	{
+		if (!pNPC->m_bNameGenerated)
+		{
+			pNPC->m_strDisplayName = GenerateCitizenName(pNPC);
+			pNPC->m_bNameGenerated = true;
+		}
+		return pNPC->m_strDisplayName.c_str();
+	}
+
+	// =========================================================
+	// COMBINE
+	// =========================================================
+	if (FStrEq(cls, "npc_combine_s"))      return "Combine Soldier";
+	if (FStrEq(cls, "npc_metropolice"))    return "Metro Police";
+	if (FStrEq(cls, "npc_stalker"))        return "Stalker";
+	if (FStrEq(cls, "npc_strider"))        return "Strider";
+	if (FStrEq(cls, "npc_hunter"))         return "Hunter";
+	if (FStrEq(cls, "npc_rollermine"))     return "Rollermine";
+	if (FStrEq(cls, "npc_turret_floor"))   return "Floor Turret";
+	if (FStrEq(cls, "npc_turret_ceiling")) return "Ceiling Turret";
+	if (FStrEq(cls, "npc_clawscanner"))    return "Claw Scanner";
+	if (FStrEq(cls, "npc_cscanner"))       return "City Scanner";
+
+	// =========================================================
+	// XEN / ZOMBIE
+	// =========================================================
+	if (FStrEq(cls, "npc_zombie"))         return "Zombie";
+	if (FStrEq(cls, "npc_fastzombie"))     return "Fast Zombie";
+	if (FStrEq(cls, "npc_poisonzombie"))   return "Poison Zombie";
+	if (FStrEq(cls, "npc_zombine"))        return "Zombine";
+
+	if (FStrEq(cls, "npc_headcrab"))       return "Headcrab";
+	if (FStrEq(cls, "npc_headcrab_fast"))  return "Fast Headcrab";
+	if (FStrEq(cls, "npc_headcrab_poison"))return "Poison Headcrab";
+
+	if (FStrEq(cls, "npc_antlion"))        return "Antlion";
+	if (FStrEq(cls, "npc_antlionguard"))   return "Antlion Guard";
+
+	if (FStrEq(cls, "npc_barnacle"))       return "Barnacle";
+
+	// =========================================================
+	// ANIMALS
+	// =========================================================
+	if (FStrEq(cls, "npc_crow"))           return "Crow";
+	if (FStrEq(cls, "npc_pigeon"))         return "Pigeon";
+	if (FStrEq(cls, "npc_seagull"))        return "Seagull";
+
+	// =========================================================
+	// VEHICLES
+	// =========================================================
+	if (FStrEq(cls, "npc_helicopter"))     return "Combine Helicopter";
+	if (FStrEq(cls, "npc_combinegunship")) return "Combine Gunship";
+	if (FStrEq(cls, "npc_apcdriver"))      return "APC Driver";
+
+	// =========================================================
+	// FALLBACK — Auto Format Classname
+	// =========================================================
+	static char formatted[128];
+
+	Q_strncpy(formatted, cls, sizeof(formatted));
+
+	// Strip "npc_"
+	if (Q_stristr(formatted, "npc_") == formatted)
+	{
+		memmove(formatted, formatted + 4, strlen(formatted) - 3);
+	}
+
+	// Replace underscores with spaces
+	for (char* p = formatted; *p; ++p)
+	{
+		if (*p == '_')
+			*p = ' ';
+	}
+
+	return formatted;
+}
 
 //-------------------------------------
 
@@ -3744,12 +3886,38 @@ bool CAI_BaseNPC::PreNPCThink()
 	return true;
 }
 
-void CAI_BaseNPC::PostNPCThink( void ) 
-{ 
-	if ( g_StartTimeCurThink != 0.0 && VCRGetMode() == VCR_Disabled )
+void CAI_BaseNPC::PostNPCThink(void)
+{
+	if (g_StartTimeCurThink != 0.0 && VCRGetMode() == VCR_Disabled)
 	{
 		g_NpcTimeThisFrame += engine->Time() - g_StartTimeCurThink;
 	}
+
+	// =========================================================
+	// NPC NAME OVERLAY (perfect duration)
+	// =========================================================
+
+	float curTime = gpGlobals->curtime;
+
+	// Compute delta from last real think
+	float duration = curTime - m_flLastRealThinkTime;
+
+	// Failsafe for first think
+	if (duration <= 0.0f)
+		duration = 0.1f;
+
+	// Slight buffer to prevent edge flicker
+	duration *= 1.1f;
+
+	Vector mins, maxs;
+	CollisionProp()->WorldSpaceAABB(&mins, &maxs);
+
+	Vector pos = maxs;
+	pos.z += 8.0f;
+
+	const char* name = GetPrettyNPCName(this);
+
+	NDebugOverlay::EntityTextAtPosition(pos, 0, name, duration);
 }
 
 void CAI_BaseNPC::CallNPCThink( void ) 
@@ -3770,11 +3938,11 @@ void CAI_BaseNPC::CallNPCThink( void )
 	// reduce cache queries by locking model in memory
 	MDLCACHE_CRITICAL_SECTION();
 
-	this->NPCThink(); 
-
-	m_flLastRealThinkTime = gpGlobals->curtime;
+	this->NPCThink();
 
 	PostNPCThink();
+
+	m_flLastRealThinkTime = gpGlobals->curtime;
 } 
 
 bool NPC_CheckBrushExclude( CBaseEntity *pEntity, CBaseEntity *pBrush )

@@ -4787,6 +4787,107 @@ void CBasePlayer::InitialSpawn( void )
 
 	m_iConnected = PlayerConnected;
 	gamestats->Event_PlayerConnected( this );
+
+	SetThink(&CBasePlayer::Think); // Self-explanatory
+	SetNextThink(5.0f); // Self-explanatory
+}
+
+void CBasePlayer::Think()
+{
+	InitEntityList(); // Calls our init function for the Entities.
+}
+
+
+const char* CBasePlayer::GetEntityVectorElement(int position)
+{
+	return m_EntitySpawnName.Element(position); // Returns a element.
+}
+
+void CBasePlayer::AddEntityVectorElement(char* Element)
+{
+	char* _string = new char[Q_strlen(Element) + 1]; // Allocates just that what is needed.
+	Q_strcpy(_string, Element); // Copies the element.
+	m_EntitySpawnName.AddToTail(_string); // Adds the element into the vector.
+}
+
+void CBasePlayer::ClearEntityVector()
+{
+	for (int i = 0; i < m_EntitySpawnName.Count(); i++) // Starts a for from 0 to "element count".
+		delete[] m_EntitySpawnName[i]; // Deletes every single element.
+	m_EntitySpawnName.Purge(); // Purges the vector.
+}
+
+void CBasePlayer::InitEntityList()
+{
+	CUtlVector<char*> EntityName; // This is a CUtlVector for the entity name. More about them here:(http://developer.valvesoftware.com/wiki/CUtlVector).
+	//This is the list of our entities.
+	EntityName.AddToTail("none");  // It's needed because of some problems with the number 0 in the code.
+	AddEntityVectorElement("none"); // Same as above...
+	EntityName.AddToTail("Melon"); // Adds Melon into our EntityName CUtlVector.
+	AddEntityVectorElement("func_melon"); // Adds the Spawn Name of our Melon into the CUtlVector.
+	//EntityName.AddToTail("Coke"); Example
+	//EntitySpawnname.AddToTail("func_coke"); Example
+
+	CSingleUserRecipientFilter user(this); // A Filter for our usermessage
+	user.MakeReliable(); // Makes the filer reliable.
+	for (int i = 0; i < EntityName.Count(); i++) // For each element a usermessage gets sent.
+	{
+		UserMessageBegin(user, "EntityNames"); // Starts our usermessage.
+		WRITE_SHORT(entindex()); // Without the entindex, we couldn't find the right player at the client side. It would add them to everyone...
+		WRITE_STRING(EntityName[i]); // Sends our name to the Client.
+		MessageEnd(); // Ends the usermessage.
+	}
+}
+
+void CBasePlayer::InventoryAddItem(int EntityID)
+{
+	for (int i = 0; i < MAX_INVENTORY; i++) // Loops through our inventory array.
+	{
+		if (!m_iInventory.Get(i)) // If there's nothing, then ...
+		{
+			m_iInventory.Set(i, EntityID); // adds the entity in the current position.
+			break; // calls the emergency break
+		}
+	}
+	engine->ClientCommand(edict(), "UpdateInventory"); // Forces an update of our Inventory GUI.
+}
+
+void CBasePlayer::InventoryRemoveItem(int Position)
+{
+	if (m_iInventory.Get(Position))
+	{
+		Vector vecForward; // Sets up a vector.
+		AngleVectors(EyeAngles(), &vecForward); // Sets up a angle vector and gets the eyeangles of the player.
+		CBaseEntity* pEnt = CreateEntityByName(GetEntityVectorElement(m_iInventory.Get(Position))); // Gets the entity's spawn name and tries to spawn it.
+		if (pEnt)
+		{
+			Vector vecOrigin = GetAbsOrigin() + vecForward * 56 + Vector(0, 0, 64); // Makes sure the entity spawns a view unites away from the player.
+			QAngle vecAngles(0, GetAbsAngles().y - 90, 0); // Changes the angle of the entity.
+			pEnt->SetAbsOrigin(vecOrigin); // Apply origin changes.
+			pEnt->SetAbsAngles(vecAngles); // Apply angle changes.
+			pEnt->Spawn(); // Spawns the entity.
+			m_iInventory.Set(Position, 0); // Removes the Entity from our m_iInventory array.
+			int i, j, helper; // ...
+			for (i = MAX_INVENTORY - 1; i > 0; i--) // For each entry in our inventory, ...
+			{
+				for (j = 0; j < i; j++) // Once again.
+				{
+					if (m_iInventory.Get(j) < m_iInventory.Get(j + 1)) // If the next entry is smaller than the current entry, then ...
+					{
+						helper = m_iInventory.Get(j); // Saves the current entry in our helper.
+						m_iInventory.Set(j, m_iInventory.Get(j + 1)); // Sets the next entry to the current entry.
+						m_iInventory.Set(j + 1, helper); // Sets the entry saved in our helper into the next entry.
+					}
+				}
+			}
+		}
+		else
+			Warning("Unable to create entity?!\n"); // If the entity wasn't found.
+
+		engine->ClientCommand(edict(), "UpdateInventory"); // Forces an update of our Inventory GUI.
+	}
+	else
+		Warning("No Entity\n"); // If there's no entity in the current position.
 }
 
 //-----------------------------------------------------------------------------
@@ -6345,6 +6446,11 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 		StartObserverMode( OBS_MODE_ROAMING );
 		return true;
 	}
+	else if (FStrEq(cmd, "dropitem"))
+	{
+		InventoryRemoveItem(atoi(args[1])); // Converts the args to a int so it can be used by our function.
+		return true;
+	}
 	else if ( stricmp( cmd, "spec_mode" ) == 0 ) // new observer mode
 	{
 		int mode;
@@ -7896,6 +8002,7 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 		SendPropInt		(SENDINFO(m_iDefaultFOV), 8, SPROP_UNSIGNED ),
 		SendPropEHandle	(SENDINFO(m_hZoomOwner) ),
 		SendPropArray	( SendPropEHandle( SENDINFO_ARRAY( m_hViewModel ) ), m_hViewModel ),
+		SendPropArray3(SENDINFO_ARRAY3(m_iInventory), SendPropInt(SENDINFO_ARRAY(m_iInventory))),
 		SendPropString	(SENDINFO(m_szLastPlaceName) ),
 		SendPropInt		( SENDINFO( m_ubEFNoInterpParity ), NOINTERP_PARITY_MAX_BITS, SPROP_UNSIGNED ),
 

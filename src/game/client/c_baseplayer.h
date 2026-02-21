@@ -208,6 +208,14 @@ public:
 	// Called by the view model if its rendering is being overridden.
 	virtual bool		ViewModel_IsTransparent( void );
 
+	const char* GetEntityVectorElement(int position); // Gets a name out of our m_EntityName vector.
+	virtual void AddEntityVectorElement(char* Element); // Adds a element to our vector.
+	virtual void ClearEntityVector(); // Clears the entity vector.
+	int GetInventoryArray(int Position) { return m_iInventory[Position]; } // Returns the element on position X.
+
+	CUtlVector<char*> m_EntityName;
+	int m_iInventory[MAX_INVENTORY];
+
 #if !defined( NO_ENTITY_PREDICTION )
 	void						AddToPlayerSimulationList( C_BaseEntity *other );
 	void						SimulatePlayerSimulatedEntities( void );

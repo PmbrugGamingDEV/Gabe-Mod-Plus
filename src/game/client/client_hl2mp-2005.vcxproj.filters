@@ -79,6 +79,9 @@
     <Filter Include="Keyvalue Editor">
       <UniqueIdentifier>{d8559613-167d-4f23-9be3-defdbe7f53a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\SDK Stuff">
+      <UniqueIdentifier>{0e91452e-a3ce-480f-9174-c82759b02410}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">
@@ -1636,6 +1639,9 @@
       <Filter>Keyvalue Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\public\tier0\memoverride.cpp" />
+    <ClCompile Include="sdk_inventory.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\SDK Stuff</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="achievement_notification_panel.h">
@@ -3467,6 +3473,9 @@
     </ClInclude>
     <ClInclude Include="vgui_keyvalue.h">
       <Filter>Keyvalue Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk_inventory.h">
+      <Filter>Source Files\Gabe Mod + Stuff\SDK Stuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

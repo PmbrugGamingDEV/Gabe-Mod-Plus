@@ -525,8 +525,11 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="lua_dbg.cpp" />
+    <ClCompile Include="lua_debugoverlay.cpp" />
     <ClCompile Include="lua_ents.cpp" />
+    <ClCompile Include="lua_player.cpp" />
     <ClCompile Include="lua_test.cpp" />
+    <ClCompile Include="lua_vector.cpp" />
     <ClCompile Include="mapentities.cpp" />
     <ClCompile Include="..\shared\mapentities_shared.cpp" />
     <ClCompile Include="maprules.cpp" />
@@ -653,6 +656,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     </ClCompile>
     <ClCompile Include="scripted.cpp" />
     <ClCompile Include="scriptedtarget.cpp" />
+    <ClCompile Include="sdk_inventorymelon.cpp" />
     <ClCompile Include="sendproxy.cpp" />
     <ClCompile Include="..\shared\sequence_Transitioner.cpp" />
     <ClCompile Include="..\..\public\server_class.cpp">
@@ -710,6 +714,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\takedamageinfo.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="weapon_jetpack.cpp" />
+    <ClCompile Include="weapon_lasergun.cpp" />
     <ClCompile Include="weapon_multitool_legacy.cpp" />
     <ClCompile Include="weapon_proplauncher.cpp" />
     <ClCompile Include="weapon_propspawner.cpp" />
@@ -1135,7 +1140,10 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="luaconf.h" />
     <ClInclude Include="lualib.h" />
     <ClInclude Include="lua_dbg.h" />
+    <ClInclude Include="lua_debugoverlay.h" />
     <ClInclude Include="lua_ents.h" />
+    <ClInclude Include="lua_player.h" />
+    <ClInclude Include="lua_vector.h" />
     <ClInclude Include="maprules.h" />
     <ClInclude Include="..\..\public\MATHLIB.H" />
     <ClInclude Include="..\..\public\model_types.h" />
@@ -1235,6 +1243,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="..\shared\weapon_parse.h" />
     <ClInclude Include="..\shared\weapon_proficiency.h" />
     <ClInclude Include="weapon_camera.h" />
+    <ClInclude Include="weapon_lasergun.h" />
     <ClInclude Include="weapon_proplauncher.h" />
     <ClInclude Include="weapon_stickylauncher.h" />
     <ClInclude Include="world.h" />

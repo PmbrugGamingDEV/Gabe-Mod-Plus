@@ -165,10 +165,52 @@ void Lua_PushEntity(lua_State* L, CBaseEntity* ent)
 	lua_setmetatable(L, -2);
 }
 
+struct LuaEntity
+{
+	CBaseEntity* ent;
+};
+
+
 CBaseEntity* Lua_GetEntity(lua_State* L, int index)
 {
 	CBaseEntity** udata = (CBaseEntity**)luaL_checkudata(L, index, LUA_ENTITY_MT);
 	return udata ? *udata : NULL;
+}
+
+CBaseEntity* Lua_CheckEntity(lua_State* L, int index)
+{
+	LuaEntity* e = (LuaEntity*)luaL_checkudata(L, index, "Entity");
+
+	if (!e->ent)
+		luaL_error(L, "Invalid entity");
+
+	return e->ent;
+}
+
+static int lua_Entity_Index(lua_State* L)
+{
+	CBaseEntity* ent = Lua_CheckEntity(L, 1);
+	const char* key = luaL_checkstring(L, 2);
+
+	if (!Q_stricmp(key, "entindex"))
+	{
+		lua_pushinteger(L, ent->entindex());
+		return 1;
+	}
+
+	return 0;
+}
+
+int Lua_OpenEntity(lua_State* L)
+{
+	luaL_newmetatable(L, "Entity");
+
+	lua_pushcfunction(L, lua_Entity_Index);
+	lua_setfield(L, -2, "__index");
+
+	lua_pop(L, 1);
+
+	return 1;
 }
 
 // =======================

@@ -20,5 +20,7 @@ void Lua_RegisterEnts(lua_State* L);
 // helpers
 void Lua_PushEntity(lua_State* L, CBaseEntity* ent);
 CBaseEntity* Lua_GetEntity(lua_State* L, int index);
+CBaseEntity* Lua_CheckEntity(lua_State* L, int index);
+int Lua_OpenEntity(lua_State* L);
 
 #endif

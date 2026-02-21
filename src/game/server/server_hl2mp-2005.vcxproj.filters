@@ -1860,6 +1860,21 @@
     <ClCompile Include="hl2\npc_antliongrub.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
+    <ClCompile Include="lua_player.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_vector.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_debugoverlay.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_lasergun.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk_inventorymelon.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\achievement_saverestore.h">
@@ -3627,6 +3642,18 @@
       <Filter>Source Files\Gabe Mod + Stuff\Multitool Files</Filter>
     </ClInclude>
     <ClInclude Include="hl2\npc_antliongrub.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_player.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_vector.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClInclude>
+    <ClInclude Include="lua_debugoverlay.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon_lasergun.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
   </ItemGroup>

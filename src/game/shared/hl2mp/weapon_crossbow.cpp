@@ -332,6 +332,13 @@ void CCrossbowBolt::BoltTouch( CBaseEntity *pOther )
 
 				SetAbsVelocity( vReflection * speed * 0.75f );
 
+#ifndef CLIENT_DLL
+				if (UTIL_PointContents(tr.endpos) != CONTENTS_WATER)
+				{
+					g_pEffects->Ricochet(tr.endpos, tr.plane.normal);
+				}
+#endif
+
 				// Start to sink faster
 				SetGravity( 1.0f );
 			}

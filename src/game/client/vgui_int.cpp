@@ -14,6 +14,7 @@
 #include "imessagechars.h"
 #include "inetgraphpanel.h"
 #include "idebugoverlaypanel.h"
+#include "sdk_inventory.h" // includes that file we'll create later.
 #include <vgui/isurface.h>
 #include <vgui/IVGui.h>
 #include <vgui/IInput.h>
@@ -175,6 +176,9 @@ void VGui_CreateGlobalPanels( void )
 	loadingdisc->Create( gameToolParent );
 	messagechars->Create( gameToolParent );
 
+	VPANEL gameParent = enginevgui->GetPanel(PANEL_INGAMESCREENS); // Our panel can be viewed as a ingamescreen.
+	InventoryPanel->Create(gameParent); // Creates the panel.
+
 	// Debugging or related tool
 	fps->Create( toolParent );
 #if defined( TRACK_BLOCKING_IO )
@@ -212,6 +216,8 @@ void VGui_Shutdown()
 	{
 		g_pClientMode->VGui_Shutdown();
 	}
+
+	InventoryPanel->Destroy(); // Destroys the panel.
 
 	// Make sure anything "marked for deletion"
 	//  actually gets deleted before this dll goes away

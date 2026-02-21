@@ -18,6 +18,7 @@
 #include "soundenvelope.h"
 #include "te_effect_dispatch.h"
 #include "ai_basenpc.h"
+#include "ieffects.h"
 #include "npc_bullseye.h"
 #include "filters.h"
 #include "SpriteTrail.h"
@@ -1377,14 +1378,7 @@ void CPropCombineBall::DoImpactEffect( const Vector &preVelocity, int index, gam
 		DispatchEffect( "cball_bounce", data );
 	}
 
-	if ( hl2_episodic.GetBool() )
-	{
-		EmitSound( "NPC_CombineBall_Episodic.Impact" );
-	}
-	else
-	{
-		EmitSound( "NPC_CombineBall.Impact" );
-	}
+	g_pEffects->Ricochet(tr.endpos, tr.plane.normal);
 }
 
 //-----------------------------------------------------------------------------

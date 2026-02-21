@@ -3,6 +3,7 @@
 //
 // Purpose: A versatile tool for manipulating entities in various ways.
 //
+// $NoKeywords: $
 //=================================================================//
 
 #include "cbase.h"

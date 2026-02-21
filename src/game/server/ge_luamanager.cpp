@@ -13,6 +13,8 @@
 //// EXPOSURE INCLUDES ////
 #include "lua_dbg.h" // Console I/O
 #include "lua_ents.h" // Entity Functions
+#include "lua_player.h" // Player funcs
+#include "lua_debugoverlay.h" // DebugOverlay stuff
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -222,8 +224,6 @@ void LuaHandle::InitDll()
 	if (m_bStarted)
 		return;
 
-	Msg(">>> InitDll ENTERED <<<\n");
-
 	pL = luaL_newstate();
 	luaL_openlibs(pL);
 
@@ -233,12 +233,14 @@ void LuaHandle::InitDll()
 	GELua()->RegPublicFunctions(pL);
 	Lua_RegisterConsole(pL);
 	Lua_RegisterEnts(pL);
+	Lua_RegisterPlayer(pL);
+	Lua_RegisterDebugOverlay(pL);
 	GELua()->RegPublicGlobals(pL);
 
 	FileHandle_t f = filesystem->Open("lua/autorun.lua", "rb", "MOD");
 	if (!f)
 	{
-		Warning("[Lua] autorun.lua not found (mod/lua/autorun.lua)\n");
+		Warning("[Lua] autorun.lua not found (lua/autorun.lua)\n");
 	}
 	else
 	{
@@ -316,10 +318,19 @@ void CallLua_OnPlayerReady(CBasePlayer* pPlayer)
 // ------------------------------------------------------------
 // Public registration hooks
 // ------------------------------------------------------------
+
+int luaGetTime(lua_State* L)
+{
+	lua_pushnumber(L, gpGlobals->curtime);
+	return 1;
+}
+
 void RegisterLUAFuncs(lua_State* L)
 {
 	lua_pushcfunction(L, lua_Print);
 	lua_setglobal(L, "print");
+	lua_pushcfunction(L, luaGetTime);
+	lua_setglobal(L, "getcurtime");
 }
 
 void RegisterLUAGlobals(lua_State* L)
@@ -358,7 +369,7 @@ CON_COMMAND(lua_dofile, "Execute a Lua file")
 	}
 
 	int size = filesystem->Size(fh);
-	char* buffer = (char*)stackalloc(size + 1);
+	char* buffer = new char[size + 1];
 
 	filesystem->Read(buffer, size, fh);
 	buffer[size] = '\0';

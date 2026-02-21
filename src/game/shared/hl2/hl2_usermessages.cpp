@@ -27,6 +27,7 @@ void RegisterUserMessages( void )
 	usermessages->Register("KillFeed", -1);
 	usermessages->Register("DamageFeed", -1);
 	usermessages->Register( "ShowMenu", -1 );
+	usermessages->Register("EntityNames", -1);
 	usermessages->Register( "Shake", 13 );
 	usermessages->Register( "Fade", 10 );
 	usermessages->Register( "VGUIMenu", -1 );	// Show VGUI menu
