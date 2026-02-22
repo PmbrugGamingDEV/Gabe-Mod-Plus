@@ -70,9 +70,6 @@
     <Filter Include="Maestra Fénix Loading Screen">
       <UniqueIdentifier>{71f020e6-3a6c-4e11-8eaf-f3f9267d86cc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Awesomium">
-      <UniqueIdentifier>{c9428593-49f9-44e4-b614-4d3f05d72f3d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Gabe Mod + Stuff\Shared">
       <UniqueIdentifier>{35fb01c2-d9ba-4820-ad46-75f57fb2df66}</UniqueIdentifier>
     </Filter>
@@ -1616,15 +1613,6 @@
     </ClCompile>
     <ClCompile Include="mapload_background.cpp">
       <Filter>Maestra Fénix Loading Screen</Filter>
-    </ClCompile>
-    <ClCompile Include="VAwesomium.cpp">
-      <Filter>Awesomium</Filter>
-    </ClCompile>
-    <ClCompile Include="awesomium_init.cpp">
-      <Filter>Awesomium</Filter>
-    </ClCompile>
-    <ClCompile Include="awesomium_testpanel.cpp">
-      <Filter>Awesomium</Filter>
     </ClCompile>
     <ClCompile Include="..\shared\gabe_events.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>
@@ -3461,9 +3449,6 @@
     </ClInclude>
     <ClInclude Include="mapload_background.h">
       <Filter>Maestra Fénix Loading Screen</Filter>
-    </ClInclude>
-    <ClInclude Include="VAwesomium.h">
-      <Filter>Awesomium</Filter>
     </ClInclude>
     <ClInclude Include="..\shared\gabe_events.h">
       <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>

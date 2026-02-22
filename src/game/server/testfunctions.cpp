@@ -18,14 +18,14 @@ void Test_CreateEntity( const CCommand &args )
 {
 	if ( args.ArgC() < 2 )
 	{
-		Error( "Test_CreateEntity: requires entity classname argument." );
+		Warning( "Test_CreateEntity: requires entity classname argument." );
 	}
 
 	const char *pClassName = args[ 1 ];
 
 	if ( !CreateEntityByName( pClassName ) )
 	{
-		Error( "Test_CreateEntity( %s ) failed.", pClassName );
+		Warning( "Test_CreateEntity( %s ) failed.", pClassName );
 	}
 }
 
@@ -36,11 +36,11 @@ void Test_RandomPlayerPosition()
 	CWorld *pWorld = GetWorldEntity();
 	if ( !pPlayer )
 	{
-		Error( "Test_RandomPlayerPosition: no local player entity." );
+		Warning( "Test_RandomPlayerPosition: no local player entity." );
 	}
 	else if ( !pWorld )
 	{
-		Error( "Test_RandomPlayerPosition: no world entity." );
+		Warning( "Test_RandomPlayerPosition: no world entity." );
 	}
 
 	

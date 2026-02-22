@@ -1,9 +1,1 @@
-﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  weapon_multitool.cpp
-c:\gabemodplus\src\game\server\weapon_multitool.cpp(1513): warning C4701: potentially uninitialized local variable 'i' used
-c:\gabemodplus\src\game\server\weapon_multitool.cpp(974): warning C4701: potentially uninitialized local variable 'i' used
-  gabe_lua515.lib(lapi.obj) : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
-     Creating library D:\Steam\steamapps\sourcemods\gabemodplus\bin\server.lib and object D:\Steam\steamapps\sourcemods\gabemodplus\bin\server.exp
-  Generating code
-  Finished generating code
-  server_hl2mp-2005.vcxproj -> D:\Steam\steamapps\sourcemods\gabemodplus\bin\server.dll
+﻿

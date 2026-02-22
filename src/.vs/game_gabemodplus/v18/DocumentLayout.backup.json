@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\testfunctions.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\testfunctions.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\weapon_multitool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\weapon_multitool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -18,8 +22,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "testfunctions.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\testfunctions.cpp",
+              "RelativeDocumentMoniker": "game\\server\\testfunctions.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\testfunctions.cpp",
+              "RelativeToolTip": "game\\server\\testfunctions.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-22T16:30:36.954Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
@@ -30,7 +47,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "weapon_multitool.cpp",
               "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\weapon_multitool.cpp",
               "RelativeDocumentMoniker": "game\\server\\weapon_multitool.cpp",
@@ -43,7 +60,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "weapon_physgun.cpp",
               "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
               "RelativeDocumentMoniker": "game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
@@ -51,8 +68,7 @@
               "RelativeToolTip": "game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
               "ViewState": "AgIAAK4GAAAAAAAAAAAqwLcGAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-22T01:55:14.217Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-22T01:55:14.217Z"
             }
           ]
         }

@@ -182,7 +182,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;kernel32.lib;user32.lib;gabe_lua515.lib;awesomium.lib;%(AdditionalDependencies);steam_api.lib</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;kernel32.lib;user32.lib;gabe_lua515.lib;%(AdditionalDependencies);steam_api.lib</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <OutputFile>$(OutDir)Client.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -239,8 +239,6 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="..\shared\animation.cpp" />
     <ClCompile Include="..\shared\base_playeranimstate.cpp" />
     <ClCompile Include="..\shared\baseachievement.cpp" />
-    <ClCompile Include="awesomium_init.cpp" />
-    <ClCompile Include="awesomium_testpanel.cpp" />
     <ClCompile Include="baseanimatedtextureproxy.cpp" />
     <ClCompile Include="baseclientrendertargets.cpp" />
     <ClCompile Include="..\shared\basecombatcharacter_shared.cpp" />
@@ -662,7 +660,6 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\shared\vehicle_viewblend_shared.cpp" />
-    <ClCompile Include="VAwesomium.cpp" />
     <ClCompile Include="vgui_avatarimage.cpp" />
     <ClCompile Include="vgui_basepanel.cpp" />
     <ClCompile Include="vgui_bitmapbutton.cpp" />
@@ -909,7 +906,6 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="hud_killfeed.h" />
     <ClInclude Include="mapload_background.h" />
     <ClInclude Include="sdk_inventory.h" />
-    <ClInclude Include="VAwesomium.h" />
     <ClInclude Include="vgui_avatarimage.h" />
     <ClInclude Include="vgui_keyvalue.h" />
     <ClInclude Include="viewdebug.h" />
