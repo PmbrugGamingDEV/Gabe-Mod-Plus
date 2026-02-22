@@ -39,7 +39,12 @@
 #include "iviewrender.h"
 #include "ragdoll.h"
 #else
+#include "te_effect_dispatch.h"
 #include "physics_prop_ragdoll.h"
+#endif
+
+#ifdef CLIENT_DLL
+#include "glow_overlay.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -60,9 +65,10 @@ ConVar phys_guntogglesound("gabe+_physgun_togglesound", "0", FCVAR_REPLICATED); 
 
 #ifdef CLIENT_DLL
 CLIENTEFFECT_REGISTER_BEGIN(PrecacheEffectGravityGun)
-CLIENTEFFECT_MATERIAL("sprites/physbeam1")
 CLIENTEFFECT_MATERIAL("sprites/physbeam")
+CLIENTEFFECT_MATERIAL("sprites/physbeam1")
 CLIENTEFFECT_MATERIAL("sprites/physglow")
+CLIENTEFFECT_MATERIAL("sprites/bluebeam")
 CLIENTEFFECT_REGISTER_END()
 
 
@@ -549,7 +555,10 @@ private:
 	CGravControllerPoint		m_gravCallback;
 
 	// add an int to measure the amount of frozen props
-	int m_frozenObjects;
+#ifndef CLIENT_DLL
+	CUtlVector<EHANDLE> m_vecFrozenEnts;
+#endif
+	int			m_frozenObjects;
 
 	bool		m_bInWeapon1;
 	bool		m_bInWeapon2;
@@ -557,6 +566,11 @@ private:
 	MoveType_t  m_oldMoveType;
 	SolidType_t m_oldSolid;
 	bool        m_bRestoreState;
+
+#ifdef CLIENT_DLL
+	int GetMuzzleAttachment(C_BaseViewModel* pVM);
+	bool GetMuzzlePosition(C_BaseViewModel* pVM, Vector& origin, QAngle& angles);
+#endif
 
 	DECLARE_ACTTABLE();
 };
@@ -662,7 +676,37 @@ CWeaponGravityGun::CWeaponGravityGun()
 	m_bInWeapon1 = false;
 	m_bInWeapon2 = false;
 	m_frozenObjects = 0;
+#ifndef CLIENT_DLL
+	m_vecFrozenEnts = NULL;
+#endif
 }
+
+#ifdef CLIENT_DLL
+
+int CWeaponGravityGun::GetMuzzleAttachment(C_BaseViewModel* pVM)
+{
+	if (!pVM)
+		return -1;
+
+	int attachment = pVM->LookupAttachment("muzzle");
+
+	// Fallback if model doesn't have "muzzle"
+	if (attachment <= 0)
+		attachment = 1;
+
+	return attachment;
+}
+
+bool CWeaponGravityGun::GetMuzzlePosition(C_BaseViewModel* pVM, Vector& origin, QAngle& angles)
+{
+	int attachment = GetMuzzleAttachment(pVM);
+	if (attachment <= 0)
+		return false;
+
+	return pVM->GetAttachment(attachment, origin, angles);
+}
+
+#endif
 
 
 //-----------------------------------------------------------------------------
@@ -780,6 +824,7 @@ void CWeaponGravityGun::Precache(void)
 	g_physgunBeam1 = PrecacheModel(PHYSGUN_BEAM_SPRITE1);
 	g_physgunBeam = PrecacheModel(PHYSGUN_BEAM_SPRITE);
 	g_physgunGlow = PrecacheModel(PHYSGUN_BEAM_GLOW);
+	PrecacheModel("sprites/bluebeam.vmt");
 
 	PrecacheScriptSound("Weapon_Physgun.Scanning");
 	PrecacheScriptSound("Weapon_Physgun.LockedOn");
@@ -1417,19 +1462,6 @@ void CWeaponGravityGun::SecondaryAttack(void)
 		return; // Skip freezing
 	}
 
-	// Sound
-	EmitSound_t params;
-	Q_memset(&params, 0, sizeof(params));
-
-	params.m_pSoundName = g_SawbladeStickSounds[random->RandomInt(0, 2)];
-	params.m_flVolume = 1.0f;
-	params.m_nPitch = PITCH_NORM;
-	params.m_nChannel = CHAN_BODY;
-	params.m_SoundLevel = SNDLVL_90dB; // ← THIS IS CRITICAL
-
-	CPASAttenuationFilter filter(this);
-	EmitSound(filter, entindex(), params);
-
 	// Toggle motion
 	const bool bWasMotionEnabled = pPhys->IsMotionEnabled();
 
@@ -1439,7 +1471,7 @@ void CWeaponGravityGun::SecondaryAttack(void)
 		pPhys->EnableMotion(false);
 		pPhys->Sleep();                 // settle immediately
 
-		NDebugOverlay::EntityTextAtPosition(m_hObject->GetAbsOrigin(), 0, "OBJECT FROZEN", 1.0f, 0, 255, 0, 255);
+		m_vecFrozenEnts.AddToTail(pHit);
 		m_frozenObjects++;
 		Msg("%d frozen bastards\n", m_frozenObjects);
 	}
@@ -1449,7 +1481,10 @@ void CWeaponGravityGun::SecondaryAttack(void)
 		pPhys->EnableMotion(true);
 		pPhys->Wake();                  // wake so gravity applies
 
-		NDebugOverlay::EntityTextAtPosition(m_hObject->GetAbsOrigin(), 0, "OBJECT UNFROZEN", 1.0f, 255, 0, 0, 255);
+		int idx = m_vecFrozenEnts.Find(pHit);
+		if (idx != m_vecFrozenEnts.InvalidIndex())
+			m_vecFrozenEnts.FastRemove(idx);
+
 		m_frozenObjects--;
 		Msg("%d frozen bastards now\n", m_frozenObjects);
 	}
@@ -1556,7 +1591,7 @@ int CWeaponGravityGun::DrawModel(int flags)
 
 		// Beam material
 		IMaterial* pMat = materials->FindMaterial(
-			pObject ? "sprites/physbeam" : "sprites/physbeam1",
+			pObject ? "sprites/physbeam1" : "sprites/physbeam",
 			TEXTURE_GROUP_CLIENT_EFFECTS
 		);
 
@@ -1640,7 +1675,7 @@ void CWeaponGravityGun::ViewModelDrawn(C_BaseViewModel* pBaseViewModel)
 	GetPhysgunColorVector(colorVec);
 
 	IMaterial* pMat = materials->FindMaterial(
-		pObject ? "sprites/physbeam" : "sprites/physbeam1",
+		pObject ? "sprites/physbeam1" : "sprites/physbeam",
 		TEXTURE_GROUP_CLIENT_EFFECTS
 	);
 
@@ -1678,12 +1713,30 @@ void CWeaponGravityGun::ViewModelDrawn(C_BaseViewModel* pBaseViewModel)
 
 	ctx->Bind(pGlow);
 
+	// Impact glow at target
 	for (int i = 0; i < 3; i++)
 	{
 		DrawSprite(points[2], scale, scale, spriteClr);
 	}
 
+	// Restore normal depth before muzzle glow
 	ctx->DepthRange(0.0f, 1.0f);
+
+	// ----- Muzzle Glow -----
+
+	Vector muzzlePos;
+	QAngle muzzleAng;
+
+	if (GetMuzzlePosition(pBaseViewModel, muzzlePos, muzzleAng))
+	{
+		float muzzleMul = clamp(gabeplus_physgun_spritesize.GetFloat(), 0.1f, 10.0f);
+		float muzzleScale = 14.0f * muzzleMul;
+
+		muzzleScale *= random->RandomFloat(0.95f, 1.05f);
+
+		DrawSprite(muzzlePos, muzzleScale, muzzleScale, spriteClr);
+		DrawSprite(muzzlePos, muzzleScale * 0.6f, muzzleScale * 0.6f, spriteClr);
+	}
 
 	render->PopView(dummyFrustum);
 
@@ -1721,6 +1774,12 @@ void CWeaponGravityGun::ItemPostFrame(void)
 	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
 	if (!pOwner)
 		return;
+
+	if (pOwner->m_afButtonPressed & IN_RELOAD)
+	{
+		Reload();
+		return;
+	}
 
 #ifdef ARGG
 	// adnan
@@ -1801,10 +1860,6 @@ void CWeaponGravityGun::ItemPostFrame(void)
 		WeaponIdle();
 		return;
 	}
-	if (pOwner->m_afButtonPressed & IN_RELOAD)
-	{
-		Reload();
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1821,5 +1876,46 @@ bool CWeaponGravityGun::HasAnyAmmo(void)
 //=========================================================
 bool CWeaponGravityGun::Reload(void)
 {
-	return false;
+#ifndef CLIENT_DLL
+
+	for (int i = m_vecFrozenEnts.Count() - 1; i >= 0; --i)
+	{
+		CBaseEntity* pEnt = m_vecFrozenEnts[i];
+		if (!pEnt)
+			continue;
+
+		IPhysicsObject* pPhys = pEnt->VPhysicsGetObject();
+		if (!pPhys)
+			continue;
+
+		CBeam* pBeam = CBeam::BeamCreate("sprites/physbeam.vmt", 1.5f);
+		if (pBeam)
+		{
+			pBeam->PointEntInit(pEnt->WorldSpaceCenter(), this);
+			pBeam->SetEndAttachment(1);
+			pBeam->SetBrightness(255);
+			pBeam->SetColor(255, 255, 255);
+			pBeam->RelinkBeam();
+			pBeam->LiveForTime(0.1);
+		}
+
+		CEffectData data;
+		data.m_vOrigin = pEnt->WorldSpaceCenter();
+		data.m_vNormal = Vector(0, 0, 1);
+		DispatchEffect("cball_explode", data);
+
+		pPhys->EnableMotion(true);
+		pPhys->Wake();
+	}
+
+	WeaponSound(RELOAD);
+
+	m_vecFrozenEnts.RemoveAll();
+	m_frozenObjects = 0;
+
+	Msg("All bastards released.\n");
+
+#endif
+
+	return true;
 }

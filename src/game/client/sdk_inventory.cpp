@@ -135,9 +135,17 @@ void CInventoryPanel::OnCommand(const char* cmd)
 	if (!Q_stricmp(cmd, "dropitem")) // If our button sends dropitem, then...
 	{
 		char com[12]; // Our buffer.
-		Q_snprintf(com, sizeof(com), "dropitem %i", ItemSelection->GetSelectedItem()); // Prints our command into the buffer.
-		engine->ServerCmd(com); // Sends the command.
-		cl_UpdateInventory.SetValue(1); // Our GUI wants to do an update now.
+		if (ItemSelection->GetSelectedItem() == NULL)
+		{
+			Msg("[Inventory] no valid item to drop!\n");
+			return;
+		}
+		else
+		{
+			Q_snprintf(com, sizeof(com), "dropitem %i", ItemSelection->GetSelectedItem()); // Prints our command into the buffer.
+			engine->ServerCmd(com); // Sends the command.
+			cl_UpdateInventory.SetValue(1); // Our GUI wants to do an update now.
+		}
 	}
 }
 

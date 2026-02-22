@@ -280,7 +280,7 @@ public:
 	virtual void			OnPickedUp( CBaseCombatCharacter *pNewOwner );
 
 	virtual void			AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, QAngle &angles ) {};
-	virtual float			CalcViewmodelBob( void ) { return 0.0f; };
+	virtual float			CalcViewmodelBob( void ) { return 1.0f; };
 
 	// Returns information about the various control panels
 	virtual void 			GetControlPanelInfo( int nPanelIndex, const char *&pPanelName );

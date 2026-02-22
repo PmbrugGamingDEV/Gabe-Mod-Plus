@@ -135,10 +135,10 @@ private:
 
 	CPanelAnimationVarAliasType( float, m_flSmallBoxSize, "SmallBoxSize", "32", "proportional_float" );
 	CPanelAnimationVarAliasType( float, m_flLargeBoxWide, "LargeBoxWide", "108", "proportional_float" );
-	CPanelAnimationVarAliasType( float, m_flLargeBoxTall, "LargeBoxTall", "72", "proportional_float" );
+	CPanelAnimationVarAliasType( float, m_flLargeBoxTall, "LargeBoxTall", "48", "proportional_float" );
 
 	CPanelAnimationVarAliasType( float, m_flMediumBoxWide, "MediumBoxWide", "75", "proportional_float" );
-	CPanelAnimationVarAliasType( float, m_flMediumBoxTall, "MediumBoxTall", "50", "proportional_float" );
+	CPanelAnimationVarAliasType( float, m_flMediumBoxTall, "MediumBoxTall", "36", "proportional_float" );
 
 	CPanelAnimationVarAliasType( float, m_flBoxGap, "BoxGap", "12", "proportional_float" );
 

@@ -240,7 +240,6 @@ static ConVar	v_ipitch_level( "v_ipitch_level", "0.3", FCVAR_REPLICATED | FCVAR_
 //-----------------------------------------------------------------------------
 float CBaseHL2MPCombatWeapon::CalcViewmodelBob( void )
 {
-	/*
 	static	float bobtime;
 	static	float lastbobtime;
 	float	cycle;
@@ -303,7 +302,6 @@ float CBaseHL2MPCombatWeapon::CalcViewmodelBob( void )
 	g_lateralBob = speed*0.005f;
 	g_lateralBob = g_lateralBob*0.3 + g_lateralBob*0.7*sin(cycle);
 	g_lateralBob = clamp( g_lateralBob, -7.0f, 4.0f );
-		*/
 	
 	//NOTENOTE: We don't use this return value in our case (need to restructure the calculation function setup!)
 	return 0.0f;

@@ -315,6 +315,9 @@ private:
 		DupedRagdollBone_t bones[MAX_DUPE_RAGDOLL_BONES];
 	};
 
+	int m_nFaceIndex;
+	EHANDLE m_hFaceTarget;
+
 	DupedEntityData_t m_DupeData;
 };
 
@@ -332,6 +335,8 @@ DEFINE_FIELD(m_nMultitoolMode, FIELD_INTEGER),
 DEFINE_FIELD(m_nLightWatermelonColor, FIELD_INTEGER),
 DEFINE_FIELD(m_nColorIndex, FIELD_INTEGER),
 DEFINE_FIELD(m_nDecalIndex, FIELD_INTEGER),
+DEFINE_FIELD(m_nFaceIndex, FIELD_INTEGER),
+DEFINE_FIELD(m_hFaceTarget, FIELD_EHANDLE),
 END_DATADESC()
 
 CWeaponMultitool::CWeaponMultitool()
@@ -346,6 +351,8 @@ CWeaponMultitool::CWeaponMultitool()
 	m_bFiresUnderwater = true;
 	m_nLightWatermelonColor = 0;
 	m_nMaterialIndex = 0;
+	m_nFaceIndex = 0;
+	m_hFaceTarget = nullptr;
 }
 
 enum MultitoolMode_t
@@ -361,6 +368,7 @@ enum MultitoolMode_t
 	MODE_LIGHT_WATERMELON,
 	MODE_DECAL,
 	MODE_MATERIAL,
+	MODE_FACEPOSER,
 	MODE_MAX
 };
 
@@ -369,17 +377,18 @@ MultitoolMode_t StringToMode(const char* psz)
 	if (!psz)
 		return MODE_REMOVE;
 
-	if (!Q_stricmp(psz, "remove"))           return MODE_REMOVE;
-	if (!Q_stricmp(psz, "distance"))         return MODE_DISTANCE;
-	if (!Q_stricmp(psz, "color"))            return MODE_COLOR;
-	if (!Q_stricmp(psz, "constraint"))       return MODE_CONSTRAINT;
-	if (!Q_stricmp(psz, "ignite"))           return MODE_IGNITE;
-	if (!Q_stricmp(psz, "duplicate"))        return MODE_DUPLICATE;
-	if (!Q_stricmp(psz, "explode"))          return MODE_EXPLODE;
-	if (!Q_stricmp(psz, "pointmessage"))     return MODE_POINTMESSAGE;
+	if (!Q_stricmp(psz, "remove")) return MODE_REMOVE;
+	if (!Q_stricmp(psz, "distance")) return MODE_DISTANCE;
+	if (!Q_stricmp(psz, "color")) return MODE_COLOR;
+	if (!Q_stricmp(psz, "constraint")) return MODE_CONSTRAINT;
+	if (!Q_stricmp(psz, "ignite")) return MODE_IGNITE;
+	if (!Q_stricmp(psz, "duplicate")) return MODE_DUPLICATE;
+	if (!Q_stricmp(psz, "explode")) return MODE_EXPLODE;
+	if (!Q_stricmp(psz, "pointmessage")) return MODE_POINTMESSAGE;
 	if (!Q_stricmp(psz, "light_watermelon")) return MODE_LIGHT_WATERMELON;
-	if (!Q_stricmp(psz, "decal"))            return MODE_DECAL;
-	if (!Q_stricmp(psz, "material"))         return MODE_MATERIAL;
+	if (!Q_stricmp(psz, "decal")) return MODE_DECAL;
+	if (!Q_stricmp(psz, "material")) return MODE_MATERIAL;
+	if (!Q_stricmp(psz, "faceposer")) return MODE_FACEPOSER;
 
 	return MODE_REMOVE;
 }
@@ -396,7 +405,8 @@ const char* g_szModeNames[] =
 	"Point Message",
 	"Light Watermelon",
 	"Decal",
-	"(Render FX) Materials",
+	"Render FX",
+	"Faceposer (NPCs)",
 };
 
 const char* g_szConstraintTypes[] = {
@@ -661,6 +671,86 @@ void RainbowThink(CBaseEntity* pEnt)
 	pEnt->SetNextThink(gpGlobals->curtime + 0.05f);
 }
 
+struct FlexPair
+{
+	const char* flex;
+	float weight; // 0..1 (or higher if you want, but keep sane)
+};
+
+struct FacePreset
+{
+	const char* name;
+	const FlexPair* pairs;
+	int pairCount;
+};
+
+// Helper macro
+#define FACE_PRESET(_name, _arr) { _name, _arr, (int)(sizeof(_arr)/sizeof(_arr[0])) }
+
+// --- Preset definitions ---
+// NOTE: Flex names vary per model. These are common-ish names.
+// You can add more aliases later.
+
+static FlexPair g_Face_Smile[] =
+{
+	{ "smile", 1.0f },
+	{ "smile_open", 0.4f },
+	{ "happy", 0.6f },
+	{ "eyes_smile", 0.6f }
+};
+
+static FlexPair g_Face_Sad[] =
+{
+	{ "sad", 1.0f },
+	{ "frown", 0.9f },
+	{ "brow_down", 0.6f },
+	{ "mouth_down", 0.8f }
+};
+
+static FlexPair g_Face_Angry[] =
+{
+	{ "angry", 1.0f },
+	{ "brow_lowerer", 1.0f },
+	{ "brow_down", 0.8f },
+	{ "sneer", 0.5f }
+};
+
+static FlexPair g_Face_Scared[] =
+{
+	{ "fear", 1.0f },
+	{ "scared", 1.0f },
+	{ "brow_raiser", 0.8f },
+	{ "eyes_wide", 1.0f },
+	{ "mouth_open", 0.6f }
+};
+
+static FlexPair g_Face_Surprised[] =
+{
+	{ "surprised", 1.0f },
+	{ "brow_raiser", 1.0f },
+	{ "eyes_wide", 1.0f },
+	{ "jaw_drop", 0.7f }
+};
+
+static FlexPair g_Face_Neutral[] =
+{
+	{ "neutral", 0.0f }
+};
+
+static FacePreset g_FacePresets[] =
+{
+	FACE_PRESET("Smile",     g_Face_Smile),
+	FACE_PRESET("Sad",       g_Face_Sad),
+	FACE_PRESET("Angry",     g_Face_Angry),
+	FACE_PRESET("Scared",    g_Face_Scared),
+	FACE_PRESET("Surprised", g_Face_Surprised),
+	FACE_PRESET("Neutral",   g_Face_Neutral),
+};
+
+const int FACE_COUNT = sizeof(g_FacePresets) / sizeof(g_FacePresets[0]);
+
+#undef FACE_PRESET
+
 void CWeaponMultitool::ApplyToolAction(CBaseEntity* pEnt)
 {
 	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
@@ -860,7 +950,55 @@ void CWeaponMultitool::ApplyToolAction(CBaseEntity* pEnt)
 		break;
 	}
 
+	case MODE_FACEPOSER:
+	{
+		if (!pEnt->IsNPC())
+		{
+			HudText(pPlayer, "Not an NPC.", 255, 100, 100);
+			break;
+		}
 
+		CBaseFlex* pFlex = dynamic_cast<CBaseFlex*>(pEnt);
+		if (!pFlex)
+		{
+			HudText(pPlayer, "NPC has no facial flexes.", 255, 100, 100);
+			break;
+		}
+
+		// Store target so we can override every frame
+		m_hFaceTarget = pEnt;
+
+		// Clear existing flex values
+		int flexCount = pFlex->GetNumFlexControllers();
+
+		for (LocalFlexController_t i; i < flexCount; i++)
+		{
+			const char* name = pFlex->GetFlexControllerName(i);
+			if (name && name[0])
+			{
+				pFlex->SetFlexWeight(const_cast<char*>(name), 0.0f);
+			}
+		}
+
+		// Apply preset immediately
+		FacePreset& preset = g_FacePresets[m_nFaceIndex];
+
+		for (int i = 0; i < preset.pairCount; i++)
+		{
+			pFlex->SetFlexWeight(
+				const_cast<char*>(preset.pairs[i].flex),
+				preset.pairs[i].weight
+			);
+		}
+
+		HudText(
+			pPlayer,
+			UTIL_VarArgs("Applied: %s", preset.name),
+			150, 255, 150
+		);
+
+		break;
+	}
 	case MODE_CONSTRAINT:
 	{
 		if (!m_hConstraintTarget1)
@@ -1259,6 +1397,20 @@ void CWeaponMultitool::ItemPostFrame()
 		}
 	}
 
+	if (m_nMultitoolMode == MODE_FACEPOSER)
+	{
+		if (pPlayer->m_afButtonPressed & IN_RELOAD)
+		{
+			m_nFaceIndex = (m_nFaceIndex + 1) % FACE_COUNT;
+
+			HudText(
+				pPlayer,
+				UTIL_VarArgs("Face: %s", g_FacePresets[m_nFaceIndex].name),
+				255, 255, 255
+			);
+		}
+	}
+
 
 	if (m_nMultitoolMode == MODE_CONSTRAINT)
 	{
@@ -1341,6 +1493,41 @@ void CWeaponMultitool::ItemPostFrame()
 			Msg(
 				"Multitool: removed %d point_message entities named \"gabeplus_mtool_pmessage\".\n",
 				removed
+			);
+		}
+	}
+
+	if (m_nMultitoolMode == MODE_FACEPOSER && m_hFaceTarget)
+	{
+		CBaseEntity* pTarget = m_hFaceTarget.Get();
+		if (!pTarget)
+			return;
+
+		CBaseFlex* pFlex = dynamic_cast<CBaseFlex*>(pTarget);
+		if (!pFlex)
+			return;
+
+		// Reset all flex weights every frame
+		LocalFlexController_t flexCount = pFlex->GetNumFlexControllers();
+
+		for (LocalFlexController_t i; i < flexCount; ++i)
+		{
+			const char* name = pFlex->GetFlexControllerName(i);
+
+			if (name && name[0])
+			{
+				pFlex->SetFlexWeight(const_cast<char*>(name), 0.0f);
+			}
+		}
+
+		// Reapply preset
+		FacePreset& preset = g_FacePresets[m_nFaceIndex];
+
+		for (int i = 0; i < preset.pairCount; i++)
+		{
+			pFlex->SetFlexWeight(
+				const_cast<char*>(preset.pairs[i].flex),
+				preset.pairs[i].weight
 			);
 		}
 	}

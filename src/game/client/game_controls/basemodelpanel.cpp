@@ -39,6 +39,8 @@ using namespace vgui;
 
 DECLARE_BUILD_FACTORY( CModelPanel );
 
+ConVar cl_himodels("cl_himodels", "1", FCVAR_CLIENTDLL, "STUB CMD");
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
