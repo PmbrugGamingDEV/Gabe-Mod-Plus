@@ -87,6 +87,7 @@ public:
 
 	int	GetSpeed() const;
 	int GetMaxSpeed() const;
+	int SetMaxSpeed( float speed );
 	int GetRPM() const;
 	float GetThrottle() const;
 	bool HasBoost() const;
@@ -179,6 +180,12 @@ inline int CFourWheelVehiclePhysics::GetSpeed() const
 inline int CFourWheelVehiclePhysics::GetMaxSpeed() const
 {
 	return INS2MPH(m_pVehicle->GetVehicleParams().engine.maxSpeed);
+}
+
+inline int CFourWheelVehiclePhysics::SetMaxSpeed( float speed )
+{
+	m_flMaxSpeed = speed;
+	return m_flMaxSpeed;
 }
 
 inline int CFourWheelVehiclePhysics::GetRPM() const

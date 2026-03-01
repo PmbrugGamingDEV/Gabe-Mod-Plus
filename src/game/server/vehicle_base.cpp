@@ -17,6 +17,7 @@
 #include "saverestore_utlvector.h"
 #include "func_break.h"
 #include "physics_impact_damage.h"
+#include "vehicle_jeep.h"
 #include "entityblocker.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -27,6 +28,45 @@
 ConVar g_debug_vehiclebase( "g_debug_vehiclebase", "0", FCVAR_CHEAT );
 extern ConVar g_debug_vehicledriver;
 
+static ConCommand gabeplus_vehicle_setspeed(
+	"gabeplus_vehicle_setspeed",
+	[](const CCommand& args)
+	{
+		if (args.ArgC() < 2)
+		{
+			Msg("Usage: gabeplus_vehicle_setspeed <speed>\n");
+			return;
+		}
+
+		float newSpeed = atof(args[1]);
+		int count = 0;
+
+		CBaseEntity* pEnt = NULL;
+
+		while ((pEnt = gEntList.FindEntityByClassname(pEnt, "prop_vehicle*")) != NULL)
+		{
+			CPropVehicleDriveable* pDrive =
+				dynamic_cast<CPropVehicleDriveable*>(pEnt);
+
+			if (!pDrive)
+				continue;
+
+			// Try airboat
+			CPropVehicle* pV = dynamic_cast<CPropVehicle*>(pDrive);
+			if (pV)
+			{
+				CFourWheelVehiclePhysics* pvphys = pV->GetPhysics();
+				pvphys->SetMaxSpeed(newSpeed);
+				count++;
+				continue;
+			}
+		}
+
+		Msg("Updated %d vehicles to max speed %.1f\n", count, newSpeed);
+	},
+	"Sets max speed for all active vehicles.",
+	FCVAR_CHEAT
+);
 // CFourWheelServerVehicle
 BEGIN_SIMPLE_DATADESC_( CFourWheelServerVehicle, CBaseServerVehicle )
 

@@ -250,7 +250,7 @@ public:
 	void GetSortColumnEx( int &iPrimarySortColumn, int &iSecondarySortColumn, bool &bSortAscending ) const;
 
 
-	public:
+public:
 		void SetRowHeight(int tall);
 		int  GetRowHeight() const;
 		int GetRowFromPoint(int x, int y);

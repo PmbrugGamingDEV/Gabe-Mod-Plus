@@ -184,6 +184,7 @@ typedef unsigned int uint;
 //       It's probable that this shouldn't be an issue, but an experiment should be done to verify this.
 //
 #ifndef _X360
+// An abstract class. Define members in inherited classes.
 #define abstract_class class
 #else
 #define abstract_class class NO_VTABLE

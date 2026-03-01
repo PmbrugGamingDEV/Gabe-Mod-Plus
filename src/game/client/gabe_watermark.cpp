@@ -84,7 +84,7 @@ void CHudWatermark::Paint(void)
     const int margin = 8;
     const int padding = 6;
 
-    const wchar_t* line1 = L"Gabe Mod Eight";
+    const wchar_t* line1 = L"Gabe Mod 8.1";
     const wchar_t* line2 = L"sites.google.com/pmbruggaming";
 
     int sw, sh;

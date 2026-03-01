@@ -73,6 +73,9 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\Multitool Files">
       <UniqueIdentifier>{16007308-931a-4c37-bfee-4e60e0a89ff6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\NPCs">
+      <UniqueIdentifier>{f1ed40e1-7738-4ad2-9039-b08ccc875ca1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\achievement_saverestore.cpp">
@@ -1875,6 +1878,15 @@
     <ClCompile Include="sdk_inventorymelon.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
+    <ClCompile Include="npc_agrunt.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\hl1_monster.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\hl1_monster_squad.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\achievement_saverestore.h">
@@ -3655,6 +3667,12 @@
     </ClInclude>
     <ClInclude Include="weapon_lasergun.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\hl1_monster.h">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\hl1_monster_squad.h">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

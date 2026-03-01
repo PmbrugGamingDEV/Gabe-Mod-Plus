@@ -19,6 +19,8 @@
 #include "ClientEffectPrecacheSystem.h"
 #include "tier0/vprof.h"
 
+#include "steam/steam_api.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -159,83 +161,151 @@ void C_TEPlayerDecal::Precache( void )
 //			player - 
 //			entity - 
 //-----------------------------------------------------------------------------
-void TE_PlayerDecal( IRecipientFilter& filter, float delay,
-	const Vector* pos, int player, int entity  )
+
+bool LoadLocalSteamSpray()
 {
-	if ( cl_playerspraydisable.GetBool() )
-		return;
+    if (!steamapicontext || !steamapicontext->SteamUser())
+        return false;
 
-	// No valid target?
-	C_BaseEntity *ent = cl_entitylist->GetEnt( entity );
-	if ( !ent )
-		return;
+    CSteamID steamID = steamapicontext->SteamUser()->GetSteamID();
+    uint32 appID = engine->GetAppID();
 
-	// Find player logo for shooter
-	player_info_t info;
-	engine->GetPlayerInfo( player, &info );
+    char sprayPath[MAX_PATH];
+    Q_snprintf(
+        sprayPath,
+        sizeof(sprayPath),
+        "userdata/%llu/%u/remote/spray.vtf",
+        steamID.ConvertToUint64(),
+        appID
+    );
 
-	// Doesn't have a logo
-	 if ( !info.customFiles[0] )	
-		return;
+    if (!filesystem->FileExists(sprayPath))
+        return false;
 
-	IMaterial *logo = materials->FindMaterial( VarArgs("decals/playerlogo%2.2d", player), TEXTURE_GROUP_DECAL );
-	if ( IsErrorMaterial( logo ) )
-		return;
+    // Copy to materials/temp
+    if (!filesystem->FileExists("materials/temp/spray.vtf"))
+    {
+        engine->CopyFile(sprayPath, "materials/temp/spray.vtf");
+    }
 
-	char logohex[ 16 ];
-	Q_binarytohex( (byte *)&info.customFiles[0], sizeof( info.customFiles[0] ), logohex, sizeof( logohex ) );
+    return true;
+}
 
-	// See if logo has been downloaded.
-	char texname[ 512 ];
-	Q_snprintf( texname, sizeof( texname ), "temp/%s", logohex );
-	char fulltexname[ 512 ];
-	Q_snprintf( fulltexname, sizeof( fulltexname ), "materials/temp/%s.vtf", logohex );
+void TE_PlayerDecal(IRecipientFilter& filter, float delay,
+    const Vector* pos, int player, int entity)
+{
+    if (cl_playerspraydisable.GetBool())
+        return;
 
-	if ( !filesystem->FileExists( fulltexname ) )
-	{
-		char custname[ 512 ];
-		Q_snprintf( custname, sizeof( custname ), "downloads/%s.dat", logohex );
-		// it may have been downloaded but not copied under materials folder
-		if ( !filesystem->FileExists( custname ) )
-			return; // not downloaded yet
+    if (!r_decals.GetBool())
+        return;
 
-		// copy from download folder to materials/temp folder
-		// this is done since material system can access only materials/*.vtf files
+    C_BaseEntity* ent = cl_entitylist->GetEnt(entity);
+    if (!ent)
+        return;
 
-		if ( !engine->CopyFile( custname, fulltexname) )
-			return;
-	}
+    player_info_t info;
+    engine->GetPlayerInfo(player, &info);
 
-	ITexture *texture = materials->FindTexture( texname, TEXTURE_GROUP_DECAL );
-	if ( IsErrorTexture( texture ) ) 
-	{
-		return; // not found 
-	}
+    IMaterial* logo = NULL;
 
-	// Update the texture used by the material if need be.
-	bool bFound = false;
-	IMaterialVar *pMatVar = logo->FindVar( "$basetexture", &bFound );
-	if ( bFound && pMatVar )
-	{
-		if ( pMatVar->GetTextureValue() != texture )
-		{
-			pMatVar->SetTextureValue( texture );
-			logo->RefreshPreservingMaterialVars();
-		}
-	}
+    //---------------------------------------------------------
+    // CASE 1: Steam CRC exists (MP or properly initialized SP)
+    //---------------------------------------------------------
+    if (info.customFiles[0] != 0)
+    {
+        logo = materials->FindMaterial(
+            VarArgs("decals/playerlogo%2.2d", player),
+            TEXTURE_GROUP_DECAL);
 
-	color32 rgbaColor = { 255, 255, 255, 255 };
-	effects->PlayerDecalShoot( 
-		logo, 
-		(void *)player,
-		entity, 
-		ent->GetModel(), 
-		ent->GetAbsOrigin(), 
-		ent->GetAbsAngles(), 
-		*pos, 
-		0, 
-		0,
-		rgbaColor );
+        if (IsErrorMaterial(logo))
+            return;
+
+        char logohex[16];
+        Q_binarytohex(
+            (byte*)&info.customFiles[0],
+            sizeof(info.customFiles[0]),
+            logohex,
+            sizeof(logohex));
+
+        char texname[512];
+        Q_snprintf(texname, sizeof(texname), "temp/%s", logohex);
+
+        char fulltexname[512];
+        Q_snprintf(fulltexname, sizeof(fulltexname),
+            "materials/temp/%s.vtf", logohex);
+
+        if (!filesystem->FileExists(fulltexname))
+        {
+            char custname[512];
+            Q_snprintf(custname, sizeof(custname),
+                "downloads/%s.dat", logohex);
+
+            if (filesystem->FileExists(custname))
+            {
+                engine->CopyFile(custname, fulltexname);
+            }
+        }
+
+        ITexture* texture =
+            materials->FindTexture(texname, TEXTURE_GROUP_DECAL);
+
+        if (!IsErrorTexture(texture))
+        {
+            bool bFound = false;
+            IMaterialVar* pMatVar =
+                logo->FindVar("$basetexture", &bFound);
+
+            if (bFound && pMatVar)
+            {
+                pMatVar->SetTextureValue(texture);
+                logo->RefreshPreservingMaterialVars();
+            }
+        }
+    }
+    //---------------------------------------------------------
+    // CASE 2: Singleplayer fallback (no CRC available)
+    //---------------------------------------------------------
+    else
+    {
+        // Directly use local spray file
+        // This assumes you have:
+        // materials/temp/spray.vtf
+        // materials/temp/spray.vmt
+
+        logo = materials->FindMaterial(
+            "temp/spray",
+            TEXTURE_GROUP_DECAL);
+
+        if (IsErrorMaterial(logo))
+        {
+            // fallback to default playerlogo if temp not found
+            logo = materials->FindMaterial(
+                "decals/playerlogo01",
+                TEXTURE_GROUP_DECAL);
+
+            if (IsErrorMaterial(logo))
+                return;
+        }
+    }
+
+    //---------------------------------------------------------
+    // Apply decal
+    //---------------------------------------------------------
+
+    color32 rgbaColor = { 255, 255, 255, 255 };
+
+    effects->PlayerDecalShoot(
+        logo,
+        (void*)player,
+        entity,
+        ent->GetModel(),
+        ent->GetAbsOrigin(),
+        ent->GetAbsAngles(),
+        *pos,
+        0,
+        0,
+        rgbaColor);
 }
 
 //-----------------------------------------------------------------------------

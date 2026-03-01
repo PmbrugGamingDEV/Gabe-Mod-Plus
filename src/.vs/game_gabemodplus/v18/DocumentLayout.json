@@ -3,16 +3,32 @@
   "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\testfunctions.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\testfunctions.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\hl2\\hud_suitpower.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\hl2\\hud_suitpower.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\weapon_multitool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\weapon_multitool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\hl2\\hl2_player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\hl2\\hl2_player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\weapon_physgun.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\shared\\hl2mp\\weapon_physgun.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\c_te_playerdecal.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\c_te_playerdecal.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\te_spritespray.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\te_spritespray.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\gabeplus_friendslist.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\gabeplus_friendslist.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\gabe_newgamedialog.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,19 +38,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "testfunctions.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\testfunctions.cpp",
-              "RelativeDocumentMoniker": "game\\server\\testfunctions.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\testfunctions.cpp",
-              "RelativeToolTip": "game\\server\\testfunctions.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAASAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "hl2_player.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\hl2\\hl2_player.cpp",
+              "RelativeDocumentMoniker": "game\\server\\hl2\\hl2_player.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\hl2\\hl2_player.cpp",
+              "RelativeToolTip": "game\\server\\hl2\\hl2_player.cpp",
+              "ViewState": "AgIAAIIBAAAAAAAAAAAvwIsBAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-22T16:30:36.954Z",
+              "WhenOpened": "2026-03-01T01:13:39.897Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "hud_suitpower.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\hl2\\hud_suitpower.cpp",
+              "RelativeDocumentMoniker": "game\\client\\hl2\\hud_suitpower.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\hl2\\hud_suitpower.cpp",
+              "RelativeToolTip": "game\\client\\hl2\\hud_suitpower.cpp",
+              "ViewState": "AgIAAMgAAAAAAAAAAAAswO4AAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-01T01:13:20.481Z",
               "EditorCaption": ""
             },
             {
@@ -47,28 +76,64 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "weapon_multitool.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\weapon_multitool.cpp",
-              "RelativeDocumentMoniker": "game\\server\\weapon_multitool.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\weapon_multitool.cpp",
-              "RelativeToolTip": "game\\server\\weapon_multitool.cpp",
-              "ViewState": "AgIAANgFAAAAAAAAAAAawOMFAAAKAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "c_te_playerdecal.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\c_te_playerdecal.cpp",
+              "RelativeDocumentMoniker": "game\\client\\c_te_playerdecal.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\c_te_playerdecal.cpp",
+              "RelativeToolTip": "game\\client\\c_te_playerdecal.cpp",
+              "ViewState": "AgIAAK4AAAAAAAAAAAAAAMgAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-22T03:56:09.733Z",
+              "WhenOpened": "2026-02-28T18:08:30.982Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "weapon_physgun.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
-              "RelativeDocumentMoniker": "game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
-              "RelativeToolTip": "game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
-              "ViewState": "AgIAAK4GAAAAAAAAAAAqwLcGAAACAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "player.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\player.cpp",
+              "RelativeDocumentMoniker": "game\\server\\player.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\player.cpp",
+              "RelativeToolTip": "game\\server\\player.cpp",
+              "ViewState": "AgIAABEWAAAAAAAAAAAiwAgWAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-22T01:55:14.217Z"
+              "WhenOpened": "2026-02-28T18:07:13.398Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "te_spritespray.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\te_spritespray.cpp",
+              "RelativeDocumentMoniker": "game\\server\\te_spritespray.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\te_spritespray.cpp",
+              "RelativeToolTip": "game\\server\\te_spritespray.cpp",
+              "ViewState": "AgIAAHsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-28T18:05:41.884Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "gabe_newgamedialog.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp",
+              "RelativeDocumentMoniker": "game\\client\\gabe_newgamedialog.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\gabe_newgamedialog.cpp",
+              "RelativeToolTip": "game\\client\\gabe_newgamedialog.cpp",
+              "ViewState": "AgIAAPUDAAAAAAAAAADwvwYEAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-28T16:56:37.338Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "gabeplus_friendslist.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\gabeplus_friendslist.cpp",
+              "RelativeDocumentMoniker": "game\\client\\gabeplus_friendslist.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\gabeplus_friendslist.cpp",
+              "RelativeToolTip": "game\\client\\gabeplus_friendslist.cpp",
+              "ViewState": "AgIAAJcBAAAAAAAAAAAAAJ0BAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-02-28T16:42:19.954Z"
             }
           ]
         }

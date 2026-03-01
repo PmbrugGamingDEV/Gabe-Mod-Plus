@@ -172,6 +172,7 @@ struct OcclusionParams_t
 //-----------------------------------------------------------------------------
 // Purpose: Interface exposed from the engine to the client .dll
 //-----------------------------------------------------------------------------
+
 abstract_class IVEngineClient
 {
 public:

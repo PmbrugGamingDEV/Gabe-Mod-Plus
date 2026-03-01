@@ -464,6 +464,8 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="globalstate.cpp" />
     <ClCompile Include="grenadethrown.cpp" />
     <ClCompile Include="guntarget.cpp" />
+    <ClCompile Include="hl2\hl1_monster.cpp" />
+    <ClCompile Include="hl2\hl1_monster_squad.cpp" />
     <ClCompile Include="hl2\npc_antliongrub.cpp" />
     <ClCompile Include="hl2\vehicle_jeep.cpp" />
     <ClCompile Include="hl2\vehicle_jetski.cpp" />
@@ -565,6 +567,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="npc_agrunt.cpp" />
     <ClCompile Include="npc_fastzombie.cpp" />
     <ClCompile Include="npc_vehicledriver.cpp" />
     <ClCompile Include="..\shared\obstacle_pushaway.cpp" />
@@ -1112,6 +1115,8 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="globalstate.h" />
     <ClInclude Include="globalstate_private.h" />
     <ClInclude Include="grenadethrown.h" />
+    <ClInclude Include="hl2\hl1_monster.h" />
+    <ClInclude Include="hl2\hl1_monster_squad.h" />
     <ClInclude Include="hl2\npc_antliongrub.h" />
     <ClInclude Include="hl2\vehicle_jeep.h" />
     <ClInclude Include="h_cycler.h" />
