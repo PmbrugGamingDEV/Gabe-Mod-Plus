@@ -1,1 +1,4 @@
-﻿
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  fx_hl2_tracers.cpp
+     Creating library D:\Steam\steamapps\sourcemods\gabemodplus\bin\Client.lib and object D:\Steam\steamapps\sourcemods\gabemodplus\bin\Client.exp
+  client_hl2mp-2005.vcxproj -> D:\Steam\steamapps\sourcemods\gabemodplus\bin\client.dll

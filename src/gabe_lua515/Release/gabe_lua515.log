@@ -1,1 +1,37 @@
-﻿
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  lapi.c
+  lauxlib.c
+  lbaselib.c
+  lcode.c
+  ldblib.c
+  ldebug.c
+  ldo.c
+  ldump.c
+  lfunc.c
+  lgc.c
+  linit.c
+  liolib.c
+  llex.c
+  lmathlib.c
+  lmem.c
+  loadlib.c
+  lobject.c
+  lopcodes.c
+  loslib.c
+  lparser.c
+  Compiling...
+  lstate.c
+  lstring.c
+  lstrlib.c
+  ltable.c
+  ltablib.c
+  ltm.c
+  lua.c
+  luac.c
+  lundump.c
+  lvm.c
+  lzio.c
+  print.c
+  wmain.c
+lua.obj : warning LNK4006: _main already defined in luac.obj; second definition ignored
+  gabe_lua515.vcxproj -> C:\GabeModPlus\src\lib\public\gabe_lua515.lib

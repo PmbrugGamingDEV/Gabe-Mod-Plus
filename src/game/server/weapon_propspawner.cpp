@@ -1,6 +1,7 @@
 #include "cbase.h"
 #include "player.h"
-#include "debugoverlay_shared.h"
+#include "util.h"
+#include "util_shared.h"
 
 #ifndef CLIENT_DLL
 #include "spark.h"
@@ -150,10 +151,29 @@ static void SpawnFromCommand(
 		return;
 	}
 
+	// --------------------------------------------------
+	// COMMANDS
+	// --------------------------------------------------
+	if (!Q_stricmp(pszSpawnType, "command"))
+	{
+		if (!pszValue || !pszValue[0])
+			return;
+
+		Msg("[SpawnMenu] Executing command: %s\n", pszValue);
+
+		char cmd[512];
+		Q_snprintf(cmd, sizeof(cmd), "%s\n", pszValue);
+
+		engine->ServerCommand(cmd);
+		engine->ServerExecute();
+
+		return;
+	}
+
 	g_pEffects->Sparks(pos, 1, 1, 0);
 }
 
-CON_COMMAND(gabe_spawn, "gabe_spawn <prop|ragdoll|npc|effect|debug> <model|classname>")
+CON_COMMAND(gabe_spawn, "gabe_spawn <prop|ragdoll|npc|effect|debug|weapon|command> <value>")
 {
 	CBasePlayer* pPlayer = UTIL_GetCommandClient();
 	if (!pPlayer || args.ArgC() < 3)

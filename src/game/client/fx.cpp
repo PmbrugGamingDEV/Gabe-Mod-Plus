@@ -970,7 +970,7 @@ void FX_HunterTracer( Vector& start, Vector& end, int velocity, bool makeWhiz )
 //			velocity - 
 //			makeWhiz - 
 //-----------------------------------------------------------------------------
-void FX_GaussTracer( Vector& start, Vector& end, int velocity, bool makeWhiz )
+void FX_GaussTracer( Vector& start, Vector& end, float velocity, bool makeWhiz )
 {
 	VPROF_BUDGET( "FX_GaussTracer", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	Vector	vNear, dStart, dEnd, shotDir;

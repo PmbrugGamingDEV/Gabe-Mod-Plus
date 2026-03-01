@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+﻿//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -903,7 +903,13 @@ void CPropJeep::Think( void )
 void CPropJeep::DrawBeam( const Vector &startPos, const Vector &endPos, float width )
 {
 	//Tracer down the middle
-	UTIL_Tracer( startPos, endPos, 0, TRACER_DONT_USE_ATTACHMENT, 6500, false, "GaussTracer" );
+	CEffectData data;
+	data.m_vStart = startPos;
+	data.m_vOrigin = endPos;
+	data.m_flScale = 6500.0f;
+	data.m_fFlags = 0;
+
+	DispatchEffect("GaussTracer", data);
 
 	//Draw the main beam shaft
 	CBeam *pBeam = CBeam::BeamCreate( GAUSS_BEAM_SPRITE, 0.5 );
@@ -936,42 +942,84 @@ void CPropJeep::DrawBeam( const Vector &startPos, const Vector &endPos, float wi
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CPropJeep::FireCannon( void )
+void CPropJeep::FireCannon(void)
 {
-	//Don't fire again if it's been too soon
-	if ( m_flCannonTime > gpGlobals->curtime )
+	if (m_flCannonTime > gpGlobals->curtime)
 		return;
 
-	if ( m_bUnableToFire )
+	if (m_bUnableToFire)
 		return;
 
 	m_flCannonTime = gpGlobals->curtime + 0.2f;
 	m_bCannonCharging = false;
 
-	//Find the direction the gun is pointing in
-	Vector aimDir;
-	GetCannonAim( &aimDir );
+	CPASAttenuationFilter sndFilter(this, "PropJeep.FireCannon");
+	EmitSound(sndFilter, entindex(), "PropJeep.FireCannon");
 
-	FireBulletsInfo_t info( 1, m_vecGunOrigin, aimDir, VECTOR_CONE_1DEGREES, MAX_TRACE_LENGTH, m_nAmmoType );
-
-	info.m_nFlags = FIRE_BULLETS_ALLOW_WATER_SURFACE_IMPACTS;
-	info.m_pAttacker = m_hPlayer;
-
-	FireBullets( info );
-
-	// Register a muzzleflash for the AI
-	if ( m_hPlayer )
+	if (m_hPlayer)
 	{
-		m_hPlayer->SetMuzzleFlashTime( gpGlobals->curtime + 0.5 );
-		m_hPlayer->RumbleEffect( RUMBLE_PISTOL, 0, RUMBLE_FLAG_RESTART	);
+		m_hPlayer->RumbleEffect(RUMBLE_PISTOL, 0, RUMBLE_FLAG_RESTART);
 	}
 
-	CPASAttenuationFilter sndFilter( this, "PropJeep.FireCannon" );
-	EmitSound( sndFilter, entindex(), "PropJeep.FireCannon" );
-	
-	// make cylinders of gun spin a bit
+	// Aim
+	Vector aimDir;
+	GetCannonAim(&aimDir);
+
+	Vector endPos = m_vecGunOrigin + (aimDir * MAX_TRACE_LENGTH);
+
+	trace_t tr;
+	UTIL_TraceLine(m_vecGunOrigin, endPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+
+	ClearMultiDamage();
+
+	// Same base damage as minimum charged shot
+	float flDamage = 15.0f;
+
+	CBaseEntity* pHit = tr.m_pEnt;
+
+	if (pHit != NULL)
+	{
+		CTakeDamageInfo dmgInfo(this, GetDriver(), flDamage, DMG_SHOCK);
+		CalculateBulletDamageForce(
+			&dmgInfo,
+			GetAmmoDef()->Index("GaussEnergy"),
+			aimDir,
+			tr.endpos,
+			1.0f
+		);
+
+		pHit->DispatchTraceAttack(dmgInfo, aimDir, &tr);
+	}
+
+	ApplyMultiDamage();
+
+	// -------- COPY OF CHARGED VISUALS --------
+
+	if (!(tr.surface.flags & SURF_SKY))
+	{
+		UTIL_ImpactTrace(&tr, m_nBulletType, "ImpactJeep");
+		UTIL_DecalTrace(&tr, "RedGlowFade");
+
+		CPVSFilter filter(tr.endpos);
+		te->GaussExplosion(filter, 0.0f, tr.endpos, tr.plane.normal, 0);
+	}
+
+	DrawBeam(m_vecGunOrigin, tr.endpos, 9.6f);
+
+	if (m_hPlayer)
+	{
+		m_hPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 0.5f);
+	}
+
+	// Rock vehicle like charged
+	IPhysicsObject* pObj = VPhysicsGetObject();
+	if (pObj != NULL)
+	{
+		Vector shoveDir = aimDir * -(flDamage * 500.0f);
+		pObj->ApplyForceOffset(shoveDir, m_vecGunOrigin);
+	}
+
 	m_nSpinPos += JEEP_GUN_SPIN_RATE;
-	//SetPoseParameter( JEEP_GUN_SPIN, m_nSpinPos );	//FIXME: Don't bother with this for E3, won't look right
 }
 
 //-----------------------------------------------------------------------------

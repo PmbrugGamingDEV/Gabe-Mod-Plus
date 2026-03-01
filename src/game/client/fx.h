@@ -69,7 +69,7 @@ CSmartPtr<CSimpleEmitter> FX_Smoke( const Vector &origin, const Vector &velocity
 void FX_Smoke( const Vector &origin, const QAngle &angles, float scale, int numParticles, unsigned char *pColor = NULL, int iAlpha = -1 );
 void FX_Dust( const Vector &vecOrigin, const Vector &vecDirection, float flSize, float flSpeed );
 void FX_CreateGaussExplosion( const Vector &pos, const Vector &dir, int type );
-void FX_GaussTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
+void FX_GaussTracer( Vector& start, Vector& end, float velocity, bool makeWhiz = true );
 void FX_TracerSound( const Vector &start, const Vector &end, int iTracerType );
 
 // Lighting information utility

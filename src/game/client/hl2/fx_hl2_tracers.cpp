@@ -72,11 +72,21 @@ DECLARE_CLIENT_EFFECT( "HunterTracer", HunterTracerCallback );
 //-----------------------------------------------------------------------------
 // Purpose: Gauss Gun's Tracer
 //-----------------------------------------------------------------------------
-void GaussTracerCallback( const CEffectData &data )
+void GaussTracerCallback(const CEffectData& data)
 {
 	float flVelocity = data.m_flScale;
-	bool bWhiz = (data.m_fFlags & TRACER_FLAG_WHIZ);
-	FX_GaussTracer( (Vector&)data.m_vStart, (Vector&)data.m_vOrigin, flVelocity, bWhiz );
+
+	if (flVelocity <= 0.0f)
+		flVelocity = 8000.0f; // fallback speed
+
+	bool bWhiz = (data.m_fFlags & TRACER_FLAG_WHIZ) != 0;
+
+	Vector start = data.m_vStart;
+	Vector end = data.m_vOrigin;
+
+	Msg("GaussTracerCallback fired\n");
+
+	FX_GaussTracer(start, end, flVelocity, bWhiz);
 }
 
 DECLARE_CLIENT_EFFECT( "GaussTracer", GaussTracerCallback );
