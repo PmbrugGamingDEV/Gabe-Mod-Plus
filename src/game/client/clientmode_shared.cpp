@@ -31,6 +31,7 @@
 #include "c_vguiscreen.h"
 #include "c_team.h"
 #include "c_rumble.h"
+#include "cl_camerablur.h"
 #include "fmtstr.h"
 #include "achievementmgr.h"
 #include "c_playerresource.h"
@@ -72,7 +73,6 @@ CON_COMMAND( hud_reloadscheme, "Reloads hud layout and animation scripts." )
 	mode->ReloadScheme();
 }
 
-#ifdef _DEBUG
 CON_COMMAND_F( crash, "Crash the client. Optional parameter -- type of crash:\n 0: read from NULL\n 1: write to NULL\n 2: DmCrashDump() (xbox360 only)", FCVAR_CHEAT )
 {
 	int crashtype = 0;
@@ -100,7 +100,6 @@ CON_COMMAND_F( crash, "Crash the client. Optional parameter -- type of crash:\n 
 			break;
 	}
 }
-#endif // _DEBUG
 
 static void __MsgFunc_Rumble( bf_read &msg )
 {
@@ -239,6 +238,8 @@ void ClientModeShared::Init()
 			pGameUI->SetLoadingBackgroundDialog(pPanelBg->GetVPanel());
 		}
 	}
+
+	CamBlur_Init();
 }
 
 
@@ -291,6 +292,8 @@ void ClientModeShared::OverrideView( CViewSetup *pSetup )
 		return;
 
 	pPlayer->OverrideView( pSetup );
+
+	CamBlur_OnOverrideView(pSetup);
 
 	if( ::input->CAM_IsThirdPerson() )
 	{
@@ -432,6 +435,8 @@ void ClientModeShared::PostRender()
 {
 	// Let the particle manager simulate things that haven't been simulated.
 	ParticleMgr()->PostRender();
+
+	CamBlur_PostRender();
 }
 
 void ClientModeShared::PostRenderVGui()

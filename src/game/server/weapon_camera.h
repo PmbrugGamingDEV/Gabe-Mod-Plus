@@ -17,13 +17,18 @@ public:
     DECLARE_SERVERCLASS();
     DECLARE_DATADESC();
 
+         CWeaponCamera();
+         ~CWeaponCamera() {}
+
     void Precache(void) override;
     void PrimaryAttack(void) override;
     void SecondaryAttack(void) override;
 private:
     void ItemPostFrame();
     void TakeScreenshot(void);
+
     std::string GenerateRandomString(size_t length);
+    int m_iBlurMode;
 };
 
 #endif // WEAPON_CAMERA_H

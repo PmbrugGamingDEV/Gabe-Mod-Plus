@@ -34,7 +34,7 @@ IMPLEMENT_ACTTABLE(CWeaponStickyLauncher);
 void CWeaponStickyLauncher::Precache()
 {
 	BaseClass::Precache();
-	PrecacheModel("models/props_junk/watermelon01.mdl");
+	PrecacheModel("models/weapons/w_bugbait.mdl");
 	PrecacheScriptSound("Weapon_Pistol.Single");
 }
 
@@ -42,6 +42,29 @@ void CWeaponStickyLauncher::Spawn()
 {
 	BaseClass::Spawn();
 	SetModel("models/weapons/w_pistol.mdl");
+}
+
+void CWeaponStickyLauncher::ItemPostFrame()
+{
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+
+	if (!pOwner)
+		return;
+
+	if (pOwner->m_nButtons & IN_ATTACK)
+	{
+		if (!m_bFireOnRelease && m_flNextPrimaryAttack <= gpGlobals->curtime)
+		{
+			PrimaryAttack();
+			m_bFireOnRelease = true;
+		}
+	}
+	else
+	{
+		m_bFireOnRelease = false;
+	}
+
+	BaseClass::ItemPostFrame();
 }
 
 void CWeaponStickyLauncher::PrimaryAttack()

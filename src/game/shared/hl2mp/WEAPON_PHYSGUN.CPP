@@ -1447,17 +1447,15 @@ void CWeaponGravityGun::SecondaryAttack(void)
 
 	const char* pszClass = pHit->GetClassname();
 
-	// Check if it's a buggy / jeep
+	static float s_flNextVehicleWarn = 0.0f;
+
 	if (FStrEq(pszClass, "prop_vehicle_jeep"))
 	{
-		// Temporary debug overlay message attached to the entity
-		NDebugOverlay::EntityTextAtPosition(
-			pHit->GetAbsOrigin(), // entity index
-			0,                   // text line
-			"Im sorry, but freezing me will crash the game!",
-			5.0f,                 // duration (seconds)
-			255, 0, 0, 255 // color
-		);
+		if (gpGlobals->curtime > s_flNextVehicleWarn)
+		{
+			pHit->AddTimedOverlay("Sorry, but if you freeze me, I will crash!", 2);
+			s_flNextVehicleWarn = gpGlobals->curtime + 2.0f;
+		}
 
 		return; // Skip freezing
 	}

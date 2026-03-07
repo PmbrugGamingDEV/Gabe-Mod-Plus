@@ -332,6 +332,8 @@ void CWeaponPistol::FireSingleBullet( void )
 	WeaponSound(SINGLE);
 	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 
+	Msg("hi\n");
+
 	pOwner->FireBullets(info);
 	pOwner->DoMuzzleFlash();
 	AddViewKick();

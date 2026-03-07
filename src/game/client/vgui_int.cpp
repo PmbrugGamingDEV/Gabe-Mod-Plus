@@ -13,6 +13,7 @@
 #include "ifpspanel.h"
 #include "imessagechars.h"
 #include "inetgraphpanel.h"
+#include "IHTMLView.h"
 #include "idebugoverlaypanel.h"
 #include "sdk_inventory.h" // includes that file we'll create later.
 #include <vgui/isurface.h>
@@ -168,6 +169,8 @@ void VGui_CreateGlobalPanels( void )
 {
 	VPANEL gameToolParent = enginevgui->GetPanel( PANEL_CLIENTDLL_TOOLS );
 	VPANEL toolParent = enginevgui->GetPanel( PANEL_TOOLS );
+	VPANEL gameParent = enginevgui->GetPanel(PANEL_INGAMESCREENS);
+
 #if defined( TRACK_BLOCKING_IO )
 	VPANEL gameDLLPanel = enginevgui->GetPanel( PANEL_GAMEDLL );
 #endif
@@ -176,7 +179,8 @@ void VGui_CreateGlobalPanels( void )
 	loadingdisc->Create( gameToolParent );
 	messagechars->Create( gameToolParent );
 
-	VPANEL gameParent = enginevgui->GetPanel(PANEL_INGAMESCREENS); // Our panel can be viewed as a ingamescreen.
+	htmlview->Create(gameParent);
+
 	InventoryPanel->Create(gameParent); // Creates the panel.
 
 	// Debugging or related tool
@@ -196,6 +200,7 @@ void VGui_CreateGlobalPanels( void )
 void VGui_Shutdown()
 {
 	VGUI_DestroyClientDLLRootPanel();
+	htmlview->Destroy();
 
 #ifndef _X360
 	MP3Player_Destroy();

@@ -317,7 +317,7 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar 
 
 #else // DBGFLAG_ASSERT
 
-#define  Assert( _exp )										((void)0)
+#define  Assert( _exp )									
 #define  AssertOnce( _exp )									((void)0)
 #define  AssertMsg( _exp, _msg )							((void)0)
 #define  AssertMsgOnce( _exp, _msg )						((void)0)

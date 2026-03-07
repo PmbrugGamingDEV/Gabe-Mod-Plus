@@ -154,6 +154,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\public\vgui_controls\EntHTML.cpp" />
     <ClCompile Include="AnalogBar.cpp" />
     <ClCompile Include="AnimatingImagePanel.cpp" />
     <ClCompile Include="AnimationController.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="..\..\public\vgui_controls\DirectorySelectDialog.h" />
     <ClInclude Include="..\..\public\vgui_controls\Divider.h" />
     <ClInclude Include="..\..\public\vgui_controls\EditablePanel.h" />
+    <ClInclude Include="..\..\public\vgui_controls\EntHTML.h" />
     <ClInclude Include="..\..\public\vgui_controls\ExpandButton.h" />
     <ClInclude Include="..\..\public\vgui_controls\FileOpenDialog.h" />
     <ClInclude Include="..\..\public\vgui_controls\FileOpenStateMachine.h" />

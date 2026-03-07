@@ -12,10 +12,15 @@ public:
 	DECLARE_SERVERCLASS();
 	DECLARE_ACTTABLE();
 
-	void PrimaryAttack();
-	void SecondaryAttack();
-	void Precache();
-	void Spawn();
+	virtual void PrimaryAttack();
+	virtual void SecondaryAttack();
+	virtual void Precache();
+	virtual void Spawn();
+	virtual void ItemPostFrame();
+
+	bool m_bFireOnRelease;
+
+	CWeaponStickyLauncher() { m_bFireOnRelease = false; }
 
 	CUtlVector<CHandle<CStickyPellet>> m_Pellets;
 };

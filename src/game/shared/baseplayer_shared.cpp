@@ -1910,12 +1910,10 @@ void CBasePlayer::SetPlayerUnderwater( bool state )
 	{
 		m_bPlayerUnderwater = state;
 
-#ifdef CLIENT_DLL
 		if ( state )
 			EmitSound( "Player.AmbientUnderWater" );
 		else
 			StopSound( "Player.AmbientUnderWater" );		
-#endif
 	}
 }
 

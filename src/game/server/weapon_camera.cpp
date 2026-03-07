@@ -25,12 +25,18 @@ END_SEND_TABLE()
 BEGIN_DATADESC(CWeaponCamera)
 END_DATADESC()
 
+CWeaponCamera::CWeaponCamera()
+{
+    m_iBlurMode = 2; // start at no blur
+}
+
 void CWeaponCamera::Precache(void)
 {
     PrecacheScriptSound("NPC_CScanner.TakePhoto");  
 
     BaseClass::Precache();
 }
+
 void CWeaponCamera::PrimaryAttack(void)
 {
     TakeScreenshot();
@@ -89,6 +95,24 @@ void CWeaponCamera::SecondaryAttack()
     m_flNextSecondaryAttack = gpGlobals->curtime + 0.01f;  // Continuous update with a small delay
 }
 
+static const char* g_pszCamFXNames[] =
+{
+    "Calm",
+    "Soft Smear",
+    "Double Vision",
+    "Screen Tear",
+    "Pulse Warp",
+    "Heavy Blur",
+    "Spiral Drift",
+    "Horizontal Collapse",
+    "Vertical Collapse",
+    "Shake Distortion",
+    "TV Static",
+    "Too Much Beer",
+    "Reality Melting"
+};
+
+static const int MAX_CAMFX_MODES = 13;
 
 void CWeaponCamera::ItemPostFrame()
 {
@@ -104,6 +128,23 @@ void CWeaponCamera::ItemPostFrame()
             float defaultFOV = 75.0f;
             pPlayer->SetFOV(this, defaultFOV);
         }
+    }
+
+    if (pPlayer->m_afButtonPressed & IN_USE)
+    {
+        m_iBlurMode++;
+
+        static const int MAX_CAMFX_MODES = 13;
+
+        if (m_iBlurMode >= MAX_CAMFX_MODES)
+            m_iBlurMode = 0;
+
+        CSingleUserRecipientFilter filter(pPlayer);
+        filter.MakeReliable();
+
+        UserMessageBegin(filter, "CamBlur");
+        WRITE_BYTE(m_iBlurMode);
+        MessageEnd();
     }
 
     BaseClass::ItemPostFrame();

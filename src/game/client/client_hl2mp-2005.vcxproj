@@ -259,6 +259,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="cl_camblur.cpp" />
     <ClCompile Include="c_ai_basehumanoid.cpp" />
     <ClCompile Include="c_ai_basenpc.cpp" />
     <ClCompile Include="c_baseanimating.cpp" />
@@ -465,6 +466,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="hud_msg.cpp" />
+    <ClCompile Include="hud_mtool.cpp" />
     <ClCompile Include="hud_numericdisplay.cpp" />
     <ClCompile Include="hud_pdump.cpp" />
     <ClCompile Include="hud_redraw.cpp" />
@@ -472,6 +474,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="hud_voicestatus.cpp" />
     <ClCompile Include="hud_weapon.cpp" />
     <ClCompile Include="..\shared\igamesystem.cpp" />
+    <ClCompile Include="IHTMLView.cpp" />
     <ClCompile Include="in_camera.cpp" />
     <ClCompile Include="in_joystick.cpp" />
     <ClCompile Include="in_main.cpp" />
@@ -893,6 +896,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="..\shared\achievement_saverestore.h" />
     <ClInclude Include="..\shared\achievementmgr.h" />
     <ClInclude Include="..\shared\baseachievement.h" />
+    <ClInclude Include="cl_camerablur.h" />
     <ClInclude Include="c_props.h" />
     <ClInclude Include="c_slideshow_display.h" />
     <ClInclude Include="cdll_bounded_cvars.h" />
@@ -904,6 +908,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="..\shared\predicted_viewmodel.h" />
     <ClInclude Include="c_weapon_proplauncher.h" />
     <ClInclude Include="hud_killfeed.h" />
+    <ClInclude Include="IHTMLView.h" />
     <ClInclude Include="mapload_background.h" />
     <ClInclude Include="sdk_inventory.h" />
     <ClInclude Include="vgui_avatarimage.h" />

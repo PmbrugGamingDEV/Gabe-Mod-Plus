@@ -8278,7 +8278,7 @@ void CBasePlayer::VPhysicsShadowUpdate( IPhysicsObject *pPhysics )
 		if ( trace.allsolid || trace.startsolid )
 		{
 			// STUCK!?!?!
-			//Warning( "Checkstuck failed.  Stuck on %s!!\n", trace.m_pEnt->GetClassname() );
+			DevWarning( "Checkstuck failed.  Stuck on %s!!\n", trace.m_pEnt->GetClassname() );
 			SetAbsOrigin( lastValidPosition );
 		}
 	}

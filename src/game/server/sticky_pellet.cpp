@@ -21,7 +21,7 @@ END_DATADESC()
 
 void CStickyPellet::Spawn()
 {
-	SetModel("models/props_junk/watermelon01.mdl");
+	SetModel("models/weapons/w_bugbait.mdl");
 	SetMoveType(MOVETYPE_FLYGRAVITY);
 	SetSolid(SOLID_BBOX);
 	SetSize(Vector(-4, -4, -4), Vector(4, 4, 4));
@@ -33,15 +33,33 @@ void CStickyPellet::Spawn()
 
 void CStickyPellet::StickToSurface(trace_t& tr)
 {
-	SetMoveType(MOVETYPE_NONE);
-	SetSolid(SOLID_NONE);
+	if (m_bStuck)
+		return;
+
 	m_bStuck = true;
 
+	// Stop movement
+	SetMoveType(MOVETYPE_NONE);
+	SetAbsVelocity(vec3_origin);
+
+	// Disable collisions so we don't retrigger Touch
+	SetSolid(SOLID_NONE);
+
 	m_hStuckTo = tr.m_pEnt;
+
 	if (m_hStuckTo)
 	{
-		matrix3x4_t localToWorld = m_hStuckTo->EntityToWorldTransform();
-		VectorITransform(GetAbsOrigin(), localToWorld, m_vOffset);
+		// Parent to the entity we hit
+		SetParent(m_hStuckTo);
+
+		matrix3x4_t worldToParent;
+
+		MatrixInvert(m_hStuckTo->EntityToWorldTransform(), worldToParent);
+
+		// Store local offset
+		VectorITransform(GetAbsOrigin(), worldToParent, m_vOffset);
+
+		// Store orientation
 		m_qAngleOffset = GetAbsAngles();
 	}
 }

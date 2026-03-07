@@ -427,6 +427,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="gabe_constraints.cpp" />
     <ClCompile Include="gabe_effects.cpp" />
     <ClCompile Include="gabe_effect_carrier.cpp" />
+    <ClCompile Include="gabe_nextbot.cpp" />
     <ClCompile Include="ge_gamelua.cpp" />
     <ClCompile Include="ge_luamanager.cpp" />
     <ClCompile Include="hl2\Func_Monitor.cpp" />
@@ -715,6 +716,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="sun.cpp" />
     <ClCompile Include="..\shared\hl2\survival_gamerules.cpp" />
     <ClCompile Include="..\shared\takedamageinfo.cpp" />
+    <ClCompile Include="sv_htmlcon.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="weapon_jetpack.cpp" />
     <ClCompile Include="weapon_lasergun.cpp" />

@@ -79,6 +79,12 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\SDK Stuff">
       <UniqueIdentifier>{0e91452e-a3ce-480f-9174-c82759b02410}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Mtool">
+      <UniqueIdentifier>{72a81e52-419d-482e-b1f7-c0827dd6e30c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HTML">
+      <UniqueIdentifier>{0825b391-90c2-48a0-8ae4-46d59ff3ffca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">
@@ -1629,6 +1635,15 @@
     <ClCompile Include="..\..\public\tier0\memoverride.cpp" />
     <ClCompile Include="sdk_inventory.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\SDK Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="cl_camblur.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hud_mtool.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Mtool</Filter>
+    </ClCompile>
+    <ClCompile Include="IHTMLView.cpp">
+      <Filter>HTML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3461,6 +3476,12 @@
     </ClInclude>
     <ClInclude Include="sdk_inventory.h">
       <Filter>Source Files\Gabe Mod + Stuff\SDK Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="cl_camerablur.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="IHTMLView.h">
+      <Filter>HTML</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

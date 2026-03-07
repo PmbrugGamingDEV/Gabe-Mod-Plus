@@ -1788,9 +1788,6 @@
     <ClCompile Include="ent_test.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
-    <ClCompile Include="sticky_pellet.cpp">
-      <Filter>Source Files\Gabe Mod + Stuff</Filter>
-    </ClCompile>
     <ClCompile Include="weapon_stickylauncher.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
@@ -1886,6 +1883,15 @@
     </ClCompile>
     <ClCompile Include="hl2\hl1_monster_squad.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
+    <ClCompile Include="sv_htmlcon.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabe_nextbot.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="sticky_pellet.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3626,12 +3632,6 @@
     <ClInclude Include="weapon_camera.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
-    <ClInclude Include="sticky_pellet.h">
-      <Filter>Source Files\Gabe Mod + Stuff</Filter>
-    </ClInclude>
-    <ClInclude Include="weapon_stickylauncher.h">
-      <Filter>Source Files\Gabe Mod + Stuff</Filter>
-    </ClInclude>
     <ClInclude Include="weapon_proplauncher.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
@@ -3673,6 +3673,12 @@
     </ClInclude>
     <ClInclude Include="hl2\hl1_monster_squad.h">
       <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClInclude>
+    <ClInclude Include="sticky_pellet.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon_stickylauncher.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

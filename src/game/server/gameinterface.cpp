@@ -1033,6 +1033,9 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	Color clr = used > MAX_EDICTS * 0.5 ? Color(255, 0, 0, 255) : Color(0, 255, 0, 255); // if we're using more than half of our edicts, print in red to warn server ops, else print in green
 	ConColorMsg(clr, "Edicts used up: %d/%d\n", used, MAX_EDICTS);
 
+	Color gbclr(0, 0, 255, 255);
+	ConColorMsg(gbclr, "Gabe Mod (v8.1) - 3/1/2026\n");
+
 	/// HACKHACK: UNDONE: We need to redesign the main loop with respect to save/load/server activate
 	// If we're loading a save game, then we don't want to call ServerActivate until after the restore is finished, because ServerActivate iterates through all the entities and calls Activate on them, and some of those entities might decide to remove themselves during Activate, which will cause problems if we're in the middle of restoring an entity that hasn't finished restoring yet.
 

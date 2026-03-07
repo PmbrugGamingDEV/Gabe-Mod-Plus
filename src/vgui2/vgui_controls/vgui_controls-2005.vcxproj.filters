@@ -237,6 +237,9 @@
     <ClCompile Include="WizardSubPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\public\vgui_controls\EntHTML.cpp">
+      <Filter>Gabe Mod + Stuff</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\public\vgui_controls\AnimatingImagePanel.h">
@@ -499,6 +502,9 @@
     </ClInclude>
     <ClInclude Include="..\..\public\vgui_controls\WizardSubPanel.h">
       <Filter>Public Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\vgui_controls\EntHTML.h">
+      <Filter>Gabe Mod + Stuff</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

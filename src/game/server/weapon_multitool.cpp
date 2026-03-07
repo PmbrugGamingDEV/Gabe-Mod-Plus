@@ -267,9 +267,11 @@ public:
 	virtual void PrimaryAttack();
 	virtual void SecondaryAttack();
 	virtual void ItemPostFrame();
+	virtual bool Deploy();
 
 private:
 	CBaseEntity* FindEntityInFront();
+	void SendHudUpdate();
 	void ApplyToolAction(CBaseEntity* pEnt);
 	void ShowDistance(CBaseEntity* pEnt);
 	void ThrowLightWatermelon();
@@ -427,6 +429,13 @@ CBaseEntity* CWeaponMultitool::FindEntityInFront()
 	return tr.m_pEnt;
 }
 
+bool CWeaponMultitool::Deploy()
+{
+	bool result = BaseClass::Deploy();
+	SendHudUpdate();
+	return result;
+}
+
 void CWeaponMultitool::PrimaryAttack()
 {
 	CBaseEntity* pEnt = FindEntityInFront();
@@ -480,7 +489,7 @@ void CWeaponMultitool::SecondaryAttack()
 
 	if (pEnt->GetClassname() && (Q_stricmp(pEnt->GetClassname(), "prop_vehicle_jeep") == 0 || Q_stricmp(pEnt->GetClassname(), "prop_vehicle_airboat") == 0))
 	{
-		NDebugOverlay::EntityTextAtPosition(pEnt->GetAbsOrigin(), 0, "Cannot dupe vehicles, sorry!", 2.0f, 255, 0, 0, 255);
+		pEnt->AddTimedOverlay("Cannot dupe vehicles, sorry!", 2);
 		return;
 	}
 
@@ -750,6 +759,28 @@ static FacePreset g_FacePresets[] =
 const int FACE_COUNT = sizeof(g_FacePresets) / sizeof(g_FacePresets[0]);
 
 #undef FACE_PRESET
+
+void CWeaponMultitool::SendHudUpdate()
+{
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
+		return;
+
+	CSingleUserRecipientFilter filter(pPlayer);
+	filter.MakeReliable();
+
+	UserMessageBegin(filter, "MultitoolHUD");
+
+	WRITE_BYTE(m_nMultitoolMode);
+	WRITE_BYTE(m_nColorIndex);
+	WRITE_BYTE(m_nDecalIndex);
+	WRITE_BYTE(m_nMaterialIndex);
+	WRITE_BYTE(m_nFaceIndex);
+	WRITE_BYTE(m_nConstraintType);
+	WRITE_BYTE(m_nLightWatermelonColor);
+
+	MessageEnd();
+}
 
 void CWeaponMultitool::ApplyToolAction(CBaseEntity* pEnt)
 {
@@ -1353,12 +1384,7 @@ void CWeaponMultitool::ItemPostFrame()
 	if (newMode != m_nMultitoolMode)
 	{
 		m_nMultitoolMode = newMode;
-
-		HudText(
-			pPlayer,
-			UTIL_VarArgs("Multitool: %s", g_szModeNames[m_nMultitoolMode]),
-			255, 255, 200
-		);
+		SendHudUpdate();
 	}
 
 	if ((pPlayer->m_nButtons & IN_RELOAD) && (pPlayer->m_afButtonPressed & IN_RELOAD))
@@ -1370,12 +1396,14 @@ void CWeaponMultitool::ItemPostFrame()
 				m_nColorIndex = (m_nColorIndex + 1) % COLOR_COUNT;
 				const char* name = g_ColorPresets[m_nColorIndex].name;
 				HudText(pPlayer, UTIL_VarArgs("Color Mode: %s", name), 255, 255, 255);
+				SendHudUpdate();
 			}
 			else if (m_nMultitoolMode == MODE_DECAL)
 			{
 				m_nDecalIndex = (m_nDecalIndex + 1) % DECAL_COUNT;
 				const char* name = g_DecalNames[m_nDecalIndex];
 				HudText(pPlayer, UTIL_VarArgs("Decal: %s", name), 255, 255, 255);
+				SendHudUpdate();
 			}
 		}
 	}
@@ -1394,6 +1422,8 @@ void CWeaponMultitool::ItemPostFrame()
 				),
 				255, 255, 255
 			);
+
+			SendHudUpdate();
 		}
 	}
 
@@ -1408,6 +1438,8 @@ void CWeaponMultitool::ItemPostFrame()
 				UTIL_VarArgs("Face: %s", g_FacePresets[m_nFaceIndex].name),
 				255, 255, 255
 			);
+
+			SendHudUpdate();
 		}
 	}
 
@@ -1418,6 +1450,8 @@ void CWeaponMultitool::ItemPostFrame()
 		{
 			m_nConstraintType = (m_nConstraintType + 1) % CONSTRAINT_TYPE_COUNT;
 			HudText(pPlayer, UTIL_VarArgs("Constraint Type: %s", g_szConstraintTypes[m_nConstraintType]), 255, 255, 255);
+
+			SendHudUpdate();
 		}
 
 		if ((pPlayer->m_nButtons & IN_USE) &&
@@ -1467,6 +1501,8 @@ void CWeaponMultitool::ItemPostFrame()
 				),
 				255, 255, 255
 			);
+
+			SendHudUpdate();
 		}
 	}
 
