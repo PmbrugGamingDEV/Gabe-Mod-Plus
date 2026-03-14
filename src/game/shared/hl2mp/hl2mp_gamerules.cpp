@@ -54,6 +54,8 @@ bool FindInList( const char **pStrings, const char *pToFind )
 ConVar sv_hl2mp_weapon_respawn_time( "sv_hl2mp_weapon_respawn_time", "20", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar sv_hl2mp_item_respawn_time( "sv_hl2mp_item_respawn_time", "30", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar sv_report_client_settings("sv_report_client_settings", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar sk_max_tripmine("sk_max_tripmine", "999", FCVAR_REPLICATED);
+
 
 extern ConVar mp_chattime;
 
@@ -1775,12 +1777,38 @@ int CHL2MPRules::PlayerRelationship( CBaseEntity *pPlayer, CBaseEntity *pTarget 
 	return GR_NOTTEAMMATE;
 }
 
-const char *CHL2MPRules::GetGameDescription( void )
-{ 
-	if ( IsTeamplay() )
-		return "Team Deathmatch"; 
+#ifndef CLIENT_DLL
 
-	return "Deathmatch"; 
+extern ConVar gabeplus_sandbox;
+extern ConVar gabeplus_deathmatch;
+
+#endif
+
+const char *CHL2MPRules::GetGameDescription( void )
+{
+#ifndef CLIENT_DLL
+	if (gabeplus_deathmatch.GetBool())
+	{
+		if (IsTeamplay())
+		{
+			return "Team Deathmatch";
+		}
+		else
+		{
+			return "Deathmatch";
+		}
+	}
+	else if (gabeplus_sandbox.GetBool())
+	{
+		return "Sandbox";
+	}
+	else
+	{
+		return "Half-Life 2";
+	}
+#else
+	return "Default";
+#endif
 } 
 
 
@@ -1865,7 +1893,9 @@ CAmmoDef* GetAmmoDef()
 		def.AddAmmoType("SMG1", DMG_BULLET, TRACER_LINE_AND_WHIZ, "sk_plr_dmg_smg1", "sk_npc_dmg_smg1", "sk_max_smg1", BULLET_IMPULSE(200, 1225), 0);
 		def.AddAmmoType("357", DMG_BULLET, TRACER_LINE_AND_WHIZ, "sk_plr_dmg_357", "sk_npc_dmg_357", "sk_max_357", BULLET_IMPULSE(800, 5000), 0);
 		def.AddAmmoType("XBowBolt", DMG_BULLET, TRACER_LINE, "sk_plr_dmg_crossbow", "sk_npc_dmg_crossbow", "sk_max_crossbow", BULLET_IMPULSE(800, 8000), 0);
+		def.AddAmmoType("MP5_Grenade", DMG_BURN | DMG_BLAST, TRACER_NONE, "sk_plr_dmg_mp5_grenade", NULL, "sk_max_mp5_grenade", 0, 0);
 		def.AddAmmoType("Uranium", DMG_ENERGYBEAM, TRACER_NONE, NULL, NULL, "sk_max_uranium", 0, 0);
+		def.AddAmmoType("TripMine", DMG_BURN | DMG_BLAST, TRACER_NONE, "sk_plr_dmg_tripmine", NULL, "sk_max_tripmine", 0, 0);
 
 		def.AddAmmoType("ammo_proto1", DMG_BULLET, TRACER_LINE, 0, 0, 10, 0, 0);
 

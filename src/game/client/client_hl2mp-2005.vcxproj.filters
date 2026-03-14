@@ -1611,9 +1611,6 @@
     <ClCompile Include="gabeplus_issues.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\hl2mp\weapon_mp5.cpp">
-      <Filter>Source Files\Gabe Mod + Stuff</Filter>
-    </ClCompile>
     <ClCompile Include="vgui_test.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
@@ -1651,6 +1648,21 @@
     <ClCompile Include="guitest.cpp" />
     <ClCompile Include="..\shared\dbg_cmds.cpp" />
     <ClCompile Include="hl2\c_npc_hydra.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_fx_gauss.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_gauss.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_357.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_crossbow.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_mp5.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
     </ClCompile>
   </ItemGroup>

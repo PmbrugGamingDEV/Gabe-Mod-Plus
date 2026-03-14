@@ -220,10 +220,13 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_357.cpp" />
+    <ClCompile Include="..\server\hl1\hl1_weapon_crossbow.cpp" />
+    <ClCompile Include="..\server\hl1\hl1_weapon_gauss.cpp" />
+    <ClCompile Include="..\server\hl1\hl1_weapon_mp5.cpp" />
     <ClCompile Include="..\shared\achievements_gabemod.cpp" />
     <ClCompile Include="..\shared\dbg_cmds.cpp" />
     <ClCompile Include="..\shared\gabe_events.cpp" />
-    <ClCompile Include="..\shared\hl2mp\weapon_mp5.cpp" />
     <ClCompile Include="..\shared\hl2mp\weapon_physgun.cpp" />
     <ClCompile Include="..\shared\hl2\achievements_hl2.cpp" />
     <ClCompile Include="achievement_notification_panel.cpp" />
@@ -298,6 +301,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="gabeplus_tutorial.cpp" />
     <ClCompile Include="gabe_newgamedialog.cpp" />
     <ClCompile Include="guitest.cpp" />
+    <ClCompile Include="hl1\hl1_fx_gauss.cpp" />
     <ClCompile Include="hl2\C_Func_Monitor.cpp" />
     <ClCompile Include="c_func_occluder.cpp" />
     <ClCompile Include="c_func_reflective_glass.cpp" />

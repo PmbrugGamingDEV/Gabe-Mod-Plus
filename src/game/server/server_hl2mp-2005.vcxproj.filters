@@ -1824,9 +1824,6 @@
     <ClCompile Include="lua_ents.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\Lua\Topic Specific Lua Expose</Filter>
     </ClCompile>
-    <ClCompile Include="..\shared\hl2mp\weapon_mp5.cpp">
-      <Filter>Source Files\Gabe Mod + Stuff</Filter>
-    </ClCompile>
     <ClCompile Include="..\shared\hl2mp\weapon_eattach.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
@@ -1930,6 +1927,33 @@
       <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
     </ClCompile>
     <ClCompile Include="weapon_crowbar_hl1.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_hl1tripmine.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="monster_tripmine.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_glock.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_gauss.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_357.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_crossbow.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_mp5.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_grenade_mp5.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_basegrenade.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
     </ClCompile>
   </ItemGroup>
@@ -3739,6 +3763,15 @@
     </ClInclude>
     <ClInclude Include="hl2\weapon_crowbar.h">
       <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="hl1\hl1_weapon_mp5.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hl1\hl1_grenade_mp5.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hl1\hl1_basegrenade.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

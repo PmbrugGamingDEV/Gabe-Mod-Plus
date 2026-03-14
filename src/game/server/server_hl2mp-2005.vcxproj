@@ -219,7 +219,6 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\activitylist.cpp" />
     <ClCompile Include="..\shared\gabe_events.cpp" />
     <ClCompile Include="..\shared\hl2mp\weapon_eattach.cpp" />
-    <ClCompile Include="..\shared\hl2mp\weapon_mp5.cpp" />
     <ClCompile Include="..\shared\hl2mp\weapon_physgun.cpp" />
     <ClCompile Include="..\shared\hl2\achievements_hl2.cpp" />
     <ClCompile Include="ai_activity.cpp" />
@@ -432,6 +431,13 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="gabe_nextbot.cpp" />
     <ClCompile Include="ge_gamelua.cpp" />
     <ClCompile Include="ge_luamanager.cpp" />
+    <ClCompile Include="hl1\hl1_basegrenade.cpp" />
+    <ClCompile Include="hl1\hl1_grenade_mp5.cpp" />
+    <ClCompile Include="hl1\hl1_weapon_357.cpp" />
+    <ClCompile Include="hl1\hl1_weapon_crossbow.cpp" />
+    <ClCompile Include="hl1\hl1_weapon_gauss.cpp" />
+    <ClCompile Include="hl1\hl1_weapon_glock.cpp" />
+    <ClCompile Include="hl1\hl1_weapon_mp5.cpp" />
     <ClCompile Include="hl2\Func_Monitor.cpp" />
     <ClCompile Include="func_movelinear.cpp" />
     <ClCompile Include="func_occluder.cpp" />
@@ -555,6 +561,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="modelentities.cpp" />
     <ClCompile Include="..\shared\ModelSoundsCache.cpp" />
     <ClCompile Include="monstermaker.cpp" />
+    <ClCompile Include="monster_tripmine.cpp" />
     <ClCompile Include="movehelper_server.cpp" />
     <ClCompile Include="movement.cpp" />
     <ClCompile Include="..\shared\movevars_shared.cpp" />
@@ -728,6 +735,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="test.cpp" />
     <ClCompile Include="weapon_crowbar_hl1.cpp" />
     <ClCompile Include="weapon_egon.cpp" />
+    <ClCompile Include="weapon_hl1tripmine.cpp" />
     <ClCompile Include="weapon_jetpack.cpp" />
     <ClCompile Include="weapon_lasergun.cpp" />
     <ClCompile Include="weapon_multitool_legacy.cpp" />
@@ -1129,6 +1137,9 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="globalstate.h" />
     <ClInclude Include="globalstate_private.h" />
     <ClInclude Include="grenadethrown.h" />
+    <ClInclude Include="hl1\hl1_basegrenade.h" />
+    <ClInclude Include="hl1\hl1_grenade_mp5.h" />
+    <ClInclude Include="hl1\hl1_weapon_mp5.h" />
     <ClInclude Include="hl2\grenade_spit.h" />
     <ClInclude Include="hl2\hl1_monster.h" />
     <ClInclude Include="hl2\hl1_monster_squad.h" />

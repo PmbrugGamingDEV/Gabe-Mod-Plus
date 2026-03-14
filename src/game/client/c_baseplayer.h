@@ -415,6 +415,11 @@ public:
 	float			m_flConstraintWidth;
 	float			m_flConstraintSpeedFactor;
 
+	float m_flStartCharge;
+	float m_flAmmoStartCharge;
+	float m_flPlayAftershock;
+	float m_flNextAmmoBurn;
+
 protected:
 
 	//Tony; made all of these virtual so mods can override.

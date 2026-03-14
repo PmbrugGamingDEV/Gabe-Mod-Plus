@@ -510,6 +510,9 @@ public:
 		m_pDeathmatchMode = new CheckButton(this, "Deathmatch Mode", "Deathmatch Gamemode (No sandbox, No godmode)");
 		m_pDeathmatchMode->SetSelected(false);
 
+		m_pHL1Mode = new CheckButton(this, "Half-Life Mode", "Spawn With Half-Life 1 weapons");
+		m_pHL1Mode->SetSelected(false);
+
 		m_pSandboxMode = new CheckButton(this, "Sandbox Mode", "Sandbox Gamemode (Default)");
 		m_pSandboxMode->SetSelected(true);
 
@@ -546,8 +549,9 @@ public:
 		m_pFriendlyFire->SetPos(pad, y);      m_pFriendlyFire->SetSize(w - pad * 2, rowH); y += rowH + 4;
 		m_pCheats->SetPos(pad, y);            m_pCheats->SetSize(w - pad * 2, rowH); y += rowH + 10;
 		m_pChangelogAtSpawn->SetPos(pad, y);  m_pChangelogAtSpawn->SetSize(w - pad * 2, rowH); y += rowH + 4;
-		m_pDeathmatchMode->SetPos(pad, y);	m_pDeathmatchMode->SetSize(w - pad * 2, rowH); y += rowH + 4;
-		m_pSandboxMode->SetPos(pad, y);		m_pSandboxMode->SetSize(w - pad * 2, rowH); y += rowH + 4;
+		m_pDeathmatchMode->SetPos(pad, y);	  m_pDeathmatchMode->SetSize(w - pad * 2, rowH); y += rowH + 4;
+		m_pHL1Mode->SetPos(pad, y);			  m_pHL1Mode->SetSize(w - pad * 2, rowH); y += rowH + 4;
+		m_pSandboxMode->SetPos(pad, y);		  m_pSandboxMode->SetSize(w - pad * 2, rowH); y += rowH + 4;
 
 		UpdateValueLabels();
 	}
@@ -598,6 +602,7 @@ public:
 	bool GetChangelogAtSpawn() const { return m_pChangelogAtSpawn->IsSelected(); }
 	bool GetDeathmatchMode() const { return m_pDeathmatchMode->IsSelected(); }
 	bool GetSandboxMode() const { return m_pSandboxMode->IsSelected(); }
+	bool GetHL1Mode() const { return m_pHL1Mode->IsSelected(); }
 
 private:
 	void ApplySingleplayerLock()
@@ -665,6 +670,7 @@ private:
 	CheckButton* m_pCheats;
 	CheckButton* m_pChangelogAtSpawn;
 	CheckButton* m_pDeathmatchMode;
+	CheckButton* m_pHL1Mode;
 	CheckButton* m_pSandboxMode;
 };
 
@@ -912,6 +918,7 @@ private:
 		const bool cheats = m_pSettingsTab->GetCheats();
 		const bool chlogatspawn = m_pSettingsTab->GetChangelogAtSpawn();
 		const bool dmmode = m_pSettingsTab->GetDeathmatchMode();
+		const bool hl1mode = m_pSettingsTab->GetHL1Mode();
 		const bool sandboxmode = m_pSettingsTab->GetSandboxMode();
 
 		char hostname[128];
@@ -963,6 +970,9 @@ private:
 			engine->ClientCmd_Unrestricted(cmd);
 
 			Q_snprintf(cmd, sizeof(cmd), "gabeplus_deathmatch %d\n", dmmode ? 1 : 0);
+			engine->ClientCmd_Unrestricted(cmd);
+
+			Q_snprintf(cmd, sizeof(cmd), "gabeplus_hl1 %d\n", hl1mode ? 1 : 0);
 			engine->ClientCmd_Unrestricted(cmd);
 
 			Q_snprintf(cmd, sizeof(cmd), "gabeplus_sandbox %d\n", sandboxmode ? 1 : 0);

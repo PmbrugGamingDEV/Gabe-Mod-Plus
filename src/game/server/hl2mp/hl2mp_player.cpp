@@ -43,6 +43,7 @@ extern CBaseEntity				*g_pLastSpawn;
 
 ConVar gabeplus_chlogatspawn("gabeplus_chlogatspawn", "1", FCVAR_ARCHIVE, "Should the Changelog/MOTD show at spawn?");
 ConVar gabeplus_deathmatch("gabeplus_deathmatch", "0", FCVAR_ARCHIVE, "If set to 1, players wil spawn with the default HL2DM weapons.");
+ConVar gabeplus_hl1("gabeplus_hl1", "0", FCVAR_ARCHIVE, "If set to 1, players wil spawn with the weapons from Half-Life: Source.");
 
 #define HL2MP_COMMAND_MAX_RATE 0.3
 
@@ -208,7 +209,6 @@ void CHL2MP_Player::GiveAllItems( void )
 	CBasePlayer::GiveAmmo( 255,	"Pistol");
 	CBasePlayer::GiveAmmo( 255,	"AR2" );
 	CBasePlayer::GiveAmmo( 5,	"AR2AltFire" );
-	CBasePlayer::GiveAmmo( 999, "Uranium");
 	CBasePlayer::GiveAmmo( 255,	"SMG1");
 	CBasePlayer::GiveAmmo( 3,	"smg1_grenade");
 	CBasePlayer::GiveAmmo( 255,	"Buckshot");
@@ -243,6 +243,26 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_slam" );
 
 	GiveNamedItem( "weapon_physcannon" );
+}
+
+void CHL2MP_Player::GiveHL1Items(void)
+{
+	CBasePlayer::GiveAmmo(999, "Uranium");
+	CBasePlayer::GiveAmmo(999, "TripMine");
+	CBasePlayer::GiveAmmo(999, "Pistol");
+	CBasePlayer::GiveAmmo(999, "357");
+	CBasePlayer::GiveAmmo(999, "XBowBolt");
+	CBasePlayer::GiveAmmo(999, "MP5_Grenade");
+	CBasePlayer::GiveAmmo(999, "SMG1");
+
+	GiveNamedItem("weapon_glock");
+	GiveNamedItem("weapon_tripmine");
+	GiveNamedItem("weapon_crowbar_hl1");
+	GiveNamedItem("weapon_egon");
+	GiveNamedItem("weapon_hl1_gauss");
+	GiveNamedItem("weapon_hl1_357");
+	GiveNamedItem("weapon_mp5");
+	GiveNamedItem("weapon_hl1_crossbow");
 }
 
 void CHL2MP_Player::GiveDefaultItems( void )
@@ -343,6 +363,7 @@ void CHL2MP_Player::HL2MPPushawayThink(void)
 }
 
 ConVar gabeplus_sandbox("gabeplus_sandbox", "1", FCVAR_ARCHIVE, "If set to 1, players will spawn with all weapons and infinite aux power.");
+
 //-----------------------------------------------------------------------------
 // Purpose: Sets HL2 specific defaults.
 //-----------------------------------------------------------------------------
@@ -394,6 +415,12 @@ void CHL2MP_Player::Spawn(void)
 		GiveAllItems(); // Sandbox
 		engine->ClientCommand( this->edict(), "sv_infinite_aux_power 1" );
 		engine->ClientCommand( this->edict(), "god" );
+	}
+	else if (gabeplus_hl1.GetBool())
+	{
+		GiveHL1Items(); // Sandbox as well but hl1 weapons
+		engine->ClientCommand(this->edict(), "sv_infinite_aux_power 1");
+		engine->ClientCommand(this->edict(), "god");
 	}
 	else
 	{

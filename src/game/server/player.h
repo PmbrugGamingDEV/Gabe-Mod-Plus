@@ -502,6 +502,12 @@ public:
 	virtual void			LeaveVehicle( const Vector &vecExitPoint = vec3_origin, const QAngle &vecExitAngles = vec3_angle );
 	int						GetVehicleAnalogControlBias() { return m_iVehicleAnalogBias; }
 	void					SetVehicleAnalogControlBias( int bias ) { m_iVehicleAnalogBias = bias; }
+
+	CNetworkVar(float, m_flStartCharge);
+	CNetworkVar(float, m_flAmmoStartCharge);
+	CNetworkVar(float, m_flPlayAftershock);
+	CNetworkVar(float, m_flNextAmmoBurn);
+
 	
 	// override these for 
 	virtual void			OnVehicleStart() {}
@@ -981,7 +987,6 @@ private:
 	int						m_iDeaths;
 
 	float					m_flNextDecalTime;// next time this player can spray a decal
-
 	// Team Handling
 	// char					m_szTeamName[TEAM_NAME_LENGTH];
 

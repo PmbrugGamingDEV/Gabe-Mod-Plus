@@ -556,6 +556,11 @@ CBasePlayer::CBasePlayer( )
 	pl.frags = 0;
 	pl.deaths = 0;
 
+	m_flStartCharge = 0.0f;
+	m_flAmmoStartCharge = 0.0f;
+	m_flPlayAftershock = 0.0f;
+	m_flNextAmmoBurn = 0.0f;
+
 	m_szNetname[0] = '\0';
 
 	m_iHealth = 0;
@@ -8047,6 +8052,10 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 		SendPropFloat	(SENDINFO(m_flFOVTime) ),
 		SendPropInt		(SENDINFO(m_iDefaultFOV), 8, SPROP_UNSIGNED ),
 		SendPropEHandle	(SENDINFO(m_hZoomOwner) ),
+		SendPropFloat(SENDINFO(m_flStartCharge), 0, SPROP_NOSCALE),
+		SendPropFloat(SENDINFO(m_flAmmoStartCharge), 0, SPROP_NOSCALE),
+		SendPropFloat(SENDINFO(m_flPlayAftershock), 0, SPROP_NOSCALE),
+		SendPropFloat(SENDINFO(m_flNextAmmoBurn), 0, SPROP_NOSCALE),
 		SendPropArray	( SendPropEHandle( SENDINFO_ARRAY( m_hViewModel ) ), m_hViewModel ),
 		SendPropArray3(SENDINFO_ARRAY3(m_iInventory), SendPropInt(SENDINFO_ARRAY(m_iInventory))),
 		SendPropString	(SENDINFO(m_szLastPlaceName) ),

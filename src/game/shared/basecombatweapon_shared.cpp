@@ -252,6 +252,7 @@ void CBaseCombatWeapon::Precache(void)
 	}
 	else
 	{
+		Msg("Loading weapon script for: %s\n", GetClassname());
 		// Couldn't read data file, remove myself
 		Warning("Error reading weapon data file for: %s\n", GetClassname());
 		//	Remove( );	//don't remove, this gets released soon!
