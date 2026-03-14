@@ -1878,9 +1878,6 @@
     <ClCompile Include="npc_agrunt.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
     </ClCompile>
-    <ClCompile Include="hl2\hl1_monster.cpp">
-      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
-    </ClCompile>
     <ClCompile Include="hl2\hl1_monster_squad.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
     </ClCompile>
@@ -1954,6 +1951,33 @@
       <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
     </ClCompile>
     <ClCompile Include="hl1\hl1_basegrenade.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_shotgun.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_rpg.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_hornetgun.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_monster_hornet.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_monster.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_monster_snark.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_snark.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_handgrenade.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_weapon_satchel.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
     </ClCompile>
   </ItemGroup>
@@ -3725,9 +3749,6 @@
     <ClInclude Include="weapon_lasergun.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
-    <ClInclude Include="hl2\hl1_monster.h">
-      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
-    </ClInclude>
     <ClInclude Include="hl2\hl1_monster_squad.h">
       <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
     </ClInclude>
@@ -3771,6 +3792,21 @@
       <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
     </ClInclude>
     <ClInclude Include="hl1\hl1_basegrenade.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hl1\hl1_weapon_rpg.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hl1\hl1_monster_hornet.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hl1\hl1_monster.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hl1\hl1_monster_snark.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hl1\hl1_weapon_satchel.h">
       <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
     </ClInclude>
   </ItemGroup>

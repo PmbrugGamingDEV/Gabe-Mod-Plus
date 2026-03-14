@@ -7,13 +7,13 @@
 
 #include "cbase.h"
 #include "npcevent.h"
-#include "hl1_baseweapon_shared.h"
+#include "basehlcombatweapon_shared.h"
 //#include "basecombatcharacter.h"
 //#include "ai_basenpc.h"
 #ifdef CLIENT_DLL
-#include "hl1/c_hl1_player.h"
+#include "c_baseplayer.h"
 #else
-#include "hl1_player.h"
+#include "hl2_player.h"
 #endif
 #include "gamerules.h"
 #include "in_buttons.h"
@@ -200,9 +200,9 @@ void CHandGrenade::BounceTouch( CBaseEntity *pOther )
 // CWeaponHandGrenade
 //-----------------------------------------------------------------------------
 
-class CWeaponHandGrenade : public CBaseHL1CombatWeapon
+class CWeaponHandGrenade : public CBaseHLCombatWeapon
 {
-	DECLARE_CLASS( CWeaponHandGrenade, CBaseHL1CombatWeapon );
+	DECLARE_CLASS( CWeaponHandGrenade, CBaseHLCombatWeapon );
 public:
 
 	DECLARE_NETWORKCLASS(); 

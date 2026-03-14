@@ -9,7 +9,7 @@
 
 #include "cbase.h"
 #include "npcevent.h"
-#include "hl1_baseweapon_shared.h"
+#include "basehlcombatweapon_shared.h"
 //#include "basecombatcharacter.h"
 //#include "ai_basenpc.h"
 #ifdef CLIENT_DLL
@@ -24,7 +24,7 @@
 
 
 #ifdef CLIENT_DLL
-#define CWeaponShotgun C_WeaponShotgun
+#define CWeaponHL1Shotgun C_WeaponHL1Shotgun
 #endif
 
 // special deathmatch shotgun spreads
@@ -32,9 +32,9 @@
 #define VECTOR_CONE_DM_DOUBLESHOTGUN Vector( 0.17365, 0.04362, 0.00 ) // 20 degrees by 5 degrees
 
 
-class CWeaponShotgun : public CBaseHL1CombatWeapon
+class CWeaponHL1Shotgun : public CBaseHLCombatWeapon
 {
-	DECLARE_CLASS( CWeaponShotgun, CBaseHL1CombatWeapon );
+	DECLARE_CLASS( CWeaponHL1Shotgun, CBaseHLCombatWeapon );
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
@@ -60,7 +60,7 @@ public:
 //	DECLARE_SERVERCLASS();
 //	DECLARE_DATADESC();
 
-	CWeaponShotgun(void);
+	CWeaponHL1Shotgun(void);
 
 //#ifndef CLIENT_DLL
 //	DECLARE_ACTTABLE();
@@ -68,9 +68,9 @@ public:
 };
 
 
-IMPLEMENT_NETWORKCLASS_ALIASED( WeaponShotgun, DT_WeaponShotgun );
+IMPLEMENT_NETWORKCLASS_ALIASED( WeaponHL1Shotgun, DT_WeaponHL1Shotgun );
 
-BEGIN_NETWORK_TABLE( CWeaponShotgun, DT_WeaponShotgun )
+BEGIN_NETWORK_TABLE( CWeaponHL1Shotgun, DT_WeaponHL1Shotgun )
 #ifdef CLIENT_DLL
 	RecvPropFloat( RECVINFO( m_flPumpTime ) ),
 	RecvPropInt( RECVINFO( m_fInSpecialReload ) ),
@@ -80,26 +80,26 @@ BEGIN_NETWORK_TABLE( CWeaponShotgun, DT_WeaponShotgun )
 #endif
 END_NETWORK_TABLE()
 
-BEGIN_PREDICTION_DATA( CWeaponShotgun )
+BEGIN_PREDICTION_DATA( CWeaponHL1Shotgun )
 #ifdef CLIENT_DLL
 	DEFINE_PRED_FIELD( m_flPumpTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_fInSpecialReload, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 #endif
 END_PREDICTION_DATA()
 
-LINK_ENTITY_TO_CLASS( weapon_shotgun, CWeaponShotgun );
-PRECACHE_WEAPON_REGISTER(weapon_shotgun);
+LINK_ENTITY_TO_CLASS( weapon_hl1_shotgun, CWeaponHL1Shotgun );
+PRECACHE_WEAPON_REGISTER(weapon_hl1_shotgun);
 
-//IMPLEMENT_SERVERCLASS_ST( CWeaponShotgun, DT_WeaponShotgun )
+//IMPLEMENT_SERVERCLASS_ST( CWeaponHL1Shotgun, DT_WeaponHL1Shotgun )
 //END_SEND_TABLE()
 
-//BEGIN_DATADESC( CWeaponShotgun )
+//BEGIN_DATADESC( CWeaponHL1Shotgun )
 //END_DATADESC()
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-CWeaponShotgun::CWeaponShotgun( void )
+CWeaponHL1Shotgun::CWeaponHL1Shotgun( void )
 {
 	m_bReloadsSingly	= true;
 	m_bFiresUnderwater	= false;
@@ -108,12 +108,12 @@ CWeaponShotgun::CWeaponShotgun( void )
 }
 
 
-void CWeaponShotgun::Precache( void )
+void CWeaponHL1Shotgun::Precache( void )
 {
 	BaseClass::Precache();
 }
 
-void CWeaponShotgun::PrimaryAttack( void )
+void CWeaponHL1Shotgun::PrimaryAttack( void )
 {
 	// Only the player fires this way so we can cast
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
@@ -165,7 +165,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 //		pPlayer->FireBullets( 6, vecSrc, vecAiming, VECTOR_CONE_10DEGREES, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0 );
 	}
 #if !defined(CLIENT_DLL)
-	EjectShell( pPlayer, 1 );
+	//EjectShell( pPlayer, 1 );
 	pPlayer->SetMuzzleFlashTime( gpGlobals->curtime + 1.0 );
 	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), 600, 0.2);
 #endif
@@ -185,7 +185,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 }
 
 
-void CWeaponShotgun::SecondaryAttack( void )
+void CWeaponHL1Shotgun::SecondaryAttack( void )
 {
 	// Only the player fires this way so we can cast
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
@@ -230,26 +230,14 @@ void CWeaponShotgun::SecondaryAttack( void )
 	Vector vecSrc	 = pPlayer->Weapon_ShootPosition();
 	Vector vecAiming = pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );	
 
-	// Fire the bullets
-	if ( g_pGameRules->IsMultiplayer() )
-	{
-		FireBulletsInfo_t info( 8, vecSrc, vecAiming, VECTOR_CONE_DM_DOUBLESHOTGUN, MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
-		info.m_pAttacker = pPlayer;
+	FireBulletsInfo_t info( 12, vecSrc, vecAiming, VECTOR_CONE_10DEGREES, MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
 
-		pPlayer->FireBullets( info );
+	pPlayer->FireBullets( info );
+	//pPlayer->FireBullets( 12, vecSrc, vecAiming, VECTOR_CONE_10DEGREES, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0 );
 
-//		pPlayer->FireBullets( 8, vecSrc, vecAiming, VECTOR_CONE_DM_DOUBLESHOTGUN, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0 );
-	}
-	else
-	{
-		FireBulletsInfo_t info( 12, vecSrc, vecAiming, VECTOR_CONE_10DEGREES, MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
-
-		pPlayer->FireBullets( info );
-//		pPlayer->FireBullets( 12, vecSrc, vecAiming, VECTOR_CONE_10DEGREES, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0 );
-	}
 #if !defined(CLIENT_DLL)
-	EjectShell( pPlayer, 1 );
-	EjectShell( pPlayer, 1 );
+	//EjectShell( pPlayer, 1 );
+	//EjectShell( pPlayer, 1 );
 #endif
 	pPlayer->ViewPunch( QAngle( -10, 0, 0 ) );
 #if !defined(CLIENT_DLL)
@@ -269,7 +257,7 @@ void CWeaponShotgun::SecondaryAttack( void )
 }
 
 
-bool CWeaponShotgun::Reload( void )
+bool CWeaponHL1Shotgun::Reload( void )
 {
 	CBaseCombatCharacter *pOwner  = GetOwner();
 	
@@ -323,7 +311,7 @@ bool CWeaponShotgun::Reload( void )
 }
 
 
-void CWeaponShotgun::FillClip( void )
+void CWeaponHL1Shotgun::FillClip( void )
 {
 	CBaseCombatCharacter *pOwner  = GetOwner();
 	
@@ -336,7 +324,7 @@ void CWeaponShotgun::FillClip( void )
 }
 
 
-void CWeaponShotgun::DryFire( void )
+void CWeaponHL1Shotgun::DryFire( void )
 {
 	WeaponSound( EMPTY );
 	m_flNextPrimaryAttack	= gpGlobals->curtime + 0.75;
@@ -344,7 +332,7 @@ void CWeaponShotgun::DryFire( void )
 }
 
 
-void CWeaponShotgun::WeaponIdle( void )
+void CWeaponHL1Shotgun::WeaponIdle( void )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 
@@ -399,7 +387,7 @@ void CWeaponShotgun::WeaponIdle( void )
 	}
 }
 
-void CWeaponShotgun::ItemPostFrame(void)
+void CWeaponHL1Shotgun::ItemPostFrame(void)
 {
 	if (m_flPumpTime && m_flPumpTime < gpGlobals->curtime)
 	{

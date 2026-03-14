@@ -27,8 +27,19 @@ int iHornetPuff;
 
 LINK_ENTITY_TO_CLASS(hornet, CHL1Hornet);
 
-extern ConVar sk_npc_dmg_hornet;
-extern ConVar sk_plr_dmg_hornet;
+ConVar sk_npc_dmg_hornet(
+	"sk_npc_dmg_hornet",
+	"8",
+	FCVAR_REPLICATED,
+	"Damage done by NPC hornet projectiles"
+);
+
+ConVar sk_plr_dmg_hornet(
+	"sk_plr_dmg_hornet",
+	"7",
+	FCVAR_REPLICATED,
+	"Damage done by player hornet projectiles"
+);
 
 BEGIN_DATADESC(CHL1Hornet)
 DEFINE_FIELD(m_flStopAttack, FIELD_TIME),
@@ -124,10 +135,10 @@ Class_T CHL1Hornet::Classify(void)
 {
 	if (GetOwnerEntity() && (GetOwnerEntity()->GetFlags() & FL_CLIENT))
 	{
-		return CLASS_PLAYER_BIOWEAPON;
+		return CLASS_PLAYER_ALLY;
 	}
 
-	return	CLASS_ALIEN_BIOWEAPON;
+	return	CLASS_PLAYER_ALLY;
 }
 
 void CHL1Hornet::StartDart(void)

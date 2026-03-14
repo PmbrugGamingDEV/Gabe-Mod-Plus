@@ -38,5 +38,5 @@ STUB_WEAPON_CLASS(weapon_egon, WeaponEgon, C_BaseHLCombatWeapon); // Spot 1
 STUB_WEAPON_CLASS(weapon_glock, WeaponGlock, C_BaseHLCombatWeapon); // Spot 0
 
 // Row 4
-// Weapon_Gauss: Spot 0
 STUB_WEAPON_CLASS(weapon_tripmine, WeaponTripMine, C_BaseHLCombatWeapon); // Spot 1
+STUB_WEAPON_CLASS(weapon_snark, WeaponSnark, C_BaseHLCombatWeapon); // Spot 3

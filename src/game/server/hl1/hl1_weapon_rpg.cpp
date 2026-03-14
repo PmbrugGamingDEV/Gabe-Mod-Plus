@@ -1,19 +1,18 @@
 #include "cbase.h"
 #include "npcevent.h"
 #include "in_buttons.h"
-#include "hl1_baseweapon_shared.h"
+#include "basehlcombatweapon_shared.h"
 #include "hl1_weapon_rpg.h"
 
 #ifdef CLIENT_DLL
-#include "c_hl1_player.h"
+#include "c_baseplayer.h"
 #include "model_types.h"
 #include "beamdraw.h"
 #include "fx_line.h"
 #include "view.h"
 #else
 #include "basecombatcharacter.h"
-#include "movie_explosion.h"
-#include "hl1_player.h"
+#include "hl2_player.h"
 #include "rope.h"
 #include "soundent.h"
 #include "vstdlib/random.h"
@@ -26,7 +25,12 @@
 
 #include "tier0/memdbgon.h"
 
-extern ConVar sk_plr_dmg_rpg;
+ConVar sk_plr_dmg_rpg(
+	"sk_plr_dmg_rpg",
+	"100",
+	FCVAR_REPLICATED | FCVAR_CHEAT,
+	"Damage done by player RPG rockets"
+);
 
 
 void TE_BeamFollow(IRecipientFilter& filter, float delay,
@@ -35,15 +39,15 @@ void TE_BeamFollow(IRecipientFilter& filter, float delay,
 
 #define	RPG_LASER_SPRITE	"sprites/redglow_mp1"
 
-class CLaserDot : public CBaseEntity
+class CHL1LaserDot : public CBaseEntity
 {
-	DECLARE_CLASS(CLaserDot, CBaseEntity);
+	DECLARE_CLASS(CHL1LaserDot, CBaseEntity);
 public:
 
-	CLaserDot(void);
-	~CLaserDot(void);
+	CHL1LaserDot(void);
+	~CHL1LaserDot(void);
 
-	static CLaserDot* Create(const Vector& origin, CBaseEntity* pOwner = NULL, bool bVisibleDot = true);
+	static CHL1LaserDot* Create(const Vector& origin, CBaseEntity* pOwner = NULL, bool bVisibleDot = true);
 
 	void	SetTargetEntity(CBaseEntity* pTarget) { m_hTargetEnt = pTarget; }
 	CBaseEntity* GetTargetEntity(void) { return m_hTargetEnt; }
@@ -80,13 +84,13 @@ protected:
 	DECLARE_NETWORKCLASS();
 	DECLARE_DATADESC();
 public:
-	CLaserDot* m_pNext;
+	CHL1LaserDot* m_pNext;
 };
 
 
 #ifndef CLIENT_DLL
 
-BEGIN_DATADESC(CRpgRocket)
+BEGIN_DATADESC(CHL1RpgRocket)
 DEFINE_FIELD(m_hOwner, FIELD_EHANDLE),
 DEFINE_FIELD(m_vecAbsVelocity, FIELD_VECTOR),
 DEFINE_FIELD(m_flIgniteTime, FIELD_TIME),
@@ -95,26 +99,26 @@ DEFINE_THINKFUNC(IgniteThink),
 DEFINE_THINKFUNC(SeekThink),
 END_DATADESC()
 
-LINK_ENTITY_TO_CLASS(rpg_rocket, CRpgRocket);
+LINK_ENTITY_TO_CLASS(rpg_rocket, CHL1RpgRocket);
 
-IMPLEMENT_SERVERCLASS_ST(CRpgRocket, DT_RpgRocket)
-END_SEND_TABLE()
+//IMPLEMENT_SERVERCLASS_ST(CHL1RpgRocket, DT_RpgRocket)
+//END_SEND_TABLE()
 
-CRpgRocket::CRpgRocket()
+CHL1RpgRocket::CHL1RpgRocket()
 {
 }
 
-void CRpgRocket::Precache(void)
+void CHL1RpgRocket::Precache(void)
 {
 	PrecacheModel("models/rpgrocket.mdl");
 	PrecacheModel("sprites/animglow01.vmt");
 
-	PrecacheScriptSound("Weapon_RPG.RocketIgnite");
+	PrecacheScriptSound("Weapon_HL1_RPG.RocketIgnite");
 
 	m_iTrail = PrecacheModel("sprites/smoke.vmt");
 }
 
-void CRpgRocket::Spawn(void)
+void CHL1RpgRocket::Spawn(void)
 {
 	Precache();
 
@@ -122,10 +126,10 @@ void CRpgRocket::Spawn(void)
 	SetModel("models/rpgrocket.mdl");
 	UTIL_SetSize(this, -Vector(0, 0, 0), Vector(0, 0, 0));
 
-	SetTouch(&CRpgRocket::RocketTouch);
+	SetTouch(&CHL1RpgRocket::RocketTouch);
 
 	SetMoveType(MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE);
-	SetThink(&CRpgRocket::IgniteThink);
+	SetThink(&CHL1RpgRocket::IgniteThink);
 
 	SetNextThink(gpGlobals->curtime + 0.4f);
 
@@ -143,7 +147,7 @@ void CRpgRocket::Spawn(void)
 	m_DmgRadius = m_flDamage * 2.5;
 }
 
-void CRpgRocket::RocketTouch(CBaseEntity* pOther)
+void CHL1RpgRocket::RocketTouch(CBaseEntity* pOther)
 {
 	if (!pOther->IsSolid() || pOther->IsSolidFlagSet(FSOLID_VOLUME_CONTENTS))
 		return;
@@ -153,19 +157,19 @@ void CRpgRocket::RocketTouch(CBaseEntity* pOther)
 		m_hOwner->NotifyRocketDied();
 	}
 
-	StopSound("Weapon_RPG.RocketIgnite");
+	StopSound("Weapon_HL1_RPG.RocketIgnite");
 	ExplodeTouch(pOther);
 }
 
-void CRpgRocket::IgniteThink(void)
+void CHL1RpgRocket::IgniteThink(void)
 {
 	SetMoveType(MOVETYPE_FLY);
 
 	AddEffects(EF_DIMLIGHT);
 
-	EmitSound("Weapon_RPG.RocketIgnite");
+	EmitSound("Weapon_HL1_RPG.RocketIgnite");
 
-	SetThink(&CRpgRocket::SeekThink);
+	SetThink(&CHL1RpgRocket::SeekThink);
 	SetNextThink(gpGlobals->curtime + 0.1f);
 
 	CBroadcastRecipientFilter filter;
@@ -185,7 +189,7 @@ void CRpgRocket::IgniteThink(void)
 	m_flIgniteTime = gpGlobals->curtime;
 }
 
-void CRpgRocket::SeekThink(void)
+void CHL1RpgRocket::SeekThink(void)
 {
 	CBaseEntity* pOther = NULL;
 	Vector vecTarget;
@@ -201,7 +205,7 @@ void CRpgRocket::SeekThink(void)
 
 	while ((pOther = gEntList.FindEntityByClassname(pOther, "laser_spot")) != NULL)
 	{
-		CLaserDot* pDot = dynamic_cast<CLaserDot*>(pOther);
+		CHL1LaserDot* pDot = dynamic_cast<CHL1LaserDot*>(pOther);
 
 		if (pDot->IsOn())
 		{
@@ -268,15 +272,15 @@ void CRpgRocket::SeekThink(void)
 	SetNextThink(gpGlobals->curtime + 0.1f);
 }
 
-void CRpgRocket::Detonate(void)
+void CHL1RpgRocket::Detonate(void)
 {
-	StopSound("Weapon_RPG.RocketIgnite");
+	StopSound("Weapon_HL1_RPG.RocketIgnite");
 	BaseClass::Detonate();
 }
 
-CRpgRocket* CRpgRocket::Create(const Vector& vecOrigin, const QAngle& angAngles, CBasePlayer* pentOwner)
+CHL1RpgRocket* CHL1RpgRocket::Create(const Vector& vecOrigin, const QAngle& angAngles, CBasePlayer* pentOwner)
 {
-	CRpgRocket* pRocket = (CRpgRocket*)CreateEntityByName("rpg_rocket");
+	CHL1RpgRocket* pRocket = (CHL1RpgRocket*)CreateEntityByName("rpg_rocket");
 	UTIL_SetOrigin(pRocket, vecOrigin);
 	pRocket->SetAbsAngles(angAngles);
 	pRocket->Spawn();
@@ -287,9 +291,9 @@ CRpgRocket* CRpgRocket::Create(const Vector& vecOrigin, const QAngle& angAngles,
 
 #endif
 
-IMPLEMENT_NETWORKCLASS_ALIASED(LaserDot, DT_LaserDot)
+IMPLEMENT_NETWORKCLASS_ALIASED(HL1LaserDot, DT_HL1LaserDot)
 
-BEGIN_NETWORK_TABLE(CLaserDot, DT_LaserDot)
+BEGIN_NETWORK_TABLE(CHL1LaserDot, DT_HL1LaserDot)
 #ifdef CLIENT_DLL
 RecvPropBool(RECVINFO(m_bIsOn)),
 #else
@@ -298,49 +302,25 @@ SendPropBool(SENDINFO(m_bIsOn)),
 END_NETWORK_TABLE()
 
 #ifndef CLIENT_DLL
-CEntityClassList<CLaserDot> g_LaserDotList;
-template <> CLaserDot* CEntityClassList<CLaserDot>::m_pClassList = NULL;
-CLaserDot* GetLaserDotList()
+CEntityClassList<CHL1LaserDot> g_LaserDotList;
+template <> CHL1LaserDot* CEntityClassList<CHL1LaserDot>::m_pClassList = NULL;
+CHL1LaserDot* GetLaserDotList()
 {
 	return g_LaserDotList.m_pClassList;
 }
 
 #endif
 
-LINK_ENTITY_TO_CLASS(laser_spot, CLaserDot);
+LINK_ENTITY_TO_CLASS(laser_spot, CHL1LaserDot);
 
-BEGIN_DATADESC(CLaserDot)
+BEGIN_DATADESC(CHL1LaserDot)
 DEFINE_FIELD(m_vecSurfaceNormal, FIELD_VECTOR),
 DEFINE_FIELD(m_hTargetEnt, FIELD_EHANDLE),
 DEFINE_FIELD(m_bVisibleLaserDot, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bIsOn, FIELD_BOOLEAN),
 END_DATADESC()
 
-CBaseEntity* CreateLaserDot(const Vector& origin, CBaseEntity* pOwner, bool bVisibleDot)
-{
-	return CLaserDot::Create(origin, pOwner, bVisibleDot);
-}
-
-void SetLaserDotTarget(CBaseEntity* pLaserDot, CBaseEntity* pTarget)
-{
-	CLaserDot* pDot = assert_cast<CLaserDot*>(pLaserDot);
-	pDot->SetTargetEntity(pTarget);
-}
-
-void EnableLaserDot(CBaseEntity* pLaserDot, bool bEnable)
-{
-	CLaserDot* pDot = assert_cast<CLaserDot*>(pLaserDot);
-	if (bEnable)
-	{
-		pDot->TurnOn();
-	}
-	else
-	{
-		pDot->TurnOff();
-	}
-}
-
-CLaserDot::CLaserDot(void)
+CHL1LaserDot::CHL1LaserDot(void)
 {
 	m_hTargetEnt = NULL;
 	m_bIsOn = true;
@@ -349,17 +329,17 @@ CLaserDot::CLaserDot(void)
 #endif
 }
 
-CLaserDot::~CLaserDot(void)
+CHL1LaserDot::~CHL1LaserDot(void)
 {
 #ifndef CLIENT_DLL
 	g_LaserDotList.Remove(this);
 #endif
 }
 
-CLaserDot* CLaserDot::Create(const Vector& origin, CBaseEntity* pOwner, bool bVisibleDot)
+CHL1LaserDot* CHL1LaserDot::Create(const Vector& origin, CBaseEntity* pOwner, bool bVisibleDot)
 {
 #ifndef CLIENT_DLL
-	CLaserDot* pLaserDot = (CLaserDot*)CBaseEntity::Create("laser_spot", origin, QAngle(0, 0, 0));
+	CHL1LaserDot* pLaserDot = (CHL1LaserDot*)CBaseEntity::Create("laser_spot", origin, QAngle(0, 0, 0));
 
 	if (pLaserDot == NULL)
 		return NULL;
@@ -385,36 +365,36 @@ CLaserDot* CLaserDot::Create(const Vector& origin, CBaseEntity* pOwner, bool bVi
 #endif
 }
 
-void CLaserDot::SetLaserPosition(const Vector& origin, const Vector& normal)
+void CHL1LaserDot::SetLaserPosition(const Vector& origin, const Vector& normal)
 {
 	SetAbsOrigin(origin);
 	m_vecSurfaceNormal = normal;
 }
 
-Vector CLaserDot::GetChasePosition()
+Vector CHL1LaserDot::GetChasePosition()
 {
 	return GetAbsOrigin() - m_vecSurfaceNormal * 10;
 }
 
-void CLaserDot::TurnOn(void)
+void CHL1LaserDot::TurnOn(void)
 {
 	m_bIsOn = true;
 	RemoveEffects(EF_NODRAW);
 }
 
-void CLaserDot::TurnOff(void)
+void CHL1LaserDot::TurnOff(void)
 {
 	m_bIsOn = false;
 	AddEffects(EF_NODRAW);
 }
 
-void CLaserDot::MakeInvisible(void)
+void CHL1LaserDot::MakeInvisible(void)
 {
 }
 
 #ifdef CLIENT_DLL
 
-int CLaserDot::DrawModel(int flags)
+int CHL1LaserDot::DrawModel(int flags)
 {
 	color32 color = { 255,255,255,255 };
 	Vector	vecAttachment, vecDir;
@@ -423,7 +403,7 @@ int CLaserDot::DrawModel(int flags)
 	float	scale;
 	Vector	endPos;
 
-	C_HL1_Player* pOwner = ToHL1Player(GetOwnerEntity());
+	C_BasePlayer* pOwner = ToBasePlayer(GetOwnerEntity());
 
 	if (pOwner != NULL && pOwner->IsDormant() == false)
 	{
@@ -459,7 +439,7 @@ int CLaserDot::DrawModel(int flags)
 	return 1;
 }
 
-void CLaserDot::OnDataChanged(DataUpdateType_t updateType)
+void CHL1LaserDot::OnDataChanged(DataUpdateType_t updateType)
 {
 	if (updateType == DATA_UPDATE_CREATED)
 	{
@@ -470,13 +450,13 @@ void CLaserDot::OnDataChanged(DataUpdateType_t updateType)
 #endif
 
 
-LINK_ENTITY_TO_CLASS(weapon_rpg, CWeaponRPG);
+LINK_ENTITY_TO_CLASS(weapon_hl1_rpg, CHL1WeaponRPG);
 
-PRECACHE_WEAPON_REGISTER(weapon_rpg);
+PRECACHE_WEAPON_REGISTER(weapon_hl1_rpg);
 
-IMPLEMENT_NETWORKCLASS_ALIASED(WeaponRPG, DT_WeaponRPG)
+IMPLEMENT_NETWORKCLASS_ALIASED(HL1WeaponRPG, DT_HL1WeaponRPG)
 
-BEGIN_DATADESC(CWeaponRPG)
+BEGIN_DATADESC(CHL1WeaponRPG)
 DEFINE_FIELD(m_bIntialStateUpdate, FIELD_BOOLEAN),
 DEFINE_FIELD(m_bGuiding, FIELD_BOOLEAN),
 #ifndef CLIENT_DLL
@@ -488,7 +468,7 @@ DEFINE_FIELD(m_flLaserDotReviveTime, FIELD_TIME),
 END_DATADESC()
 
 
-BEGIN_NETWORK_TABLE(CWeaponRPG, DT_WeaponRPG)
+BEGIN_NETWORK_TABLE(CHL1WeaponRPG, DT_HL1WeaponRPG)
 #ifdef CLIENT_DLL
 RecvPropBool(RECVINFO(m_bIntialStateUpdate)),
 RecvPropBool(RECVINFO(m_bGuiding)),
@@ -501,7 +481,7 @@ SendPropBool(SENDINFO(m_bLaserDotSuspended)),
 END_NETWORK_TABLE()
 
 
-BEGIN_PREDICTION_DATA(CWeaponRPG)
+BEGIN_PREDICTION_DATA(CHL1WeaponRPG)
 #ifdef CLIENT_DLL
 DEFINE_PRED_FIELD(m_bIntialStateUpdate, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 DEFINE_PRED_FIELD(m_bGuiding, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
@@ -510,7 +490,7 @@ DEFINE_PRED_FIELD(m_flLaserDotReviveTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
 #endif
 END_PREDICTION_DATA()
 
-CWeaponRPG::CWeaponRPG(void)
+CHL1WeaponRPG::CHL1WeaponRPG(void)
 {
 	m_bReloadsSingly = false;
 	m_bFiresUnderwater = true;
@@ -520,7 +500,7 @@ CWeaponRPG::CWeaponRPG(void)
 }
 
 
-CWeaponRPG::~CWeaponRPG()
+CHL1WeaponRPG::~CHL1WeaponRPG()
 {
 #ifndef CLIENT_DLL
 	if (m_hLaserDot != NULL)
@@ -531,7 +511,7 @@ CWeaponRPG::~CWeaponRPG()
 #endif
 }
 
-void CWeaponRPG::ItemPostFrame(void)
+void CHL1WeaponRPG::ItemPostFrame(void)
 {
 	BaseClass::ItemPostFrame();
 
@@ -578,7 +558,7 @@ void CWeaponRPG::ItemPostFrame(void)
 }
 
 
-void CWeaponRPG::Drop(const Vector& vecVelocity)
+void CHL1WeaponRPG::Drop(const Vector& vecVelocity)
 {
 	StopGuiding();
 
@@ -594,7 +574,7 @@ void CWeaponRPG::Drop(const Vector& vecVelocity)
 }
 
 
-int CWeaponRPG::GetDefaultClip1(void) const
+int CHL1WeaponRPG::GetDefaultClip1(void) const
 {
 	if (g_pGameRules->IsMultiplayer())
 	{
@@ -606,7 +586,7 @@ int CWeaponRPG::GetDefaultClip1(void) const
 	}
 }
 
-void CWeaponRPG::Precache(void)
+void CHL1WeaponRPG::Precache(void)
 {
 #ifndef CLIENT_DLL
 	UTIL_PrecacheOther("laser_spot");
@@ -618,7 +598,7 @@ void CWeaponRPG::Precache(void)
 }
 
 
-bool CWeaponRPG::Deploy(void)
+bool CHL1WeaponRPG::Deploy(void)
 {
 	m_bIntialStateUpdate = true;
 	m_bLaserDotSuspended = false;
@@ -638,7 +618,7 @@ bool CWeaponRPG::Deploy(void)
 	return DefaultDeploy((char*)GetViewModel(), (char*)GetWorldModel(), ACT_VM_DRAW, (char*)GetAnimPrefix());
 }
 
-void CWeaponRPG::PrimaryAttack(void)
+void CHL1WeaponRPG::PrimaryAttack(void)
 {
 	if (m_hMissile != NULL)
 		return;
@@ -688,7 +668,7 @@ void CWeaponRPG::PrimaryAttack(void)
 	QAngle vecAngles;
 	VectorAngles(vForward, vecAngles);
 
-	CRpgRocket* pMissile = CRpgRocket::Create(muzzlePoint, vecAngles, pOwner);
+	CHL1RpgRocket* pMissile = CHL1RpgRocket::Create(muzzlePoint, vecAngles, pOwner);
 	pMissile->m_hOwner = this;
 	pMissile->SetAbsVelocity(pMissile->GetAbsVelocity() + vForward * DotProduct(pOwner->GetAbsVelocity(), vForward));
 
@@ -706,7 +686,7 @@ void CWeaponRPG::PrimaryAttack(void)
 }
 
 
-void CWeaponRPG::WeaponIdle(void)
+void CHL1WeaponRPG::WeaponIdle(void)
 {
 	CBaseCombatCharacter* pOwner = GetOwner();
 
@@ -737,7 +717,7 @@ void CWeaponRPG::WeaponIdle(void)
 }
 
 
-void CWeaponRPG::NotifyRocketDied(void)
+void CHL1WeaponRPG::NotifyRocketDied(void)
 {
 	m_hMissile = NULL;
 
@@ -746,7 +726,7 @@ void CWeaponRPG::NotifyRocketDied(void)
 }
 
 
-bool CWeaponRPG::Reload(void)
+bool CHL1WeaponRPG::Reload(void)
 {
 	CBaseCombatCharacter* pOwner = GetOwner();
 
@@ -808,7 +788,7 @@ bool CWeaponRPG::Reload(void)
 }
 
 
-bool CWeaponRPG::Holster(CBaseCombatWeapon* pSwitchingTo)
+bool CHL1WeaponRPG::Holster(CBaseCombatWeapon* pSwitchingTo)
 {
 	if (IsGuiding() && (m_hMissile != NULL))
 		return false;
@@ -828,7 +808,7 @@ bool CWeaponRPG::Holster(CBaseCombatWeapon* pSwitchingTo)
 }
 
 
-void CWeaponRPG::UpdateSpot(void)
+void CHL1WeaponRPG::UpdateSpot(void)
 {
 	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
 
@@ -867,13 +847,13 @@ void CWeaponRPG::UpdateSpot(void)
 }
 
 
-void CWeaponRPG::CreateLaserPointer(void)
+void CHL1WeaponRPG::CreateLaserPointer(void)
 {
 #ifndef CLIENT_DLL
 	if (m_hLaserDot != NULL)
 		return;
 
-	m_hLaserDot = CLaserDot::Create(GetAbsOrigin(), GetOwner());
+	m_hLaserDot = CHL1LaserDot::Create(GetAbsOrigin(), GetOwner());
 	if (!IsGuiding())
 	{
 		if (m_hLaserDot)
@@ -885,13 +865,13 @@ void CWeaponRPG::CreateLaserPointer(void)
 }
 
 
-bool CWeaponRPG::IsGuiding(void)
+bool CHL1WeaponRPG::IsGuiding(void)
 {
 	return m_bGuiding;
 }
 
 
-void CWeaponRPG::StartGuiding(void)
+void CHL1WeaponRPG::StartGuiding(void)
 {
 	m_bGuiding = true;
 
@@ -905,7 +885,7 @@ void CWeaponRPG::StartGuiding(void)
 	UpdateSpot();
 }
 
-void CWeaponRPG::StopGuiding(void)
+void CHL1WeaponRPG::StopGuiding(void)
 {
 	m_bGuiding = false;
 

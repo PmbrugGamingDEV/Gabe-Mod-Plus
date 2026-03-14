@@ -1665,6 +1665,21 @@
     <ClCompile Include="..\server\hl1\hl1_weapon_mp5.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_shotgun.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_rpg.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_hornetgun.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_handgrenade.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_weapon_satchel.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="achievement_notification_panel.h">
@@ -3505,6 +3520,12 @@
     </ClInclude>
     <ClInclude Include="..\..\public\tier0\cpumonitoring.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\server\hl1\hl1_weapon_rpg.h">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\server\hl1\hl1_weapon_satchel.h">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

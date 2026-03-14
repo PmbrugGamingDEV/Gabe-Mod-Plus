@@ -223,7 +223,12 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="..\server\hl1\hl1_weapon_357.cpp" />
     <ClCompile Include="..\server\hl1\hl1_weapon_crossbow.cpp" />
     <ClCompile Include="..\server\hl1\hl1_weapon_gauss.cpp" />
+    <ClCompile Include="..\server\hl1\hl1_weapon_handgrenade.cpp" />
+    <ClCompile Include="..\server\hl1\hl1_weapon_hornetgun.cpp" />
     <ClCompile Include="..\server\hl1\hl1_weapon_mp5.cpp" />
+    <ClCompile Include="..\server\hl1\hl1_weapon_rpg.cpp" />
+    <ClCompile Include="..\server\hl1\hl1_weapon_satchel.cpp" />
+    <ClCompile Include="..\server\hl1\hl1_weapon_shotgun.cpp" />
     <ClCompile Include="..\shared\achievements_gabemod.cpp" />
     <ClCompile Include="..\shared\dbg_cmds.cpp" />
     <ClCompile Include="..\shared\gabe_events.cpp" />
@@ -893,6 +898,8 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\public\tier0\cpumonitoring.h" />
+    <ClInclude Include="..\server\hl1\hl1_weapon_rpg.h" />
+    <ClInclude Include="..\server\hl1\hl1_weapon_satchel.h" />
     <ClInclude Include="..\shared\gabe_client.h" />
     <ClInclude Include="..\shared\gabe_events.h" />
     <ClInclude Include="..\shared\lauxlib.h" />

@@ -254,15 +254,30 @@ void CHL2MP_Player::GiveHL1Items(void)
 	CBasePlayer::GiveAmmo(999, "XBowBolt");
 	CBasePlayer::GiveAmmo(999, "MP5_Grenade");
 	CBasePlayer::GiveAmmo(999, "SMG1");
+	CBasePlayer::GiveAmmo(999, "BuckShot");
+	CBasePlayer::GiveAmmo(999, "rpg_round");
+	CBasePlayer::GiveAmmo(999, "Hornet");
+	CBasePlayer::GiveAmmo(999, "Snark");
+	CBasePlayer::GiveAmmo(999, "grenade");
+	CBasePlayer::GiveAmmo(999, "Satchel");
 
 	GiveNamedItem("weapon_glock");
 	GiveNamedItem("weapon_tripmine");
 	GiveNamedItem("weapon_crowbar_hl1");
 	GiveNamedItem("weapon_egon");
+	GiveNamedItem("weapon_hornetgun");
 	GiveNamedItem("weapon_hl1_gauss");
 	GiveNamedItem("weapon_hl1_357");
+	GiveNamedItem("weapon_snark");
 	GiveNamedItem("weapon_mp5");
+	GiveNamedItem("weapon_hl1_rpg");
+	GiveNamedItem("weapon_hl1_shotgun");
 	GiveNamedItem("weapon_hl1_crossbow");
+	GiveNamedItem("weapon_handgrenade");
+	GiveNamedItem("weapon_satchel");
+
+	engine->ServerCommand("viewmodel_fov 90");
+	engine->ServerExecute();
 }
 
 void CHL2MP_Player::GiveDefaultItems( void )

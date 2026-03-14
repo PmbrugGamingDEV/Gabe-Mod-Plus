@@ -17,7 +17,6 @@ public:
 	void	Spawn(void);
 
 	virtual void	TraceAttack(const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr);
-	virtual void    TraceAttack(const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator);
 
 	bool	BecomeRagdoll(const CTakeDamageInfo& info, const Vector& forceVector);
 

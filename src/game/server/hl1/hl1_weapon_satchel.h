@@ -13,8 +13,9 @@
 
 #ifndef CLIENT_DLL
 #include "hl1_basegrenade.h"
-#include "hl1_baseweapon_shared.h"
 #endif
+
+#include "basehlcombatweapon_shared.h"
 
 
 #ifdef CLIENT_DLL
@@ -26,9 +27,9 @@
 // CWeaponSatchel
 //-----------------------------------------------------------------------------
 
-class CWeaponSatchel : public CBaseHL1CombatWeapon
+class CWeaponSatchel : public CBaseHLCombatWeapon
 {
-	DECLARE_CLASS( CWeaponSatchel, CBaseHL1CombatWeapon );
+	DECLARE_CLASS( CWeaponSatchel, CBaseHLCombatWeapon );
 
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
@@ -73,15 +74,15 @@ private:
 
 #ifndef CLIENT_DLL
 //-----------------------------------------------------------------------------
-// CSatchelCharge
+// CHL1SatchelCharge
 //-----------------------------------------------------------------------------
 
-class CSatchelCharge : public CHL1BaseGrenade
+class CHL1SatchelCharge : public CHL1BaseGrenade
 {
 public:
-	DECLARE_CLASS( CSatchelCharge, CHL1BaseGrenade );
+	DECLARE_CLASS( CHL1SatchelCharge, CHL1BaseGrenade );
 
-	CSatchelCharge();
+	CHL1SatchelCharge();
 
 	void	Spawn( void );
 	void	Precache( void );

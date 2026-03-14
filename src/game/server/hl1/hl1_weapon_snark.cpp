@@ -1,6 +1,6 @@
 #include "cbase.h"
 #include "npcevent.h"
-#include "hl1_baseweapon_shared.h"
+#include "basehlcombatweapon_shared.h"
 #include "basecombatcharacter.h"
 #include "ai_basenpc.h"
 #include "player.h"
@@ -13,9 +13,9 @@
 #include "hl1_monster_snark.h"
 #include "beam_shared.h"
 
-class CWeaponSnark : public CBaseHL1CombatWeapon
+class CWeaponSnark : public CBaseHLCombatWeapon
 {
-	DECLARE_CLASS(CWeaponSnark, CBaseHL1CombatWeapon);
+	DECLARE_CLASS(CWeaponSnark, CBaseHLCombatWeapon);
 public:
 	CWeaponSnark(void);
 

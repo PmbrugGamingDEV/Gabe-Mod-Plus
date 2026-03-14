@@ -9,6 +9,7 @@
 #include "player.h"
 #include "vstdlib/random.h"
 #include "engine/IEngineSound.h"
+#include "physics_prop_ragdoll.h"
 #include "npcevent.h"
 
 #include "hl1_prop_ragdoll.h"
@@ -37,11 +38,6 @@ void CHL1BaseMonster::Spawn(void)
 	BaseClass::Spawn();
 }
 
-void CHL1BaseMonster::TraceAttack(const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator)
-{
-	TraceAttack(info, vecDir, ptr);
-}
-
 
 void CHL1BaseMonster::TraceAttack(const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr)
 {
@@ -49,63 +45,48 @@ void CHL1BaseMonster::TraceAttack(const CTakeDamageInfo &info, const Vector &vec
 	{
 		UTIL_BloodSpray(ptr->endpos, vecDir, BloodColor(), 4, FX_BLOODSPRAY_ALL);
 	}
-	BaseClass::TraceAttack(info, vecDir, ptr, 0);
+	BaseClass::TraceAttack(info, vecDir, ptr);
 }
 
 bool CHL1BaseMonster::BecomeRagdoll(const CTakeDamageInfo& info, const Vector& forceVector)
 {
+	if (!CanBecomeRagdoll())
+		return false;
+
+	CTakeDamageInfo info2 = info;
+	info2.SetDamageForce(forceVector);
+
+	// Vehicle collision special case
 	if ((info.GetDamageType() & DMG_VEHICLE) && !g_pGameRules->IsMultiplayer())
 	{
-		CTakeDamageInfo info2 = info;
-		info2.SetDamageForce(forceVector);
 		Vector pos = info2.GetDamagePosition();
 		float flAbsMinsZ = GetAbsOrigin().z + WorldAlignMins().z;
+
 		if ((pos.z - flAbsMinsZ) < 24)
 		{
-			// HACKHACK: Make sure the vehicle impact is at least 2ft off the ground
+			// Make sure impact point is slightly above ground
 			pos.z = flAbsMinsZ + 24;
 			info2.SetDamagePosition(pos);
 		}
-
-		// in single player create ragdolls on the server when the player hits someone
-		// with their vehicle - for more dramatic death/collisions
-		CHL1Ragdoll* pRagdoll = CreateHL1Ragdoll(this, m_nForceBone, info2, COLLISION_GROUP_INTERACTIVE_DEBRIS, true);
-		
-		pRagdoll->m_iRagdollHealth = m_iStartHealth / 2;
-		if (HasAlienGibs())
-			pRagdoll->m_bHumanGibs = 0;
-		else if (HasHumanGibs())
-			pRagdoll->m_bHumanGibs = 1;
-		if (BloodColor() == DONT_BLEED)
-			pRagdoll->m_bShouldNotGib = 1;
-		
-		FixupBurningServerRagdoll(pRagdoll);
-		RemoveDeferred();
-		return true;
 	}
 
-	//Fix up the force applied to server side ragdolls. This fixes magnets not affecting them.
-	CTakeDamageInfo newinfo = info;
-	newinfo.SetDamageForce(forceVector);
+	// Spawn HL2 ragdoll
+	CBaseEntity* pEnt = CreateServerRagdoll(
+		this,
+		m_nForceBone,
+		info2,
+		COLLISION_GROUP_INTERACTIVE_DEBRIS
+	);
 
-	
-	if (CanBecomeRagdoll() == false)
-		return false;
+	CRagdollProp* pRagdoll = dynamic_cast<CRagdollProp*>(pEnt);
 
-	CHL1Ragdoll* pRagdoll = CreateHL1Ragdoll(this, m_nForceBone, info, COLLISION_GROUP_INTERACTIVE_DEBRIS, true);
-	
-	pRagdoll->m_iRagdollHealth = m_iStartHealth / 2;
-	if (HasAlienGibs())
-		pRagdoll->m_bHumanGibs = 0;
-	else if (HasHumanGibs())
-		pRagdoll->m_bHumanGibs = 1;
-	if (BloodColor() == DONT_BLEED)
-		pRagdoll->m_bShouldNotGib = 1;
-	
-	FixupBurningServerRagdoll(pRagdoll);
-	PhysSetEntityGameFlags(pRagdoll, FVPHYSICS_NO_SELF_COLLISIONS);
+	if (pRagdoll)
+	{
+		FixupBurningServerRagdoll(pRagdoll);
+		PhysSetEntityGameFlags(pRagdoll, FVPHYSICS_NO_SELF_COLLISIONS);
+	}
+
 	RemoveDeferred();
-	
 	return true;
 }
 
@@ -149,7 +130,7 @@ bool CHL1BaseMonster::CorpseGib(const CTakeDamageInfo &info)
 }
 
 bool CHL1BaseMonster::HasAlienGibs(void)
-{
+{  /*
 	Class_T myClass = Classify();
 
 	if (myClass == CLASS_ALIEN_MILITARY ||
@@ -158,13 +139,14 @@ bool CHL1BaseMonster::HasAlienGibs(void)
 		myClass == CLASS_ALIEN_PREDATOR ||
 		myClass == CLASS_ALIEN_PREY)
 
-		return true;
+		return true;*/
 
 	return false;
 }
 
 bool CHL1BaseMonster::HasHumanGibs(void)
 {
+	/*
 	Class_T myClass = Classify();
 
 	if (myClass == CLASS_HUMAN_MILITARY ||
@@ -172,7 +154,7 @@ bool CHL1BaseMonster::HasHumanGibs(void)
 		myClass == CLASS_HUMAN_PASSIVE ||
 		myClass == CLASS_PLAYER)
 
-		return true;
+		return true;*/
 
 	return false;
 }

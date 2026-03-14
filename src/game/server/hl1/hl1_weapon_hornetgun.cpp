@@ -7,15 +7,15 @@
 
 #include "cbase.h"
 #include "npcevent.h"
-#include "hl1_baseweapon_shared.h"
+#include "basehlcombatweapon_shared.h"
 //#include "basecombatcharacter.h"
 //#include "ai_basenpc.h"
 #include "gamerules.h"
 #include "in_buttons.h"
 #ifdef CLIENT_DLL
-#include "hl1/c_hl1_player.h"
+#include "c_baseplayer.h"
 #else
-#include "hl1_player.h"
+#include "hl2_player.h"
 #include "soundent.h"
 #include "game.h"
 #endif
@@ -34,9 +34,9 @@
 #define CWeaponHgun C_WeaponHgun
 #endif
 
-class CWeaponHgun : public CBaseHL1CombatWeapon
+class CWeaponHgun : public CBaseHLCombatWeapon
 {
-	DECLARE_CLASS( CWeaponHgun, CBaseHL1CombatWeapon );
+	DECLARE_CLASS( CWeaponHgun, CBaseHLCombatWeapon );
 public:
 
 	DECLARE_NETWORKCLASS(); 
@@ -125,7 +125,7 @@ void CWeaponHgun::Precache( void )
 //-----------------------------------------------------------------------------
 void CWeaponHgun::PrimaryAttack( void )
 {
-	CHL1_Player *pPlayer = ToHL1Player( GetOwner() );
+	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 	if ( !pPlayer )
 	{
 		return;
@@ -177,7 +177,7 @@ void CWeaponHgun::PrimaryAttack( void )
 //-----------------------------------------------------------------------------
 void CWeaponHgun::SecondaryAttack( void )
 {
-	CHL1_Player *pPlayer = ToHL1Player( GetOwner() );
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
 	if ( !pPlayer )
 	{
 		return;
@@ -286,7 +286,7 @@ bool CWeaponHgun::Holster( CBaseCombatWeapon *pSwitchingTo )
 
 	if ( bRet )
 	{
-		CHL1_Player *pPlayer = ToHL1Player( GetOwner() );
+		CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
 		if ( pPlayer )
 		{
 #if !defined(CLIENT_DLL)            
@@ -310,7 +310,7 @@ bool CWeaponHgun::Reload( void )
 		return true;
 	}
 
-	CHL1_Player *pPlayer = ToHL1Player( GetOwner() );
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
 	if ( !pPlayer )
 	{
 		return true;

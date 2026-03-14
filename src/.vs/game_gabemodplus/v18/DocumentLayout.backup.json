@@ -11,8 +11,12 @@
       "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\shared\\hl2mp\\hl2mp_gamerules.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\hl1\\hl1_weapon_mp5.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\hl1\\hl1_weapon_mp5.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\hl1\\hl1_weapon_satchel.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\hl1\\hl1_weapon_satchel.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\hl1\\hl1_weapon_satchel.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\hl1\\hl1_weapon_satchel.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,20 +26,15 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 5,
           "Children": [
             {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "hl2mp_player.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp",
-              "RelativeDocumentMoniker": "game\\server\\hl2mp\\hl2mp_player.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp",
-              "RelativeToolTip": "game\\server\\hl2mp\\hl2mp_player.cpp",
-              "ViewState": "AgIAAPAAAAAAAAAAAAAAAP8AAAAhAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-03-14T03:48:18.006Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Document",
@@ -45,31 +44,49 @@
               "RelativeDocumentMoniker": "game\\shared\\hl2mp\\HL2MP_GAMERULES.CPP",
               "ToolTip": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\HL2MP_GAMERULES.CPP",
               "RelativeToolTip": "game\\shared\\hl2mp\\HL2MP_GAMERULES.CPP",
-              "ViewState": "AgIAAA0HAAAAAAAAAAAAAGcHAACAAAAAAAAAAA==",
+              "ViewState": "AgIAAHoHAAAAAAAAAAAAAGwHAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-03-14T03:40:55.697Z",
+              "WhenOpened": "2026-03-14T13:40:10.484Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "hl1_weapon_mp5.cpp",
-              "DocumentMoniker": "C:\\GABEMODPLUS\\SRC\\GAME\\SERVER\\HL1\\HL1_WEAPON_MP5.CPP",
-              "RelativeDocumentMoniker": "GAME\\SERVER\\HL1\\HL1_WEAPON_MP5.CPP",
-              "ToolTip": "C:\\GABEMODPLUS\\SRC\\GAME\\SERVER\\HL1\\HL1_WEAPON_MP5.CPP",
-              "RelativeToolTip": "GAME\\SERVER\\HL1\\HL1_WEAPON_MP5.CPP",
-              "ViewState": "AgIAANUAAAAAAAAAAAAAANcAAAAmAAAAAAAAAA==",
+              "Title": "hl1_weapon_satchel.cpp",
+              "DocumentMoniker": "C:\\GABEMODPLUS\\SRC\\GAME\\SERVER\\HL1\\HL1_WEAPON_SATCHEL.CPP",
+              "RelativeDocumentMoniker": "GAME\\SERVER\\HL1\\HL1_WEAPON_SATCHEL.CPP",
+              "ToolTip": "C:\\GABEMODPLUS\\SRC\\GAME\\SERVER\\HL1\\HL1_WEAPON_SATCHEL.CPP",
+              "RelativeToolTip": "GAME\\SERVER\\HL1\\HL1_WEAPON_SATCHEL.CPP",
+              "ViewState": "AgIAAIwBAAAAAAAAAAAAALABAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-03-14T03:33:22.867Z",
+              "WhenOpened": "2026-03-14T13:34:44.458Z",
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "hl1_weapon_satchel.h",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\hl1\\HL1_WEAPON_SATCHEL.H",
+              "RelativeDocumentMoniker": "game\\server\\hl1\\HL1_WEAPON_SATCHEL.H",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\hl1\\HL1_WEAPON_SATCHEL.H",
+              "RelativeToolTip": "game\\server\\hl1\\HL1_WEAPON_SATCHEL.H",
+              "ViewState": "AgIAAEIAAAAAAAAAAADgv1cAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-03-14T13:34:09.3Z",
+              "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "hl2mp_player.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp",
+              "RelativeDocumentMoniker": "game\\server\\hl2mp\\hl2mp_player.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp",
+              "RelativeToolTip": "game\\server\\hl2mp\\hl2mp_player.cpp",
+              "ViewState": "AgIAAPoAAAAAAAAAAAAAAAUBAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-14T13:25:57.757Z",
+              "EditorCaption": ""
             }
           ]
         }

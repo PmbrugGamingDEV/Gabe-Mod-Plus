@@ -8,9 +8,9 @@
 #define SQUEEK_DETONATE_DELAY	15.0
 #define SNARK_EXPLOSION_VOLUME	512
 
-ConVar sk_snark_health("sk_snark_health", "0");
-ConVar sk_snark_dmg_bite("sk_snark_dmg_bite", "0");
-ConVar sk_snark_dmg_pop("sk_snark_dmg_pop", "0");
+ConVar sk_snark_health("sk_snark_health", "10", FCVAR_REPLICATED);
+ConVar sk_snark_dmg_bite("sk_snark_dmg_bite", "5", FCVAR_REPLICATED);
+ConVar sk_snark_dmg_pop("sk_snark_dmg_pop", "15", FCVAR_REPLICATED);
 
 enum w_squeak_e {
 	WSQUEAK_IDLE1 = 0,
@@ -100,27 +100,16 @@ void CHL1Snark::Spawn(void)
 	m_posPrev = Vector(0, 0, 0);
 }
 
+#define CLASS_ALIEN_BIOWEAPON CLASS_HEADCRAB
+#define CLASS_ALIEN_MILITARY  CLASS_ANTLION
+#define CLASS_HUMAN_MILITARY  CLASS_COMBINE
+#define CLASS_HUMAN_PASSIVE   CLASS_NONE
+#define CLASS_INSECT          CLASS_HEADCRAB
 
-Class_T	CHL1Snark::Classify(void)
+
+Class_T CHL1Snark::Classify(void)
 {
-	if (m_iMyClass != CLASS_NONE)
-		return m_iMyClass;
-
-	if (GetEnemy() != NULL)
-	{
-		m_iMyClass = CLASS_INSECT;
-		switch (GetEnemy()->Classify())
-		{
-		case CLASS_PLAYER:
-		case CLASS_HUMAN_PASSIVE:
-		case CLASS_HUMAN_MILITARY:
-			m_iMyClass = CLASS_NONE;
-			return CLASS_ALIEN_MILITARY;
-		}
-		m_iMyClass = CLASS_NONE;
-	}
-
-	return CLASS_ALIEN_BIOWEAPON;
+	return CLASS_ZOMBIE;
 }
 
 void CHL1Snark::Event_Killed(const CTakeDamageInfo& inputInfo)

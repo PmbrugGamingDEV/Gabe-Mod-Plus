@@ -5,7 +5,7 @@
 #endif
 
 
-#include "hl1_baseweapon_shared.h"
+#include "basehlcombatweapon_shared.h"
 
 #ifdef CLIENT_DLL
 #include "iviewrender_beams.h"
@@ -19,15 +19,15 @@
 #include "beam_shared.h"
 #include "hl1_basegrenade.h"
 
-class CWeaponRPG;
+class CHL1WeaponRPG;
 
-class CRpgRocket : public CHL1BaseGrenade
+class CHL1RpgRocket : public CHL1BaseGrenade
 {
-	DECLARE_CLASS(CRpgRocket, CHL1BaseGrenade);
-	DECLARE_SERVERCLASS();
+	DECLARE_CLASS(CHL1RpgRocket, CHL1BaseGrenade);
+	//DECLARE_SERVERCLASS();
 
 public:
-	CRpgRocket();
+	CHL1RpgRocket();
 
 	Class_T Classify(void) { return CLASS_NONE; }
 
@@ -39,9 +39,9 @@ public:
 
 	virtual void Detonate(void);
 
-	static CRpgRocket* Create(const Vector& vecOrigin, const QAngle& angAngles, CBasePlayer* pentOwner = NULL);
+	static CHL1RpgRocket* Create(const Vector& vecOrigin, const QAngle& angAngles, CBasePlayer* pentOwner = NULL);
 
-	CHandle<CWeaponRPG>		m_hOwner;
+	CHandle<CHL1WeaponRPG>		m_hOwner;
 	float					m_flIgniteTime;
 	int						m_iTrail;
 
@@ -52,22 +52,22 @@ public:
 #endif
 
 #ifdef CLIENT_DLL
-#define CLaserDot C_LaserDot
+#define CHL1LaserDot C_HL1LaserDot
 #endif
 
-class CLaserDot;
+class CHL1LaserDot;
 
 #ifdef CLIENT_DLL
-#define CWeaponRPG C_WeaponRPG
+#define CHL1WeaponRPG C_HL1WeaponRPG
 #endif
 
-class CWeaponRPG : public CBaseHL1CombatWeapon
+class CHL1WeaponRPG : public CBaseHLCombatWeapon
 {
-	DECLARE_CLASS(CWeaponRPG, CBaseHL1CombatWeapon);
+	DECLARE_CLASS(CHL1WeaponRPG, CBaseHLCombatWeapon);
 public:
 
-	CWeaponRPG(void);
-	~CWeaponRPG();
+	CHL1WeaponRPG(void);
+	~CHL1WeaponRPG();
 
 	void	ItemPostFrame(void);
 	void	Precache(void);
@@ -101,7 +101,7 @@ private:
 	CNetworkHandle(CBaseEntity, m_hMissile);
 
 #ifndef CLIENT_DLL
-	CHandle<CLaserDot>	m_hLaserDot;
+	CHandle<CHL1LaserDot>	m_hLaserDot;
 #endif
 };
 
