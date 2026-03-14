@@ -37,6 +37,8 @@
 #include "ispatialpartition.h"
 #include "textstatsmgr.h"
 #include "bitbuf.h"
+#include "MP_AI/bot_main.h"
+#include "ienginevgui.h"
 #include "saverestoretypes.h"
 #include "physics_saverestore.h"
 #include "achievement_saverestore.h"
@@ -63,6 +65,7 @@
 #include "AI_ResponseSystem.h"
 #include "saverestore_stringtable.h"
 #include "util.h"
+#include "vgui_controls/ConsoleDialog.h"
 #include "tier0/icommandline.h"
 #include "datacache/imdlcache.h"
 #include "engine/iserverplugin.h"
@@ -1206,6 +1209,8 @@ void CServerGameDLL::GameFrame( bool simulating )
 
 	// Any entities that detect network state changes on a timer do it here.
 	g_NetworkPropertyEventMgr.FireEvents();
+
+	Bot_RunAll();
 
 	gpGlobals->frametime = oldframetime;
 }
@@ -2392,8 +2397,11 @@ bool CServerGameClients::ClientConnect( edict_t *pEdict, const char *pszName, co
 void CServerGameClients::ClientActive( edict_t *pEdict, bool bLoadGame )
 {
 	MDLCACHE_CRITICAL_SECTION();
-	
-	::ClientActive( pEdict, bLoadGame );
+
+	if (pEdict)
+	{
+		::ClientActive(pEdict, bLoadGame);
+	}
 
 	// If we just loaded from a save file, call OnRestore on valid entities
 	EndRestoreEntities();

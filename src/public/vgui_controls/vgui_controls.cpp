@@ -3,8 +3,12 @@
 // Purpose: 
 //
 //=============================================================================
+
+#include "cbase.h"
+
 #ifdef _WIN32
-#include "vgui/IVgui.h"
+
+#include "vgui/IVGui.h"
 #include "vgui_controls/Controls.h"
 
 #include "vgui_controls/AnimatingImagePanel.h"

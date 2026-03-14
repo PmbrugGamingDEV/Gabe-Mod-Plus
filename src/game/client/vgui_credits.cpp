@@ -111,7 +111,7 @@ public:
 		SetSize(width, height);
 
 		SetPos(
-			pad,
+			sw - width - pad,
 			sh - height - pad
 		);
 

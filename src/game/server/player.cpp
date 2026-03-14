@@ -4517,6 +4517,52 @@ void CBasePlayer::PostThink()
 	SimulatePlayerSimulatedEntities();
 #endif
 
+// PUT THIS IN CBASEPLAYER::POSTTHINK() OR SOMETHING LIKE THAT!!!!!
+
+// Inherited from JBMod remake v1.0
+
+// Debug: show classname of entity player is looking at using debug overlay
+	trace_t tr;
+
+	Vector vecStart = EyePosition();
+	Vector vecForward;
+	AngleVectors(EyeAngles(), &vecForward);
+
+	Vector vecEnd = vecStart + vecForward * 4096;
+
+	UTIL_TraceLine(
+		vecStart,
+		vecEnd,
+		MASK_SHOT,
+		this,
+		COLLISION_GROUP_NONE,
+		&tr
+	);
+
+	if (tr.m_pEnt)
+	{
+		const char* classname;
+
+		if (tr.DidHitWorld())
+		{
+			classname = "";
+		}
+		else
+		{
+			classname = tr.m_pEnt->GetClassname();
+		}
+
+		NDebugOverlay::ScreenText(
+			0.5f,     // X (center)
+			0.05f,    // Y (top)
+			classname,
+			255, 255, 255,
+			255,
+			0.0f      // duration (0 = one frame, perfect for PostThink)
+		);
+	}
+
+	// Purpose: shows classnames of objects as a text, useful for mapping/learning
 }
 
 // handles touching physics objects

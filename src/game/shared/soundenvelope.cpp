@@ -391,15 +391,29 @@ void CSoundPatch::Init( IRecipientFilter *pFilter, CBaseEntity *pEnt, int channe
 #endif
 }
 
+static ConVar* g_pHostTimescale = NULL;
+
 //-----------------------------------------------------------------------------
 // Purpose: Ramps the pitch to a new value
 // Input  : pitchTarget - new value
 //			deltaTime - seconds to reach the value
 //-----------------------------------------------------------------------------
-void CSoundPatch::ChangePitch( float pitchTarget, float deltaTime )
+extern ConVar host_timescale;
+
+void CSoundPatch::ChangePitch(float pitchTarget, float deltaTime)
 {
+	if (!g_pHostTimescale)
+		g_pHostTimescale = cvar->FindVar("host_timescale");
+
+	float scale = 1.0f;
+	if (g_pHostTimescale)
+		scale = g_pHostTimescale->GetFloat();
+
+	pitchTarget *= scale;
+	pitchTarget = clamp(pitchTarget, 1.0f, 255.0f);
+
 	m_flags |= SND_CHANGE_PITCH;
-	m_pitch.SetTarget( pitchTarget, deltaTime );
+	m_pitch.SetTarget(pitchTarget, deltaTime);
 }
 
 

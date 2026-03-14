@@ -199,7 +199,7 @@ static ConVar	sv_hydraTestSpike( "sv_hydraTestSpike", "1", 0, "Hydra Test impali
 
 void CNPC_Hydra::Precache()
 {
-	PrecacheModel( "models/Hydra.mdl" );
+	PrecacheModel( "models/props_c17/oildrum001.mdl" );
 	UTIL_PrecacheOther( "hydra_impale" );
 
 	PrecacheScriptSound( "NPC_Hydra.ExtendTentacle" );
@@ -308,7 +308,7 @@ void CNPC_Hydra::RunAI( void )
 	{
 		m_vecChain.Set( i, m_body[i].vecPos );
 
-#if 0
+#if 1
 		if (m_body[i].bStuck)
 		{
 			NDebugOverlay::Box(m_body[i].vecPos, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ), 255, 0, 0, 20, .1);
@@ -321,20 +321,19 @@ void CNPC_Hydra::RunAI( void )
 		NDebugOverlay::Line( m_body[i-1].vecPos, m_body[i].vecPos, 255, 255, 255, true, .1);
 #endif
 
-#if 0
+#if 1
 		char text[128];
 		Q_snprintf( text, sizeof( text ), "%d", i );
 		NDebugOverlay::Text( m_body[i].vecPos, text, false, 0.1 );
 #endif
 
-#if 0
-		char text[128];
+#if 1
 		Q_snprintf( text, sizeof( text ), "%4.0f", (m_body[i].vecPos - m_body[i-1].vecPos).Length() * 100 / m_idealSegmentLength - 100);
 		NDebugOverlay::Text( 0.5*(m_body[i-1].vecPos + m_body[i].vecPos), text, false, 0.1 );
 #endif
 	}
-	//NDebugOverlay::Box(m_body[i].vecPos, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ), 0, 255, 0, 20, .1);
-	//NDebugOverlay::Box( m_vecHeadGoal, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ), 255, 255, 0, 20, .1);
+	NDebugOverlay::Box(m_body[i].vecPos, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ), 0, 255, 0, 20, .1);
+	NDebugOverlay::Box( m_vecHeadGoal, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ), 255, 255, 0, 20, .1);
 	for (; i < CHAIN_LINKS; i++)
 	{
 		m_vecChain.Set( i, m_vecChain[i-1] );
@@ -1650,7 +1649,7 @@ void CHydraImpale::Spawn( void )
 //-----------------------------------------------------------------------------
 void CHydraImpale::Precache( void )
 {
-	PrecacheModel( "models/props_junk/cardboard_box001a.mdl" );
+	PrecacheModel( "models/hydra.mdl" );
 	BaseClass::Precache();
 }
 
@@ -1700,7 +1699,7 @@ IPhysicsConstraint *CHydraImpale::CreateConstraint( CNPC_Hydra *pHydra, IPhysics
 		m_pConstraint->SetGameData( (void *)this );
 	}
 
-	SetThink( ImpaleThink );
+	SetThink(&CHydraImpale::ImpaleThink);
 	SetNextThink( gpGlobals->curtime );
 	return m_pConstraint;
 }

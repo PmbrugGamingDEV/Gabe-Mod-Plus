@@ -695,7 +695,7 @@ void CBasePlayer::SetStepSoundTime( stepsoundtimes_t iStepSoundTime, bool bWalki
 	{
 	case STEPSOUNDTIME_NORMAL:
 	case STEPSOUNDTIME_WATER_FOOT:
-		m_flStepSoundTime = bWalking ? 400 : 300;
+		m_flStepSoundTime = bWalking ? 400 : 255;
 		break;
 
 	case STEPSOUNDTIME_ON_LADDER:

@@ -178,7 +178,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;kernel32.lib;user32.lib;gabe_lua515.lib;%(AdditionalDependencies);steam_api.lib</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;kernel32.lib;user32.lib;gabe_lua515.lib;%(AdditionalDependencies);steam_api.lib;vgui_controls.lib</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <OutputFile>$(OutDir)Server.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -212,6 +212,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\public\vgui_controls\vgui_controls.cpp" />
     <ClCompile Include="..\shared\achievement_saverestore.cpp" />
     <ClCompile Include="..\shared\achievementmgr.cpp" />
     <ClCompile Include="..\shared\achievements_hlx.cpp" />
@@ -286,6 +287,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\ammodef.cpp" />
     <ClCompile Include="..\shared\animation.cpp" />
     <ClCompile Include="..\shared\base_playeranimstate.cpp" />
+    <ClCompile Include="baseprojectile.cpp" />
     <ClCompile Include="base_transmit_proxy.cpp" />
     <ClCompile Include="..\shared\baseachievement.cpp" />
     <ClCompile Include="baseanimating.cpp" />
@@ -465,9 +467,14 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="globalstate.cpp" />
     <ClCompile Include="grenadethrown.cpp" />
     <ClCompile Include="guntarget.cpp" />
+    <ClCompile Include="hl2\grenade_spit.cpp" />
     <ClCompile Include="hl2\hl1_monster.cpp" />
     <ClCompile Include="hl2\hl1_monster_squad.cpp" />
     <ClCompile Include="hl2\npc_antliongrub.cpp" />
+    <ClCompile Include="hl2\npc_blob.cpp" />
+    <ClCompile Include="hl2\npc_bullsquid.cpp" />
+    <ClCompile Include="hl2\npc_houndeye.cpp" />
+    <ClCompile Include="hl2\npc_hydra.cpp" />
     <ClCompile Include="hl2\vehicle_jeep.cpp" />
     <ClCompile Include="hl2\vehicle_jetski.cpp" />
     <ClCompile Include="hl2\weapon_immolator.cpp" />
@@ -553,6 +560,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\movevars_shared.cpp" />
     <ClCompile Include="..\shared\mp_shareddefs.cpp" />
     <ClCompile Include="..\shared\multiplay_gamerules.cpp" />
+    <ClCompile Include="MP_AI\bot_main.cpp" />
     <ClCompile Include="nav_area.cpp" />
     <ClCompile Include="nav_colors.cpp" />
     <ClCompile Include="nav_edit.cpp" />
@@ -718,6 +726,8 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\takedamageinfo.cpp" />
     <ClCompile Include="sv_htmlcon.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="weapon_crowbar_hl1.cpp" />
+    <ClCompile Include="weapon_egon.cpp" />
     <ClCompile Include="weapon_jetpack.cpp" />
     <ClCompile Include="weapon_lasergun.cpp" />
     <ClCompile Include="weapon_multitool_legacy.cpp" />
@@ -753,6 +763,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="wcedit.cpp" />
     <ClCompile Include="..\shared\weapon_parse.cpp" />
     <ClCompile Include="..\shared\weapon_proficiency.cpp" />
+    <ClCompile Include="weapon_proto1.cpp" />
     <ClCompile Include="weapon_stickylauncher.cpp" />
     <ClCompile Include="weight_button.cpp" />
     <ClCompile Include="world.cpp" />
@@ -922,7 +933,6 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="hl2\vehicle_apc.cpp" />
     <ClCompile Include="hl2\weapon_cguard.cpp" />
     <ClCompile Include="hl2\weapon_flaregun.cpp" />
-    <ClCompile Include="hl2mp\hl2mp_bot_temp.cpp" />
     <ClCompile Include="hl2mp\hl2mp_client.cpp" />
     <ClCompile Include="hl2mp\hl2mp_cvars.cpp" />
     <ClCompile Include="hl2mp\hl2mp_gameinterface.cpp" />
@@ -957,6 +967,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="weapon_multitool.cpp" />
     <ClCompile Include="entity_tools_server.cpp" />
     <ClCompile Include="toolframework_server.cpp" />
+    <ClCompile Include="wpnscanner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\achievement_saverestore.h" />
@@ -1043,6 +1054,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="basemultiplayerplayer.h" />
     <ClInclude Include="..\shared\baseparticleentity.h" />
     <ClInclude Include="..\shared\baseplayer_shared.h" />
+    <ClInclude Include="baseprojectile.h" />
     <ClInclude Include="BasePropDoor.h" />
     <ClInclude Include="basetoggle.h" />
     <ClInclude Include="baseviewmodel.h" />
@@ -1117,10 +1129,15 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="globalstate.h" />
     <ClInclude Include="globalstate_private.h" />
     <ClInclude Include="grenadethrown.h" />
+    <ClInclude Include="hl2\grenade_spit.h" />
     <ClInclude Include="hl2\hl1_monster.h" />
     <ClInclude Include="hl2\hl1_monster_squad.h" />
     <ClInclude Include="hl2\npc_antliongrub.h" />
+    <ClInclude Include="hl2\npc_bullsquid.h" />
+    <ClInclude Include="hl2\npc_houndeye.h" />
+    <ClInclude Include="hl2\npc_hydra.h" />
     <ClInclude Include="hl2\vehicle_jeep.h" />
+    <ClInclude Include="hl2\weapon_crowbar.h" />
     <ClInclude Include="h_cycler.h" />
     <ClInclude Include="hierarchy.h" />
     <ClInclude Include="..\shared\hintmessage.h" />
@@ -1158,6 +1175,9 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="movehelper_server.h" />
     <ClInclude Include="movie_explosion.h" />
     <ClInclude Include="..\shared\multiplay_gamerules.h" />
+    <ClInclude Include="MP_AI\bot_combat.h" />
+    <ClInclude Include="MP_AI\bot_main.h" />
+    <ClInclude Include="MP_AI\bot_navigation.h" />
     <ClInclude Include="nav.h" />
     <ClInclude Include="nav_area.h" />
     <ClInclude Include="nav_colors.h" />
@@ -1319,12 +1339,10 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="hl2\vehicle_apc.h" />
     <ClInclude Include="hl2\vehicle_crane.h" />
     <ClInclude Include="hl2\weapon_alyxgun.h" />
-    <ClInclude Include="hl2\weapon_crowbar.h" />
     <ClInclude Include="hl2\grenade_beam.h" />
     <ClInclude Include="hl2\grenade_homer.h" />
     <ClInclude Include="hl2\grenade_pathfollower.h" />
     <ClInclude Include="hl2\weapon_flaregun.h" />
-    <ClInclude Include="hl2mp\hl2mp_bot_temp.h" />
     <ClInclude Include="hl2mp\hl2mp_gameinterface.h" />
     <ClInclude Include="..\shared\hl2mp\hl2mp_gamerules.h" />
     <ClInclude Include="hl2mp\hl2mp_player.h" />

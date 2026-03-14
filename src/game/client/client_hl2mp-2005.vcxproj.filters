@@ -85,6 +85,9 @@
     <Filter Include="HTML">
       <UniqueIdentifier>{0825b391-90c2-48a0-8ae4-46d59ff3ffca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files">
+      <UniqueIdentifier>{aea592db-0cf3-457d-8389-82a435ad7581}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">
@@ -1644,6 +1647,11 @@
     </ClCompile>
     <ClCompile Include="IHTMLView.cpp">
       <Filter>HTML</Filter>
+    </ClCompile>
+    <ClCompile Include="guitest.cpp" />
+    <ClCompile Include="..\shared\dbg_cmds.cpp" />
+    <ClCompile Include="hl2\c_npc_hydra.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3482,6 +3490,9 @@
     </ClInclude>
     <ClInclude Include="IHTMLView.h">
       <Filter>HTML</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\public\tier0\cpumonitoring.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

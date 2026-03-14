@@ -208,6 +208,7 @@ void CHL2MP_Player::GiveAllItems( void )
 	CBasePlayer::GiveAmmo( 255,	"Pistol");
 	CBasePlayer::GiveAmmo( 255,	"AR2" );
 	CBasePlayer::GiveAmmo( 5,	"AR2AltFire" );
+	CBasePlayer::GiveAmmo( 999, "Uranium");
 	CBasePlayer::GiveAmmo( 255,	"SMG1");
 	CBasePlayer::GiveAmmo( 3,	"smg1_grenade");
 	CBasePlayer::GiveAmmo( 255,	"Buckshot");
@@ -242,8 +243,6 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_slam" );
 
 	GiveNamedItem( "weapon_physcannon" );
-
-	Weapon_Switch(Weapon_OwnsThisType("weapon_physcannon"));
 }
 
 void CHL2MP_Player::GiveDefaultItems( void )
@@ -269,8 +268,6 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	GiveNamedItem( "weapon_smg1" );
 	GiveNamedItem( "weapon_frag" );
 	GiveNamedItem( "weapon_physcannon" );
-
-	Weapon_Switch(Weapon_OwnsThisType("weapon_physcannon"));
 }
 
 void CHL2MP_Player::GiveSDKItems(void)
@@ -408,6 +405,8 @@ void CHL2MP_Player::Spawn(void)
 	{
 		engine->ClientCommand( this->edict(), "gabeplus_chlog\n" );
 	}
+
+	Weapon_Switch(Weapon_OwnsThisType("weapon_physcannon"));
 
 	RemoveEffects( EF_NOINTERP );
 

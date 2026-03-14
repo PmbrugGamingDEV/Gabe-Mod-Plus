@@ -240,6 +240,40 @@ public:
 LINK_ENTITY_TO_CLASS(item_large_box_lrounds, CItem_LargeBoxLRounds);
 LINK_ENTITY_TO_CLASS(item_ammo_ar2_large, CItem_LargeBoxLRounds);
 
+// ========================================================================
+//	>> CItem_BoxProto1Rounds
+// ========================================================================
+class CItem_BoxProto1Rounds : public CItem
+{
+public:
+	DECLARE_CLASS(CItem_BoxProto1Rounds, CItem);
+
+	void Precache(void)
+	{
+		PrecacheModel("models/items/357ammo.mdl");
+	}
+	void Spawn(void)
+	{
+		Precache();
+		SetModel("models/items/357ammo.mdl");
+		BaseClass::Spawn();
+	}
+
+	bool MyTouch(CBasePlayer* pPlayer)
+	{
+		if (ITEM_GiveAmmo(pPlayer, 55, "ammo_proto1"))
+		{
+			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
+			{
+				UTIL_Remove(this);
+			}
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_ammo_proto1, CItem_BoxProto1Rounds);
+
 
 // ========================================================================
 //	>> CItem_Box357Rounds

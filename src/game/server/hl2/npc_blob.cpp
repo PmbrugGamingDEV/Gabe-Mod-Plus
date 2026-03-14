@@ -138,18 +138,21 @@ END_DATADESC()
 
 const char *pszBlobModels[] =
 {
-	"models/gibs/agibs.mdl",
-	"models/props_junk/watermelon01.mdl",
-	"models/w_squeak.mdl",
-	"models/baby_headcrab.mdl"
+	"models/props_junk/watermelon01.mdl"
 };
 
-const char *GetBlobModelName()
+const char* GetBlobModelName()
 {
 	int index = npc_blob_use_model.GetInt();
 
-	return pszBlobModels[ index ];
+	int count = ARRAYSIZE(pszBlobModels);
+
+	if (index < 0 || index >= count)
+		index = 0;
+
+	return pszBlobModels[index];
 }
+
 
 //---------------------------------------------------------
 //---------------------------------------------------------

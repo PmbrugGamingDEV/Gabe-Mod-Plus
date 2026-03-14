@@ -247,6 +247,8 @@ class CMattsPipe : public CWeaponCrowbar
 	void SetPickupTouch( void )	{	/* do nothing */ }
 };
 
+LINK_ENTITY_TO_CLASS(weapon_mattpipe, CMattsPipe);
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
@@ -751,11 +753,10 @@ void CNPC_Citizen::SelectExpressionType()
 void CNPC_Citizen::FixupMattWeapon()
 {
 	CBaseCombatWeapon *pWeapon = GetActiveWeapon();
-	if ( pWeapon && pWeapon->ClassMatches( "weapon_crowbar" ) && NameMatches( "matt" ) )
+	if ( pWeapon && pWeapon->ClassMatches( "weapon_mattpipe" ) && NameMatches( "matt" ) )
 	{
-		Weapon_Drop( pWeapon );
 		UTIL_Remove( pWeapon );
-		pWeapon = (CBaseCombatWeapon *)CREATE_UNSAVED_ENTITY( CMattsPipe, "weapon_crowbar" );
+		pWeapon = (CBaseCombatWeapon *)CREATE_UNSAVED_ENTITY( CMattsPipe, "weapon_mattpipe" );
 		pWeapon->SetName( AllocPooledString( "matt_weapon" ) );
 		DispatchSpawn( pWeapon );
 
@@ -2092,7 +2093,7 @@ bool CNPC_Citizen::IsManhackMeleeCombatant()
 {
 	CBaseCombatWeapon *pWeapon = GetActiveWeapon();
 	CBaseEntity *pEnemy = GetEnemy();
-	return ( pEnemy && pWeapon && pEnemy->Classify() == CLASS_MANHACK && pWeapon->ClassMatches( "weapon_crowbar" ) );
+	return ( pEnemy && pWeapon && pEnemy->Classify() == CLASS_MANHACK && pWeapon->ClassMatches( "weapon_mattpipe" ) );
 }
 
 //-----------------------------------------------------------------------------

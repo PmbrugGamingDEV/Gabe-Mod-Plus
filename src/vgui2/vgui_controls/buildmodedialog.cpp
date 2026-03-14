@@ -206,7 +206,7 @@ BuildModeDialog::BuildModeDialog(BuildGroup *buildGroup) : Frame(buildGroup->Get
 	_copySettings = NULL;
 	_autoUpdate = false;
 	MakePopup();
-	SetTitle("VGUI Build Mode Editor", true);
+	SetTitle("GABE MOD VGUI BUILDER", true);
 
 	CreateControls();
 	LoadUserConfig("BuildModeDialog");

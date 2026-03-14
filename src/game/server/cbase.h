@@ -18,6 +18,7 @@
 #pragma warning(disable : 4201)		// nameless struct/union
 #pragma warning(disable : 4511)     // copy constructor could not be generated
 #pragma warning(disable : 4675)     // resolved overload was found by argument dependent lookup
+#pragma error(disable : errorcode)
 #endif
 
 #ifdef _DEBUG
@@ -103,10 +104,6 @@ extern void FireTargets( const char *targetName, CBaseEntity *pActivator, CBaseE
 
 // used by suit voice to indicate damage sustained and repaired type to player
 
-#define MIN min
-#define MAX max
-#define OVERRIDE override
-
 enum
 {
 	itbd_Paralyze = 0,
@@ -121,6 +118,13 @@ enum
 	// Must be last!
 	CDMG_TIMEBASED
 };
+
+// conformation defines
+
+#define MIN min
+#define MAX max
+
+#define OVERRIDE override
 
 // when calling KILLED(), a value that governs gib behavior is expected to be 
 // one of these three values

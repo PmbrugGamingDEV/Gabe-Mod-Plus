@@ -40,6 +40,12 @@ extern bool			g_fGameOver;
 
 void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 {
+	if (!pPlayer)
+	{
+		Msg("WARNING: the bot's pPlayer was NULL.\n");
+		return;
+	}
+
 	pPlayer->InitialSpawn();
 	pPlayer->Spawn();
 
@@ -86,6 +92,8 @@ void CHL2MP_Player::IntroTipThink(void)
 {
 	CFmtStr msg;
 
+	PrecacheScriptSound("Water.Drips");
+
 	switch (m_iIntroStage)
 	{
 	case 0:
@@ -98,9 +106,12 @@ void CHL2MP_Player::IntroTipThink(void)
 
 	case 2:
 		msg.sprintf("\x04Have Fun!\n");
+		EmitSound("Water.Drips");
 		ClientPrint(this, HUD_PRINTTALK, msg.Access());
 		return;
 	}
+
+	EmitSound("Water.Drips");
 
 	ClientPrint(this, HUD_PRINTTALK, msg.Access());
 
@@ -132,6 +143,13 @@ void ClientActive( edict_t *pEdict, bool bLoadGame )
 	Assert( !bLoadGame );
 
 	CHL2MP_Player *pPlayer = ToHL2MPPlayer( CBaseEntity::Instance( pEdict ) );
+
+	if (!pPlayer)
+	{
+		Warning("Bot entity creation failed: pPlayer was NULL.\n");
+		return;
+	}
+
 	FinishClientPutInServer( pPlayer );
 }
 

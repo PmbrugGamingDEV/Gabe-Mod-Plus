@@ -686,8 +686,11 @@ void CNPC_Houndeye::SonicAttack ( void )
 	}
 	Vector vFacingDir = EyeDirection3D( );
 	m_pEnergyWave = (CEnergyWave*)Create( "energy_wave", EyePosition(), GetLocalAngles() );
-	m_flEndEnergyWaveTime = gpGlobals->curtime + 1; //<<TEMP>> magic
-	m_pEnergyWave->SetAbsVelocity( 100*vFacingDir );
+	if (m_pEnergyWave)
+	{
+		m_flEndEnergyWaveTime = gpGlobals->curtime + 1; //<<TEMP>> magic
+		m_pEnergyWave->SetAbsVelocity(100 * vFacingDir);
+	}
 
 	CBaseEntity *pEntity = NULL;
 	// iterate on all entities in the vicinity.
@@ -797,16 +800,25 @@ void CNPC_Houndeye::StartTask( const Task_t *pTask )
 		{
 			TaskFail(FAIL_NO_ENEMY);
 		}
-		else 
+		else
 		{
-			Vector vTargetPos = GetEnemyLKP();
-			vTargetPos.z	= GetFloorZ(vTargetPos);
+			Vector vEnemyPos = GetEnemyLKP();
+			vEnemyPos.z = GetFloorZ(vEnemyPos);
 
-			if (GetNavigator()->SetRadialGoal(vTargetPos, random->RandomInt(50,500), 90, 175, m_bLoopClockwise))
+			if (GetNavigator()->SetRadialGoal(
+				vEnemyPos,                     // destination
+				vEnemyPos,                     // center of circle
+				random->RandomInt(50, 500),     // radius
+				90.0f,                         // arc
+				175.0f,                        // step distance
+				m_bLoopClockwise,              // clockwise
+				false                          // air route
+			))
 			{
 				TaskComplete();
 				return;
 			}
+
 			TaskFail(FAIL_NO_ROUTE);
 		}
 		break;

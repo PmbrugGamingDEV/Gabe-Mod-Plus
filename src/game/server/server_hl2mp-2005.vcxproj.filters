@@ -76,6 +76,12 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\NPCs">
       <UniqueIdentifier>{f1ed40e1-7738-4ad2-9039-b08ccc875ca1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\MP_BOT">
+      <UniqueIdentifier>{de6baeb3-d27a-44ae-97a8-130eb489e155}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Readded Stuff">
+      <UniqueIdentifier>{c4ccf48c-0a28-4021-b98b-ecd7e79188e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\achievement_saverestore.cpp">
@@ -1653,9 +1659,6 @@
     <ClCompile Include="hl2\weapon_flaregun.cpp">
       <Filter>Source Files\HL2 DLL\unused</Filter>
     </ClCompile>
-    <ClCompile Include="hl2mp\hl2mp_bot_temp.cpp">
-      <Filter>Source Files\HL2MP</Filter>
-    </ClCompile>
     <ClCompile Include="hl2mp\hl2mp_client.cpp">
       <Filter>Source Files\HL2MP</Filter>
     </ClCompile>
@@ -1892,6 +1895,42 @@
     </ClCompile>
     <ClCompile Include="sticky_pellet.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="MP_AI\bot_main.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\MP_BOT</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_proto1.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="wpnscanner.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
+    <ClCompile Include="baseprojectile.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\public\vgui_controls\vgui_controls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\npc_bullsquid.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\grenade_spit.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\npc_blob.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\npc_hydra.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\npc_houndeye.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_egon.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_crowbar_hl1.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2900,9 +2939,6 @@
     <ClInclude Include="hl2\weapon_alyxgun.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
-    <ClInclude Include="hl2\weapon_crowbar.h">
-      <Filter>Source Files\HL2 DLL</Filter>
-    </ClInclude>
     <ClInclude Include="hl2\grenade_beam.h">
       <Filter>Source Files\HL2 DLL\unused</Filter>
     </ClInclude>
@@ -2914,9 +2950,6 @@
     </ClInclude>
     <ClInclude Include="hl2\weapon_flaregun.h">
       <Filter>Source Files\HL2 DLL\unused</Filter>
-    </ClInclude>
-    <ClInclude Include="hl2mp\hl2mp_bot_temp.h">
-      <Filter>Source Files\HL2MP</Filter>
     </ClInclude>
     <ClInclude Include="hl2mp\hl2mp_gameinterface.h">
       <Filter>Source Files\HL2MP</Filter>
@@ -3679,6 +3712,33 @@
     </ClInclude>
     <ClInclude Include="weapon_stickylauncher.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="MP_AI\bot_combat.h">
+      <Filter>Source Files\Gabe Mod + Stuff\MP_BOT</Filter>
+    </ClInclude>
+    <ClInclude Include="MP_AI\bot_main.h">
+      <Filter>Source Files\Gabe Mod + Stuff\MP_BOT</Filter>
+    </ClInclude>
+    <ClInclude Include="MP_AI\bot_navigation.h">
+      <Filter>Source Files\Gabe Mod + Stuff\MP_BOT</Filter>
+    </ClInclude>
+    <ClInclude Include="baseprojectile.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\npc_bullsquid.h">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\grenade_spit.h">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\npc_hydra.h">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\npc_houndeye.h">
+      <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\weapon_crowbar.h">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
