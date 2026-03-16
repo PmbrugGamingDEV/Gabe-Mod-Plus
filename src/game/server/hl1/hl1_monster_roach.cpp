@@ -47,7 +47,7 @@ public:
 	void Look(int iDistance);
 	void Move(float flInterval);
 
-	Class_T  Classify(void) { return CLASS_INSECT; }
+	Class_T  Classify(void) { return CLASS_NONE; }
 
 	void Touch(CBaseEntity *pOther);
 

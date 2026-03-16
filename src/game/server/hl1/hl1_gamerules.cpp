@@ -16,6 +16,8 @@
 
 REGISTER_GAMERULES_CLASS( CHalfLife1 );
 
+#if !defined(HL2_DLL)
+
 ConVar sv_thirdpersondeath( "sv_thirdpersondeath", "0", FCVAR_REPLICATED | FCVAR_CHEAT);
 
 ConVar sk_plr_dmg_crowbar			( "sk_plr_dmg_crowbar",			"0", FCVAR_REPLICATED );
@@ -68,6 +70,7 @@ ConVar sk_npc_dmg_12mm_bullet		( "sk_npc_dmg_12mm_bullet",		"0", FCVAR_REPLICATE
 
 ConVar sk_mp_dmg_multiplier			( "sk_mp_dmg_multiplier", "2.0" );
 
+
 //HL:S Fix Options
 ConVar hl1_mp5_recoil("hl1_mp5_recoil",	"1", FCVAR_REPLICATED | FCVAR_ARCHIVE, "Enables Half-Life 1 style recoil for the MP5.");
 ConVar hl1_ragdoll_gib("hl1_ragdoll_gib", "0", FCVAR_REPLICATED | FCVAR_ARCHIVE, "Enables gibbing of ragdolls.");
@@ -97,6 +100,93 @@ ConVar hl1_crowbar_tile_vol("hl1_crowbar_tile_vol", "2", FCVAR_REPLICATED | FCVA
 ConVar hl1_crowbar_wood_vol("hl1_crowbar_wood_vol", "2", FCVAR_REPLICATED | FCVAR_ARCHIVE, "Sets the crowbar clang sound on wood.");
 ConVar hl1_crowbar_glass_vol("hl1_crowbar_glass_vol", "2", FCVAR_REPLICATED | FCVAR_ARCHIVE, "Sets the crowbar clang sound on glass.");
 ConVar hl1_crowbar_computer_vol("hl1_crowbar_computer_vol", "2", FCVAR_REPLICATED | FCVAR_ARCHIVE, "Sets the crowbar clang sound on computer.");
+#else
+
+extern ConVar sv_thirdpersondeath;
+
+extern ConVar sk_plr_dmg_crowbar;
+
+extern ConVar sk_npc_dmg_9mm_bullet;
+extern ConVar sk_plr_dmg_9mm_bullet;
+extern ConVar sk_max_9mm_bullet;
+
+extern ConVar sk_npc_dmg_9mmAR_bullet;
+
+extern ConVar sk_plr_dmg_357_bullet;
+extern ConVar sk_max_357_bullet;
+
+extern ConVar sk_plr_dmg_buckshot;
+extern ConVar sk_max_buckshot;
+
+extern ConVar sk_plr_dmg_mp5_grenade;
+extern ConVar sk_max_mp5_grenade;
+extern ConVar sk_mp5_grenade_radius;
+
+extern ConVar sk_plr_dmg_rpg;
+extern ConVar sk_max_rpg_rocket;
+
+extern ConVar sk_plr_dmg_xbow_bolt_plr;
+extern ConVar sk_plr_dmg_xbow_bolt_npc;
+extern ConVar sk_max_xbow_bolt;
+
+extern ConVar sk_plr_dmg_egon_narrow;
+extern ConVar sk_plr_dmg_egon_wide;
+extern ConVar sk_max_uranium;
+
+extern ConVar sk_plr_dmg_gauss;
+
+extern ConVar sk_plr_dmg_grenade;
+extern ConVar sk_max_grenade;
+
+extern ConVar sk_plr_dmg_hornet;
+extern ConVar sk_npc_dmg_hornet;
+extern ConVar sk_max_hornet;
+
+extern ConVar sk_max_snark;
+
+extern ConVar sk_plr_dmg_tripmine;
+extern ConVar sk_max_tripmine;
+
+extern ConVar sk_plr_dmg_satchel;
+extern ConVar sk_max_satchel;
+
+extern ConVar sk_npc_dmg_12mm_bullet;
+
+extern ConVar sk_mp_dmg_multiplier;
+
+
+// HL:S Fix Options
+extern ConVar hl1_mp5_recoil;
+extern ConVar hl1_ragdoll_gib;
+extern ConVar hl1_bullsquid_spit;
+extern ConVar hl1_bigmomma_splash;
+extern ConVar hl1_movement;
+extern ConVar hl1_move_sounds;
+
+
+// Crowbar Sounds
+extern ConVar hl1_crowbar_sound;
+extern ConVar hl1_crowbar_concrete;
+extern ConVar hl1_crowbar_metal;
+extern ConVar hl1_crowbar_dirt;
+extern ConVar hl1_crowbar_vent;
+extern ConVar hl1_crowbar_grate;
+extern ConVar hl1_crowbar_tile;
+extern ConVar hl1_crowbar_wood;
+extern ConVar hl1_crowbar_glass;
+extern ConVar hl1_crowbar_computer;
+
+extern ConVar hl1_crowbar_concrete_vol;
+extern ConVar hl1_crowbar_metal_vol;
+extern ConVar hl1_crowbar_dirt_vol;
+extern ConVar hl1_crowbar_vent_vol;
+extern ConVar hl1_crowbar_grate_vol;
+extern ConVar hl1_crowbar_tile_vol;
+extern ConVar hl1_crowbar_wood_vol;
+extern ConVar hl1_crowbar_glass_vol;
+extern ConVar hl1_crowbar_computer_vol;
+#endif
+
 
 int	CHalfLife1::Damage_GetShowOnHud( void )
 {
@@ -120,6 +210,7 @@ int	CHalfLife1::Damage_GetShowOnHud( void )
 		}
 	}
 
+#if !defined(HL2_DLL)
 	class CVoiceGameMgrHelper : public IVoiceGameMgrHelper
 	{
 	public:
@@ -129,11 +220,14 @@ int	CHalfLife1::Damage_GetShowOnHud( void )
 			return true;
 		}
 	};
+
 	CVoiceGameMgrHelper g_VoiceGameMgrHelper;
 	IVoiceGameMgrHelper *g_pVoiceGameMgrHelper = &g_VoiceGameMgrHelper;
+#endif
 
 	CHalfLife1::CHalfLife1()
 	{
+		InitDefaultAIRelationships();
 	}
 
 	bool CHalfLife1::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
@@ -154,7 +248,7 @@ int	CHalfLife1::Damage_GetShowOnHud( void )
 
 	}
 
-
+#if !defined(HL2_DLL)
 	class CCorpse : public CBaseAnimating
 	{
 		DECLARE_CLASS( CCorpse, CBaseAnimating );
@@ -216,6 +310,8 @@ int	CHalfLife1::Damage_GetShowOnHud( void )
 		g_pBodyQueueHead = (CCorpse *)pHead->GetOwnerEntity();
 	}
 
+#endif
+
 	void CHalfLife1::InitDefaultAIRelationships( void )
 	{
 		int i, j;
@@ -232,17 +328,7 @@ int	CHalfLife1::Damage_GetShowOnHud( void )
 
 		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_NONE,				D_NU, 0 );			
 		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_PLAYER,			D_NU, 0 );			
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_HUMAN_PASSIVE,	D_NU, 0 );		
 		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_PLAYER_ALLY,		D_NU, 0 );		
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_ALIEN_PREY,		D_NU, 0 );
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_ALIEN_MILITARY,	D_NU, 0 );
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_ALIEN_MONSTER,	D_NU, 0 );
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_ALIEN_PREDATOR,	D_NU, 0 );
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_HUMAN_MILITARY,	D_NU, 0 );
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_MACHINE,			D_NU, 0 );
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_ALIEN_BIOWEAPON,	D_NU, 0 );
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_PLAYER_BIOWEAPON,	D_NU, 0 );
-		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_INSECT,			D_NU, 0 );
 		CBaseCombatCharacter::SetDefaultRelationship( CLASS_NONE,				CLASS_BARNACLE,			D_NU, 0 );
 		
 		CBaseCombatCharacter::SetDefaultRelationship( CLASS_HUMAN_PASSIVE,		CLASS_NONE,				D_NU, 0 );			
@@ -641,6 +727,8 @@ bool CHalfLife1::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 	return BaseClass::ShouldCollide( collisionGroup0, collisionGroup1 ); 
 }
 
+#if !defined( HL2_DLL )
+
 #define BULLET_MASS_GRAINS_TO_LB(grains)	(0.002285*(grains)/16.0f)
 #define BULLET_MASS_GRAINS_TO_KG(grains)	lbs2kg(BULLET_MASS_GRAINS_TO_LB(grains))
 
@@ -677,3 +765,5 @@ CAmmoDef *GetAmmoDef()
 
 	return &def;
 }
+
+#endif

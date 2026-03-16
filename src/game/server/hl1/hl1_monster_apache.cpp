@@ -18,7 +18,7 @@
 #include	"engine/IEngineSound.h"
 #include	"ammodef.h"
 #include	"soundenvelope.h"
-#include	"hl1_CBaseHelicopter.h"
+#include	"CBaseHelicopter.h"
 #include	"ndebugoverlay.h"
 #include	"smoke_trail.h"
 #include	"beam_shared.h"

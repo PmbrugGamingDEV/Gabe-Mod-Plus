@@ -36,7 +36,7 @@ protected:
 
 CHL1EventLog g_HL1EventLog;
 
-IGameSystem* GameLogSystem()
+IGameSystem* HL1GameLogSystem()
 {
 	return &g_HL1EventLog;
 }

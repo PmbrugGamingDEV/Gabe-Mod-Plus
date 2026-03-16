@@ -18,7 +18,7 @@
 #include "engine/IEngineSound.h"
 #include "hl1_monster.h"
 
-ConVar sk_ichthyosaur_health("sk_ichthyosaur_health", "0");
+extern ConVar sk_ichthyosaur_health;
 ConVar sk_ichthyosaur_shake("sk_ichthyosaur_shake", "0");
 
 #define SEARCH_RETRY 16
@@ -732,7 +732,7 @@ void CHL1Ichthyosaur::HandleAnimEvent(animevent_t* pEvent)
 
 Class_T CHL1Ichthyosaur::Classify(void)
 {
-	return	CLASS_ALIEN_MONSTER;
+	return	CLASS_ANTLION;
 }
 
 void CHL1Ichthyosaur::NPCThink(void)

@@ -29,7 +29,12 @@ ConVar sk_bullsquid_dmg_bite("sk_bullsquid_dmg_bite", "0");
 ConVar sk_bullsquid_dmg_whip("sk_bullsquid_dmg_whip", "0");
 ConVar sk_bullsquid_dmg_spit("sk_bullsquid_dmg_spit", "0");
 
-extern ConVar hl1_bullsquid_spit;
+ConVar hl1_bullsquid_spit(
+	"hl1_bullsquid_spit",
+	"0",
+	FCVAR_REPLICATED | FCVAR_ARCHIVE,
+	"Should use HL1 Bullsquid spit decal."
+);
 
 enum
 {
@@ -340,7 +345,7 @@ int CHL1Bullsquid::TranslateSchedule(int scheduleType)
 
 Class_T	CHL1Bullsquid::Classify(void)
 {
-	return CLASS_ALIEN_PREDATOR;
+	return CLASS_COMBINE;
 }
 
 void CHL1Bullsquid::IdleSound(void)

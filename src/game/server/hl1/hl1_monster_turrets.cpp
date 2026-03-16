@@ -958,7 +958,7 @@ int CHL1BaseTurret::MoveTurret(void)
 Class_T	CHL1BaseTurret::Classify(void)
 {
 	if (m_iOn || m_iAutoStart)
-		return	CLASS_MACHINE;
+		return	CLASS_COMBINE;
 	return CLASS_NONE;
 }
 

@@ -354,7 +354,7 @@ void CHL1Gargantua::Precache()
 
 Class_T  CHL1Gargantua::Classify(void)
 {
-	return CLASS_ALIEN_MONSTER;
+	return CLASS_ZOMBIE;
 }
 
 void CHL1Gargantua::PrescheduleThink(void)

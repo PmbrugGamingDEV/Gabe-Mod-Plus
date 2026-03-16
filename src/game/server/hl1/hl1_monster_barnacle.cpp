@@ -10,13 +10,13 @@
 #include "vcollide_parse.h"
 #include "engine/IEngineSound.h"
 
-ConVar	sk_barnacle_health("sk_barnacle_health", "25");
+extern ConVar sk_barnacle_health;
 
 static int ACT_EAT = 0;
 
-int	g_interactionBarnacleVictimDangle = 0;
-int	g_interactionBarnacleVictimReleased = 0;
-int	g_interactionBarnacleVictimGrab = 0;
+extern int	g_interactionBarnacleVictimDangle;
+extern int	g_interactionBarnacleVictimReleased;
+extern int	g_interactionBarnacleVictimGrab;
 
 LINK_ENTITY_TO_CLASS(monster_barnacle, CHL1Barnacle);
 IMPLEMENT_CUSTOM_AI(monster_barnacle, CHL1Barnacle);

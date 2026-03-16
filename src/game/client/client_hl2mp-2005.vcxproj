@@ -220,6 +220,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_usermessages.cpp" />
     <ClCompile Include="..\server\hl1\hl1_weapon_357.cpp" />
     <ClCompile Include="..\server\hl1\hl1_weapon_crossbow.cpp" />
     <ClCompile Include="..\server\hl1\hl1_weapon_gauss.cpp" />
@@ -305,8 +306,14 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="gabeplus_spawnmenu.cpp" />
     <ClCompile Include="gabeplus_tutorial.cpp" />
     <ClCompile Include="gabe_newgamedialog.cpp" />
+    <ClCompile Include="ge_createserver.cpp" />
     <ClCompile Include="guitest.cpp" />
+    <ClCompile Include="hl1\c_hl1_legacytempents.cpp" />
     <ClCompile Include="hl1\hl1_fx_gauss.cpp" />
+    <ClCompile Include="hl1\hl1_fx_gibs.cpp" />
+    <ClCompile Include="hl1\hl1_menu_hls.cpp" />
+    <ClCompile Include="hl1\hl1_menu_rm.cpp" />
+    <ClCompile Include="hl1\hud_numbers.cpp" />
     <ClCompile Include="hl2\C_Func_Monitor.cpp" />
     <ClCompile Include="c_func_occluder.cpp" />
     <ClCompile Include="c_func_reflective_glass.cpp" />
@@ -346,7 +353,6 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="c_vehicle_choreo_generic.cpp" />
     <ClCompile Include="c_vehicle_jeep.cpp" />
     <ClCompile Include="c_vguiscreen.cpp" />
-    <ClCompile Include="hl2\c_npc_hydra.cpp" />
     <ClCompile Include="hl2\c_waterbullet.cpp" />
     <ClCompile Include="C_WaterLODControl.cpp" />
     <ClCompile Include="c_world.cpp" />
@@ -922,6 +928,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="..\shared\point_bonusmaps_accessor.h" />
     <ClInclude Include="..\shared\predicted_viewmodel.h" />
     <ClInclude Include="c_weapon_proplauncher.h" />
+    <ClInclude Include="hl1\hud_numbers.h" />
     <ClInclude Include="hud_killfeed.h" />
     <ClInclude Include="IHTMLView.h" />
     <ClInclude Include="mapload_background.h" />

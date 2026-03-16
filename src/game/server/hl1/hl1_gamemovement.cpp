@@ -12,7 +12,6 @@
 extern ConVar hl1_movement;
 
 static CHL1GameMovement g_GameMovement;
-IGameMovement *g_pGameMovement = (IGameMovement *)&g_GameMovement;
 
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CGameMovement, IGameMovement, INTERFACENAME_GAMEMOVEMENT, g_GameMovement );
 
@@ -124,7 +123,7 @@ bool CHL1GameMovement::CanUnduck()
 		trace_t trace;
 		Vector newOrigin;
 
-		VectorCopy(mv->m_vecAbsOrigin, newOrigin);
+		VectorCopy(mv->GetAbsOrigin(), newOrigin);
 
 		if (player->GetGroundEntity() != NULL)
 		{
@@ -147,7 +146,7 @@ bool CHL1GameMovement::CanUnduck()
 
 		bool saveducked = player->m_Local.m_bDucked;
 		player->m_Local.m_bDucked = false;
-		TracePlayerBBox(mv->m_vecAbsOrigin, newOrigin, MASK_PLAYERSOLID, COLLISION_GROUP_PLAYER_MOVEMENT, trace);
+		TracePlayerBBox(mv->GetAbsOrigin(), newOrigin, MASK_PLAYERSOLID, COLLISION_GROUP_PLAYER_MOVEMENT, trace);
 		player->m_Local.m_bDucked = saveducked;
 		if (trace.startsolid || (trace.fraction != 1.0f))
 			return false;
@@ -169,7 +168,7 @@ void CHL1GameMovement::FinishUnDuck(void)
 		trace_t trace;
 		Vector newOrigin;
 
-		VectorCopy(mv->m_vecAbsOrigin, newOrigin);
+		VectorCopy(mv->GetAbsOrigin(), newOrigin);
 
 		if (player->GetGroundEntity() != NULL)
 		{
@@ -196,7 +195,7 @@ void CHL1GameMovement::FinishUnDuck(void)
 		player->SetViewOffset(GetPlayerViewOffset(false));
 		player->m_Local.m_flDucktime = 0;
 
-		VectorCopy(newOrigin, mv->m_vecAbsOrigin);
+		mv->SetAbsOrigin(newOrigin);
 
 		// Recategorize position since ducking can change origin
 		CategorizePosition();
@@ -216,6 +215,8 @@ void CHL1GameMovement::FinishDuck(void)
 	{
 		int i;
 
+		Vector absorigin = mv->GetAbsOrigin();
+
 		Vector hullSizeNormal = VEC_HULL_MAX - VEC_HULL_MIN;
 		Vector hullSizeCrouch = VEC_DUCK_HULL_MAX - VEC_DUCK_HULL_MIN;
 
@@ -231,12 +232,14 @@ void CHL1GameMovement::FinishDuck(void)
 		{
 			for (i = 0; i < 3; i++)
 			{
-				mv->m_vecAbsOrigin[i] -= (VEC_DUCK_HULL_MIN[i] - VEC_HULL_MIN[i]);
+				absorigin[i] -= (VEC_DUCK_HULL_MIN[i] - VEC_HULL_MIN[i]);
 			}
 		}
 		else
 		{
-			VectorAdd(mv->m_vecAbsOrigin, viewDelta, mv->m_vecAbsOrigin);
+			Vector newOrigin = mv->GetAbsOrigin();
+			VectorAdd(newOrigin, viewDelta, newOrigin);
+			mv->SetAbsOrigin(newOrigin);
 		}
 
 		// See if we are stuck?
@@ -374,6 +377,8 @@ void CHL1GameMovement::Duck(void)
 
 void CHL1GameMovement::HandleDuckingSpeedCrop()
 {
+	m_iSpeedCropped = false;
+
 	if ( !m_iSpeedCropped && ( player->GetFlags() & FL_DUCKING ) )
 	{
 		float frac = 0.33333333f;

@@ -66,7 +66,7 @@ public:
 
 	void Activate(void);
 
-	Class_T	Classify(void) { return CLASS_INSECT; };
+	Class_T	Classify(void) { return CLASS_ANTLION; };
 
 	void Event_Killed(const CTakeDamageInfo& info);
 

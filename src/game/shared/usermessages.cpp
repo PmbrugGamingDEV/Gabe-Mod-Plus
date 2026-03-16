@@ -12,6 +12,7 @@
 #include "tier0/memdbgon.h"
 
 void RegisterUserMessages( void );
+void RegisterUserMessagesHL1(void);
 
 //-----------------------------------------------------------------------------
 // Purpose: Force registration on .dll load
@@ -20,6 +21,7 @@ void RegisterUserMessages( void );
 CUserMessages::CUserMessages()
 {
 	// Game specific registration function;
+	RegisterUserMessagesHL1();
 	RegisterUserMessages();
 }
 

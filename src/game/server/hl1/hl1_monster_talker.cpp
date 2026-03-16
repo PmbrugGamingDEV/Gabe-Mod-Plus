@@ -242,58 +242,43 @@ void CHL1Talker::SetAnswerQuestion(CNPCSimpleTalker* pSpeaker)
 
 bool CHL1Talker::BecomeRagdoll(const CTakeDamageInfo& info, const Vector& forceVector)
 {
+	if (!CanBecomeRagdoll())
+		return false;
+
+	CTakeDamageInfo info2 = info;
+	info2.SetDamageForce(forceVector);
+
+	// Vehicle collision special case
 	if ((info.GetDamageType() & DMG_VEHICLE) && !g_pGameRules->IsMultiplayer())
 	{
-		CTakeDamageInfo info2 = info;
-		info2.SetDamageForce(forceVector);
 		Vector pos = info2.GetDamagePosition();
 		float flAbsMinsZ = GetAbsOrigin().z + WorldAlignMins().z;
+
 		if ((pos.z - flAbsMinsZ) < 24)
 		{
-			// HACKHACK: Make sure the vehicle impact is at least 2ft off the ground
+			// Make sure impact point is slightly above ground
 			pos.z = flAbsMinsZ + 24;
 			info2.SetDamagePosition(pos);
 		}
-
-		// in single player create ragdolls on the server when the player hits someone
-		// with their vehicle - for more dramatic death/collisions
-		CHL1Ragdoll* pRagdoll = CreateHL1Ragdoll(this, m_nForceBone, info2, COLLISION_GROUP_INTERACTIVE_DEBRIS, true);
-
-		pRagdoll->m_iRagdollHealth = m_iStartHealth / 2;
-		if (HasAlienGibs())
-			pRagdoll->m_bHumanGibs = 0;
-		else if (HasHumanGibs())
-			pRagdoll->m_bHumanGibs = 1;
-		if (BloodColor() == DONT_BLEED)
-			pRagdoll->m_bShouldNotGib = 1;
-
-		FixupBurningServerRagdoll(pRagdoll);
-		RemoveDeferred();
-		return true;
 	}
 
-	//Fix up the force applied to server side ragdolls. This fixes magnets not affecting them.
-	CTakeDamageInfo newinfo = info;
-	newinfo.SetDamageForce(forceVector);
+	// Spawn HL2 ragdoll
+	CBaseEntity* pEnt = CreateServerRagdoll(
+		this,
+		m_nForceBone,
+		info2,
+		COLLISION_GROUP_INTERACTIVE_DEBRIS
+	);
 
+	CRagdollProp* pRagdoll = dynamic_cast<CRagdollProp*>(pEnt);
 
-	if (CanBecomeServerRagdoll() == false)
-		return false;
+	if (pRagdoll)
+	{
+		FixupBurningServerRagdoll(pRagdoll);
+		PhysSetEntityGameFlags(pRagdoll, FVPHYSICS_NO_SELF_COLLISIONS);
+	}
 
-	CHL1Ragdoll* pRagdoll = CreateHL1Ragdoll(this, m_nForceBone, newinfo, COLLISION_GROUP_INTERACTIVE_DEBRIS, true);
-
-	pRagdoll->m_iRagdollHealth = m_iStartHealth / 2;
-	if (HasAlienGibs())
-		pRagdoll->m_bHumanGibs = 0;
-	else if (HasHumanGibs())
-		pRagdoll->m_bHumanGibs = 1;
-	if (BloodColor() == DONT_BLEED)
-		pRagdoll->m_bShouldNotGib = 1;
-
-	FixupBurningServerRagdoll(pRagdoll);
-	PhysSetEntityGameFlags(pRagdoll, FVPHYSICS_NO_SELF_COLLISIONS);
 	RemoveDeferred();
-
 	return true;
 }
 
@@ -586,16 +571,6 @@ Disposition_t CHL1Talker::IRelationType(CBaseEntity *pTarget)
 	return BaseClass::IRelationType(pTarget);
 }
 
-void CHL1Talker::TraceAttack(const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator)
-{
-	if (info.GetDamage() >= 1.0 && !(info.GetDamageType() & DMG_SHOCK))
-	{
-		UTIL_BloodImpact(ptr->endpos, vecDir, BloodColor(), 4);
-	}
-
-	BaseClass::TraceAttack(info, vecDir, ptr, pAccumulator);
-}
-
 void CHL1Talker::TraceAttack(const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr)
 {
 	if (info.GetDamage() >= 1.0 && !(info.GetDamageType() & DMG_SHOCK))
@@ -603,7 +578,7 @@ void CHL1Talker::TraceAttack(const CTakeDamageInfo &info, const Vector &vecDir, 
 		UTIL_BloodImpact(ptr->endpos, vecDir, BloodColor(), 4);
 	}
 
-	BaseClass::TraceAttack(info, vecDir, ptr, 0);
+	BaseClass::TraceAttack(info, vecDir, ptr);
 }
 
 void CHL1Talker::StartFollowing(CBaseEntity *pLeader)

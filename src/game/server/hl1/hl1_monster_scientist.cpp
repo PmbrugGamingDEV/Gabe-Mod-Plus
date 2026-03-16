@@ -56,7 +56,7 @@ void CHL1Scientist::Precache(void)
 {
 	PrecacheModel("models/scientist.mdl");
 
-	PrecacheScriptSound("Scientist.Pain");
+	PrecacheScriptSound("NPC_Scientist.Pain1");
 
 	TalkInit();
 
@@ -72,6 +72,8 @@ void CHL1Scientist::Spawn(void)
 	SetRenderColor(255, 255, 255, 255);
 
 	Precache();
+
+	ACT_EXCITED = ActivityList_RegisterPrivateActivity("ACT_EXCITED");
 
 	SetBoneCacheFlags(BCF_NO_ANIMATION_SKIP);
 
@@ -115,7 +117,7 @@ void CHL1Scientist::Activate()
 
 Class_T	CHL1Scientist::Classify(void)
 {
-	return	CLASS_HUMAN_PASSIVE;
+	return	CLASS_PLAYER_ALLY;
 }
 
 int CHL1Scientist::GetSoundInterests(void)
@@ -185,7 +187,7 @@ int CHL1Scientist::OnTakeDamage_Alive(const CTakeDamageInfo &inputInfo)
 		m_flPainTime = gpGlobals->curtime + random->RandomFloat(0.5, 0.75);
 
 		CPASAttenuationFilter filter(this);
-		EmitSound(filter, entindex(), "Scientist.Pain");
+		EmitSound(filter, entindex(), "NPC_Scientist.Pain1");
 	}
 
 	return BaseClass::OnTakeDamage_Alive(inputInfo);

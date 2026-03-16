@@ -32,6 +32,8 @@ public:
 
 protected:
 	CHL1_Player *m_pHL1Player;
+private:
+	bool m_iSpeedCropped;
 };
 
 #endif

@@ -374,7 +374,7 @@ void CHGrunt::PrescheduleThink(void)
 
 Class_T	CHGrunt::Classify(void)
 {
-	return CLASS_HUMAN_MILITARY;
+	return CLASS_COMBINE;
 }
 
 int CHGrunt::MeleeAttack1Conditions(float flDot, float flDist)

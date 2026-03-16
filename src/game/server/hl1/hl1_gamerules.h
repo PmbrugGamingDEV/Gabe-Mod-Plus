@@ -47,4 +47,6 @@ public:
 
 };
 
+extern CHalfLife1* g_pHL1GameRules;
+
 #endif

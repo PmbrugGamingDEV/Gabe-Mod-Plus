@@ -78,7 +78,7 @@ public:
 	void Precache(void);
 
 	float	MaxYawSpeed(void);
-	Class_T Classify(void) { return CLASS_ALIEN_MILITARY; }
+	Class_T Classify(void) { return CLASS_ZOMBIE; }
 	int  GetSoundInterests(void);
 	void HandleAnimEvent(animevent_t* pEvent);
 
@@ -134,9 +134,9 @@ END_DATADESC()
 
 int CHL1AlienGrunt::IRelationPriority(CBaseEntity* pTarget)
 {
-	if (pTarget->Classify() == CLASS_HUMAN_MILITARY)
+	if (pTarget->Classify() == CLASS_PLAYER_ALLY)
 	{
-		if (FClassnameIs(pTarget, "monster_human_grunt"))
+		if (FClassnameIs(pTarget, "monster_scientist"))
 		{
 			return (BaseClass::IRelationPriority(pTarget) + 1);
 		}

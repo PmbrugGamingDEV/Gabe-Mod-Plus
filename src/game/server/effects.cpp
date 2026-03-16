@@ -1393,6 +1393,7 @@ public:
 	void	Precache( void );
 	void	CanThink ( void );
 	void	CanTouch ( CBaseEntity *pOther );
+	void	Use		 (CBaseEntity* pOther);
 
 	DECLARE_DATADESC();
 };
@@ -1464,6 +1465,18 @@ void CItemSoda::CanTouch ( CBaseEntity *pOther )
 	SetTouch ( NULL );
 	SetThink ( &CItemSoda::SUB_Remove );
 	SetNextThink( gpGlobals->curtime );
+}
+
+void CItemSoda::Use(CBaseEntity* pOther)
+{
+	CBasePlayer* pPlayer = UTIL_GetLocalPlayer();
+
+	for (int i = 0; i < 15; i++)
+	{ 
+		pPlayer->m_iHealth++;
+	}
+
+	UTIL_Remove(this);
 }
 
 #ifndef _XBOX

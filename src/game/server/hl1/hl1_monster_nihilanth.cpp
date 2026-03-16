@@ -35,12 +35,10 @@ public:
 	void Spawn(void);
 	void Precache(void);
 
-	Class_T Classify(void) { return CLASS_ALIEN_MILITARY; };
+	Class_T Classify(void) { return CLASS_COMBINE; };
 
 	int	OnTakeDamage_Alive(const CTakeDamageInfo& info);
 	void TraceAttack(const CTakeDamageInfo& info, const Vector& vecDir, trace_t* ptr);
-
-	void TraceAttack(const CTakeDamageInfo& info, const Vector& vecDir, trace_t* ptr, CDmgAccumulator* pAccumulator);
 
 	bool ShouldGib(const CTakeDamageInfo& info) { return false; }
 
@@ -383,11 +381,6 @@ bool collision_pnttocube(float pointx, float pointy, float pointz, float cube1x,
 		result = true;
 	}
 	return result;
-}
-
-void CHL1Nihilanth::TraceAttack(const CTakeDamageInfo& info, const Vector& vecDir, trace_t* ptr, CDmgAccumulator* pAccumulator)
-{
-	CHL1Nihilanth::TraceAttack(info, vecDir, ptr);
 }
 
 void CHL1Nihilanth::TraceAttack(const CTakeDamageInfo& info, const Vector& vecDir, trace_t* ptr)

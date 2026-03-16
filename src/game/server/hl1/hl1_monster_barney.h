@@ -33,7 +33,7 @@ public:
 	void    BarneyFirePistol(void);
 
 	int		OnTakeDamage_Alive(const CTakeDamageInfo &inputInfo);
-	void	TraceAttack(const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator);
+	void	TraceAttack(const CTakeDamageInfo& inputInfo, const Vector& vecDir, trace_t* ptr);
 	void	Event_Killed(const CTakeDamageInfo &info);
 
 	void	DeathSound(const CTakeDamageInfo &info);

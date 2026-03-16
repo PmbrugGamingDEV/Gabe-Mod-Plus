@@ -9,34 +9,35 @@ using namespace vgui;
 #include <vgui_controls/Button.h>
 #include "ienginevgui.h"
 
+
 extern ConVar hl1_mp5_recoil;
-extern ConVar hl1_ragdoll_gib;
-extern ConVar hl1_bullsquid_spit;
-extern ConVar hl1_bigmomma_splash;
-extern ConVar hl1_movement;
-extern ConVar hl1_move_sounds;
+ConVar hl1_ragdoll_gib("hl1_ragdoll_gib", "1", FCVAR_CLIENTDLL);
+ConVar hl1_bullsquid_spit("hl1_bullsquid_spit", "1", FCVAR_CLIENTDLL);
+ConVar hl1_bigmomma_splash("hl1_bigmomma_splash", "1", FCVAR_CLIENTDLL);
+ConVar hl1_movement("hl1_movement", "1", FCVAR_CLIENTDLL);
+ConVar hl1_move_sounds("hl1_move_sounds", "1", FCVAR_CLIENTDLL);
 
-//Crowbar Sounds
-extern ConVar hl1_crowbar_sound;
-extern ConVar hl1_crowbar_concrete;
-extern ConVar hl1_crowbar_metal;
-extern ConVar hl1_crowbar_dirt;
-extern ConVar hl1_crowbar_vent;
-extern ConVar hl1_crowbar_grate;
-extern ConVar hl1_crowbar_tile;
-extern ConVar hl1_crowbar_wood;
-extern ConVar hl1_crowbar_glass;
-extern ConVar hl1_crowbar_computer;
+// Crowbar
+ConVar hl1_crowbar_sound("hl1_crowbar_sound", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_concrete("hl1_crowbar_concrete", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_metal("hl1_crowbar_metal", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_dirt("hl1_crowbar_dirt", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_vent("hl1_crowbar_vent", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_grate("hl1_crowbar_grate", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_tile("hl1_crowbar_tile", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_wood("hl1_crowbar_wood", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_glass("hl1_crowbar_glass", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_computer("hl1_crowbar_computer", "1", FCVAR_CLIENTDLL);
 
-extern ConVar hl1_crowbar_concrete_vol;
-extern ConVar hl1_crowbar_metal_vol;
-extern ConVar hl1_crowbar_dirt_vol;
-extern ConVar hl1_crowbar_vent_vol;
-extern ConVar hl1_crowbar_grate_vol;
-extern ConVar hl1_crowbar_tile_vol;
-extern ConVar hl1_crowbar_wood_vol;
-extern ConVar hl1_crowbar_glass_vol;
-extern ConVar hl1_crowbar_computer_vol;
+ConVar hl1_crowbar_concrete_vol("hl1_crowbar_concrete_vol", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_metal_vol("hl1_crowbar_metal_vol", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_dirt_vol("hl1_crowbar_dirt_vol", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_vent_vol("hl1_crowbar_vent_vol", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_grate_vol("hl1_crowbar_grate_vol", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_tile_vol("hl1_crowbar_tile_vol", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_wood_vol("hl1_crowbar_wood_vol", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_glass_vol("hl1_crowbar_glass_vol", "1", FCVAR_CLIENTDLL);
+ConVar hl1_crowbar_computer_vol("hl1_crowbar_computer_vol", "1", FCVAR_CLIENTDLL);
 
 class CSubOptionsHLS : public vgui::PropertyPage
 {

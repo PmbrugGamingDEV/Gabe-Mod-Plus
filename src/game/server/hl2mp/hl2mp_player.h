@@ -59,6 +59,7 @@ public:
 	void			SetupBones( matrix3x4_t *pBoneToWorld, int boneMask );
 
 	virtual void Precache( void );
+	void		 RemoveHL2Weapons();
 	virtual void Spawn( void );
 	virtual void PostThink( void );
 	virtual void PreThink( void );

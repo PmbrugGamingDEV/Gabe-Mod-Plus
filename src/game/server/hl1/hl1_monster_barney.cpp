@@ -33,7 +33,7 @@
 #define BA_KILL		"BA_KILL"
 #define BA_POK		"BA_POK"
 
-ConVar	sk_barney_health("sk_barney_health", "35");
+extern ConVar sk_barney_health;
 
 #define		BARNEY_DRAW		( 2 )
 #define		BARNEY_SHOOT		( 3 )
@@ -318,7 +318,7 @@ int CHL1Barney::OnTakeDamage_Alive(const CTakeDamageInfo &inputInfo)
 	return ret;
 }
 
-void CHL1Barney::TraceAttack(const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator)
+void CHL1Barney::TraceAttack(const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr)
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -345,7 +345,7 @@ void CHL1Barney::TraceAttack(const CTakeDamageInfo &inputInfo, const Vector &vec
 		break;
 	}
 
-	BaseClass::TraceAttack(info, vecDir, ptr, pAccumulator);
+	BaseClass::TraceAttack(info, vecDir, ptr);
 }
 
 void CHL1Barney::Event_Killed(const CTakeDamageInfo &info)

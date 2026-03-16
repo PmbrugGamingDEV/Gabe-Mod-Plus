@@ -258,7 +258,9 @@ public:
 
 	CPlayerState			*PlayerData( void ) { return &pl; }
 	
-	int						RequiredEdictIndex( void ) { return ENTINDEX(edict()); } 
+	int						RequiredEdictIndex( void ) { return ENTINDEX(edict()); }
+
+	bool					m_bHasLongJump;
 
 	void					LockPlayerInPlace( void );
 	void					UnlockPlayer( void );

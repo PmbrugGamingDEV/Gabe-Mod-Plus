@@ -226,7 +226,7 @@ END_DATADESC()
 
 Class_T CHL1Tentacle::Classify(void)
 {
-	return CLASS_ALIEN_MONSTER;
+	return CLASS_ANTLION;
 }
 
 CHL1Tentacle::CHL1Tentacle()

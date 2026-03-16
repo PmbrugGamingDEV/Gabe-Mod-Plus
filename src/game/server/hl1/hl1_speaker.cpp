@@ -5,9 +5,9 @@
 #define ANNOUNCE_MINUTES_MAX	2.25
 #define SPEAKER_START_SILENT	1
 
-class CSpeaker : public CPointEntity
+class CHL1Speaker : public CPointEntity
 {
-	DECLARE_CLASS(CSpeaker, CPointEntity);
+	DECLARE_CLASS(CHL1Speaker, CPointEntity);
 public:
 	bool KeyValue(const char* szKeyName, const char* szValue);
 	void Spawn(void);
@@ -23,16 +23,16 @@ public:
 	DECLARE_DATADESC();
 };
 
-LINK_ENTITY_TO_CLASS(speaker, CSpeaker);
+LINK_ENTITY_TO_CLASS(speaker, CHL1Speaker);
 
-BEGIN_DATADESC(CSpeaker)
+BEGIN_DATADESC(CHL1Speaker)
 DEFINE_FIELD(m_preset, FIELD_INTEGER),
 DEFINE_KEYFIELD(m_iszMessage, FIELD_STRING, "message"),
 DEFINE_THINKFUNC(SpeakerThink),
 DEFINE_USEFUNC(ToggleUse),
 END_DATADESC()
 
-void CSpeaker::Spawn(void)
+void CHL1Speaker::Spawn(void)
 {
 	char* szSoundFile = (char*)STRING(m_iszMessage);
 
@@ -40,28 +40,28 @@ void CSpeaker::Spawn(void)
 	{
 		Msg("SPEAKER with no Level/Sentence! at: %f, %f, %f\n", GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z);
 		SetNextThink(gpGlobals->curtime + 0.1);
-		SetThink(&CSpeaker::SUB_Remove);
+		SetThink(&CHL1Speaker::SUB_Remove);
 		return;
 	}
 	SetSolid(SOLID_NONE);
 	SetMoveType(MOVETYPE_NONE);
 
 
-	SetThink(&CSpeaker::SpeakerThink);
+	SetThink(&CHL1Speaker::SpeakerThink);
 	SetNextThink(TICK_NEVER_THINK);
 
-	SetUse(&CSpeaker::ToggleUse);
+	SetUse(&CHL1Speaker::ToggleUse);
 
 	Precache();
 }
 
-void CSpeaker::Precache(void)
+void CHL1Speaker::Precache(void)
 {
 	if (!FBitSet(GetSpawnFlags(), SPEAKER_START_SILENT))
 		SetNextThink(gpGlobals->curtime + random->RandomFloat(5.0, 15.0));
 }
 
-void CSpeaker::SpeakerThink(void)
+void CHL1Speaker::SpeakerThink(void)
 {
 	char* szSoundFile = NULL;
 	float flvolume = 1.0;
@@ -118,7 +118,7 @@ void CSpeaker::SpeakerThink(void)
 	return;
 }
 
-void CSpeaker::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CHL1Speaker::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
 {
 	int fActive = (GetNextThink() > 0.0);
 
@@ -151,7 +151,7 @@ void CSpeaker::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE
 	}
 }
 
-bool CSpeaker::KeyValue(const char* szKeyName, const char* szValue)
+bool CHL1Speaker::KeyValue(const char* szKeyName, const char* szValue)
 {
 	if (FStrEq(szKeyName, "preset"))
 	{

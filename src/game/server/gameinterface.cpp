@@ -56,6 +56,7 @@
 #include "engine/ivdebugoverlay.h"
 #include "shareddefs.h"
 #include "props.h"
+#include "baseentity.h"
 #include "timedeventmgr.h"
 #include "gameinterface.h"
 #include "eventqueue.h"
@@ -916,6 +917,16 @@ bool CServerGameDLL::IsRestoring()
 	return g_InRestore;
 }
 
+static int g_iGenericPrecacheCount = 0;
+static const int MAX_GENERIC_SAFE = 3500;
+
+void PrecacheAllSounds(const char* path)
+{
+	// removed
+}
+
+static bool g_bDidPrecacheAllSounds = false;
+
 // Called any time a new level is started (after GameInit() also on level transitions within a game)
 bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, char const *pOldLevel, char const *pLandmarkName, bool loadGame, bool background )
 {
@@ -1038,6 +1049,13 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 
 	Color gbclr(0, 0, 255, 255);
 	ConColorMsg(gbclr, "Gabe Mod (v8.1) - 3/1/2026\n");
+
+	if (!g_bDidPrecacheAllSounds)
+	{
+		DevMsg("Precaching all sounds...\n");
+		PrecacheAllSounds("sound");
+		g_bDidPrecacheAllSounds = true;
+	}
 
 	/// HACKHACK: UNDONE: We need to redesign the main loop with respect to save/load/server activate
 	// If we're loading a save game, then we don't want to call ServerActivate until after the restore is finished, because ServerActivate iterates through all the entities and calls Activate on them, and some of those entities might decide to remove themselves during Activate, which will cause problems if we're in the middle of restoring an entity that hasn't finished restoring yet.

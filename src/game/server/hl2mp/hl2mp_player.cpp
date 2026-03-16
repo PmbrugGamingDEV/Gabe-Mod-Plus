@@ -137,6 +137,13 @@ const char *g_ppszRandomCombineModels[] =
 
 #pragma warning( disable : 4355 )
 
+ConVar gabeplus_hl1weapons(
+	"gabeplus_hl1weapons",
+	"0",
+	FCVAR_REPLICATED | FCVAR_NOTIFY,
+	"Replace HL2 weapons with HL1 equivalents"
+);
+
 CHL2MP_Player::CHL2MP_Player()
 {
 	//Tony; create our player animation state.
@@ -377,6 +384,97 @@ void CHL2MP_Player::HL2MPPushawayThink(void)
 	SetNextThink( gpGlobals->curtime + PUSHAWAY_THINK_INTERVAL, HL2MP_PUSHAWAY_THINK_CONTEXT );
 }
 
+void ReplaceHL2WeaponsInMap()
+{
+	if (!gabeplus_hl1weapons.GetBool())
+		return;
+
+	CBaseEntity* pEnt = NULL;
+
+	while ((pEnt = gEntList.FindEntityByClassname(pEnt, "weapon_*")) != NULL)
+	{
+		const char* oldClass = pEnt->GetClassname();
+		const char* newClass = NULL;
+
+		if (FStrEq(oldClass, "weapon_frag"))
+			newClass = "weapon_handgrenade";
+
+		else if (FStrEq(oldClass, "weapon_crowbar"))
+			newClass = "weapon_crowbar_hl1";
+
+		else if (FStrEq(oldClass, "weapon_physcannon"))
+			newClass = "weapon_egon";
+
+		else if (FStrEq(oldClass, "weapon_crossbow"))
+			newClass = "weapon_hl1_crossbow";
+
+		else if (FStrEq(oldClass, "weapon_pistol"))
+			newClass = "weapon_glock";
+
+		else if (FStrEq(oldClass, "weapon_smg1"))
+			newClass = "weapon_mp5";
+
+		else if (FStrEq(oldClass, "weapon_shotgun"))
+			newClass = "weapon_hl1_shotgun";
+
+		else if (FStrEq(oldClass, "weapon_rpg"))
+			newClass = "weapon_hl1_rpg";
+
+		else if (FStrEq(oldClass, "weapon_357"))
+			newClass = "weapon_hl1_357";
+
+		else if (FStrEq(oldClass, "weapon_ar2"))
+			newClass = "weapon_gauss";
+
+		if (newClass)
+		{
+			Vector pos = pEnt->GetAbsOrigin();
+			QAngle ang = pEnt->GetAbsAngles();
+
+			UTIL_Remove(pEnt);
+
+			CBaseEntity* pNew = CreateEntityByName(newClass);
+
+			if (pNew)
+			{
+				pNew->SetAbsOrigin(pos);
+				pNew->SetAbsAngles(ang);
+				DispatchSpawn(pNew);
+			}
+		}
+	}
+}
+
+void CHL2MP_Player::RemoveHL2Weapons()
+{
+	const char* hl2Weapons[] =
+	{
+		"weapon_pistol",
+		"weapon_smg1",
+		"weapon_ar2",
+		"weapon_shotgun",
+		"weapon_frag",
+		"weapon_crossbow",
+		"weapon_physcannon",
+		"weapon_crowbar",
+		"weapon_357",
+		"weapon_stunstick",
+		"weapon_rpg",
+		"weapon_slam"
+	};
+
+	for (int i = 0; i < ARRAYSIZE(hl2Weapons); i++)
+	{
+		CBaseCombatWeapon* pWeapon = Weapon_OwnsThisType(hl2Weapons[i]);
+
+		if (pWeapon)
+		{
+			Weapon_Drop(pWeapon);
+			UTIL_Remove(pWeapon);
+		}
+	}
+}
+
 ConVar gabeplus_sandbox("gabeplus_sandbox", "1", FCVAR_ARCHIVE, "If set to 1, players will spawn with all weapons and infinite aux power.");
 
 //-----------------------------------------------------------------------------
@@ -390,6 +488,14 @@ void CHL2MP_Player::Spawn(void)
 	PickDefaultSpawnTeam();
 
 	BaseClass::Spawn();
+
+	static bool bReplacedWeapons = false;
+
+	if (gabeplus_hl1weapons.GetBool() && !bReplacedWeapons)
+	{
+		ReplaceHL2WeaponsInMap();
+		bReplacedWeapons = true;
+	}
 
 	// Choose one of the two groups
 	if ( RandomInt( 0, 1 ) == 0 )
@@ -433,6 +539,7 @@ void CHL2MP_Player::Spawn(void)
 	}
 	else if (gabeplus_hl1.GetBool())
 	{
+		RemoveHL2Weapons();
 		GiveHL1Items(); // Sandbox as well but hl1 weapons
 		engine->ClientCommand(this->edict(), "sv_infinite_aux_power 1");
 		engine->ClientCommand(this->edict(), "god");

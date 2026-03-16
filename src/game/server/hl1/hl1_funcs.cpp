@@ -1876,6 +1876,7 @@ void CHL1FuncTankPhysCannister::Fire(int bulletCount, const Vector& barrelEnd, c
 	pCannister->CannisterFire(pAttacker);
 }
 
+#if 0
 //---------------------------------
 //			Health Charger
 //---------------------------------
@@ -2267,3 +2268,5 @@ bool CRecharge::CreateVPhysics()
 	VPhysicsInitStatic();
 	return true;
 }
+
+#endif

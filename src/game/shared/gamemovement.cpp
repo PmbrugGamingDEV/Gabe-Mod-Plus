@@ -2868,6 +2868,11 @@ bool CGameMovement::LadderMove( void )
 	VectorMA( mv->GetAbsOrigin(), LadderDistance(), wishdir, end );
 	TracePlayerBBox( mv->GetAbsOrigin(), end, LadderMask(), COLLISION_GROUP_PLAYER_MOVEMENT, pm );
 
+	DevMsg("ladder trace: frac=%.2f contents=%x ent=%s\n",
+		pm.fraction,
+		pm.contents,
+		pm.m_pEnt ? pm.m_pEnt->GetClassname() : "NULL");
+
 	// no ladder in that direction, return
 	if ( pm.fraction == 1.0f || !OnLadder( pm ) )
 		return false;

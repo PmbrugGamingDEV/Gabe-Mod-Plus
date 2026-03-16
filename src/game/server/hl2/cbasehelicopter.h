@@ -208,6 +208,9 @@ protected:
 	float			m_flGoalSpeed;		// Goal speed
 	float			m_flInitialSpeed;
 
+	float			m_angleVelocity;
+	float			m_flNextCrashExplosion;
+
 	float			m_flRandomOffsetTime;
 	Vector			m_vecRandomOffset;
 	float			m_flRotorWashEntitySearchTime;

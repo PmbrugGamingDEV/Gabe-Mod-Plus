@@ -151,7 +151,10 @@ protected:
 	virtual bool	LadderMove( void );
 	virtual bool	OnLadder( trace_t &trace );
 	virtual float	LadderDistance( void ) const { return 2.0f; }	///< Returns the distance a player can be from a ladder and still attach to it
-	virtual unsigned int LadderMask( void ) const { return MASK_PLAYERSOLID; }
+	virtual unsigned int LadderMask(void) const
+	{
+		return MASK_PLAYERSOLID_BRUSHONLY | CONTENTS_LADDER;
+	}
 	virtual float	ClimbSpeed( void ) const { return MAX_CLIMB_SPEED; }
 	virtual float	LadderLateralMultiplier( void ) const { return 1.0f; }
 

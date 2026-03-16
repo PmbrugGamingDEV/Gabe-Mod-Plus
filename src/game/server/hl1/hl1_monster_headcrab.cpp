@@ -308,7 +308,7 @@ int CHL1Headcrab::RangeAttack1Conditions(float flDot, float flDist)
 
 Class_T	CHL1Headcrab::Classify(void)
 {
-	return CLASS_ALIEN_PREY;
+	return CLASS_HEADCRAB;
 }
 
 Vector CHL1Headcrab::Center(void)

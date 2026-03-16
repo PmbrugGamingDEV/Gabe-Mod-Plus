@@ -147,6 +147,8 @@ void CFuncLadder::Spawn()
 
 	m_bFakeLadder = HasSpawnFlags(SF_LADDER_DONTGETON);
 #endif
+
+	DevMsg("HL1 ladder has spawned\n");
 }
 
 //-----------------------------------------------------------------------------
@@ -443,7 +445,15 @@ BEGIN_NETWORK_TABLE( CFuncLadder, DT_FuncLadder )
 #endif
 END_NETWORK_TABLE()
 
-LINK_ENTITY_TO_CLASS( func_useableladder, CFuncLadder );
+LINK_ENTITY_TO_CLASS(func_useableladder, CFuncLadder);
+
+class CFuncHL1Ladder : public CFuncLadder
+{
+public:
+	DECLARE_CLASS(CFuncHL1Ladder, CFuncLadder);
+};
+
+LINK_ENTITY_TO_CLASS(func_ladder, CFuncHL1Ladder);
 
 //---------------------------------------------------------
 // Save/Restore

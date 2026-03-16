@@ -1312,6 +1312,7 @@ void SENTENCEG_Init()
 		return;
 
 	engine->PrecacheSentenceFile( "scripts/sentences.txt" );
+	engine->PrecacheSentenceFile("scripts/hl1_sentences.txt");
 	fSentencesInit = true;
 }
 

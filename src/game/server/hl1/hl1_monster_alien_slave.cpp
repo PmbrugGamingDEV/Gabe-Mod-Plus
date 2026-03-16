@@ -101,7 +101,7 @@ END_DATADESC();
 
 Class_T	CHL1ISlave::Classify(void)
 {
-	return	CLASS_ALIEN_MILITARY;
+	return	CLASS_COMBINE;
 }
 
 Disposition_t CHL1ISlave::IRelationType(CBaseEntity *pTarget)

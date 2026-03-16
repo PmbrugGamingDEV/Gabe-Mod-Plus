@@ -88,6 +88,12 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files">
       <UniqueIdentifier>{aea592db-0cf3-457d-8389-82a435ad7581}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\HL1">
+      <UniqueIdentifier>{deff71bf-aab9-4c6e-ac42-a71ab620e305}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Goldeneye">
+      <UniqueIdentifier>{33fd760b-4226-4ab1-8884-d6033562259b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">
@@ -1647,9 +1653,6 @@
     </ClCompile>
     <ClCompile Include="guitest.cpp" />
     <ClCompile Include="..\shared\dbg_cmds.cpp" />
-    <ClCompile Include="hl2\c_npc_hydra.cpp">
-      <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
-    </ClCompile>
     <ClCompile Include="hl1\hl1_fx_gauss.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
     </ClCompile>
@@ -1679,6 +1682,27 @@
     </ClCompile>
     <ClCompile Include="..\server\hl1\hl1_weapon_satchel.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\server\hl1\hl1_usermessages.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\HL1</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hud_numbers.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\HL1</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_fx_gibs.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\HL1</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_menu_hls.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\HL1</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\hl1_menu_rm.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\HL1</Filter>
+    </ClCompile>
+    <ClCompile Include="hl1\c_hl1_legacytempents.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\HL1</Filter>
+    </ClCompile>
+    <ClCompile Include="ge_createserver.cpp">
+      <Filter>Goldeneye</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3526,6 +3550,9 @@
     </ClInclude>
     <ClInclude Include="..\server\hl1\hl1_weapon_satchel.h">
       <Filter>Source Files\Gabe Mod + Stuff\NPC + Weapon Client Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hl1\hud_numbers.h">
+      <Filter>Source Files\Gabe Mod + Stuff\HL1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

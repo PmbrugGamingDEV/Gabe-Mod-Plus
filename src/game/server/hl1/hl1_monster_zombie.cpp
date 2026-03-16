@@ -17,9 +17,9 @@
 
 #define ZOMBIE_FLINCH_DELAY			2
 
-ConVar	sk_zombie_health("sk_zombie_health", "50");
-ConVar  sk_zombie_dmg_one_slash("sk_zombie_dmg_one_slash", "20");
-ConVar  sk_zombie_dmg_both_slash("sk_zombie_dmg_both_slash", "40");
+extern ConVar  sk_zombie_health;
+extern ConVar  sk_zombie_dmg_one_slash;
+extern ConVar  sk_zombie_dmg_both_slash;
 
 static float DamageForce(const Vector &size, float damage)
 {
@@ -61,7 +61,7 @@ LINK_ENTITY_TO_CLASS(monster_zombie, CHL1Zombie);
 
 Class_T	CHL1Zombie::Classify(void)
 {
-	return	CLASS_ALIEN_MONSTER;
+	return	CLASS_ZOMBIE;
 }
 
 int CHL1Zombie::OnTakeDamage_Alive(const CTakeDamageInfo &inputInfo)

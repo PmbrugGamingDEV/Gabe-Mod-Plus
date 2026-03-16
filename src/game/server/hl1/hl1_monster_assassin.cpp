@@ -176,7 +176,7 @@ int CHL1Assassin::GetSoundInterests(void)
 
 Class_T	CHL1Assassin::Classify(void)
 {
-	return CLASS_HUMAN_MILITARY;
+	return CLASS_COMBINE;
 }
 
 int CHL1Assassin::MeleeAttack1Conditions(float flDot, float flDist)

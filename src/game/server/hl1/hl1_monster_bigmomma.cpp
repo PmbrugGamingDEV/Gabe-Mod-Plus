@@ -66,7 +66,13 @@ ConVar sk_bigmomma_dmg_blast("sk_bigmomma_dmg_blast", "100");
 ConVar sk_bigmomma_radius_blast("sk_bigmomma_radius_blast", "250");
 
 extern ConVar sv_gravity;
-extern ConVar hl1_bigmomma_splash;
+
+ConVar hl1_bigmomma_splash(
+	"hl1_bigmomma_splash",
+	"0",
+	FCVAR_REPLICATED | FCVAR_ARCHIVE,
+	"Should use HL1 Bigmomma splash decal."
+);
 
 enum
 {
@@ -347,7 +353,7 @@ public:
 	void Spawn(void);
 	void Precache(void);
 
-	Class_T	Classify(void) { return CLASS_ALIEN_MONSTER; };
+	Class_T	Classify(void) { return CLASS_COMBINE; };
 	void TraceAttack(const CTakeDamageInfo& info, const Vector& vecDir, trace_t* ptr);
 	int	OnTakeDamage(const CTakeDamageInfo& info);
 	void HandleAnimEvent(animevent_t* pEvent);

@@ -25,8 +25,6 @@ private:
 
 static CHL1TempEnts g_TempEnts;
 
-ITempEnts *tempents = (ITempEnts *)&g_TempEnts;
-
 
 void CHL1TempEnts::LevelInit()
 {

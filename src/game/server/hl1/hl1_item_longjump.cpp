@@ -3,7 +3,7 @@
 #include "gamerules.h"
 #include "items.h"
 #include "hl1_items.h"
-#include "hl1_player.h"
+#include "hl2_player.h"
 
 class CHL1Longjump : public CHL1Item
 {
@@ -21,7 +21,7 @@ public:
 	}
 	bool MyTouch(CBasePlayer *pPlayer)
 	{
-		CHL1_Player *pHL1Player = (CHL1_Player*)pPlayer;
+		CBasePlayer *pHL1Player = (CBasePlayer*)pPlayer;
 
 		if (pHL1Player->m_bHasLongJump == true)
 		{

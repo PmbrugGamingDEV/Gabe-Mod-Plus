@@ -285,6 +285,37 @@ static const char* GetPrettyNPCName(CAI_BaseNPC* pNPC)
 	if (FStrEq(cls, "npc_gman"))           return "G-Man";
 
 	// =========================================================
+	// HALF-LIFE 1 NPCs
+	// =========================================================
+	if (FStrEq(cls, "monster_barney"))      return "Barney";
+	if (FStrEq(cls, "monster_scientist"))   return "Scientist";
+
+	if (FStrEq(cls, "monster_human_grunt")) return "H.E.C.U. Grunt";
+	if (FStrEq(cls, "monster_human_assassin")) return "Black Ops Assassin";
+
+	if (FStrEq(cls, "monster_alien_grunt")) return "Alien Grunt";
+	if (FStrEq(cls, "monster_alien_slave"))  return "Vortigaunt";
+
+	if (FStrEq(cls, "monster_bullchicken")) return "Bullsquid";
+	if (FStrEq(cls, "monster_houndeye"))    return "Houndeye";
+
+	if (FStrEq(cls, "monster_headcrab"))    return "Headcrab";
+	if (FStrEq(cls, "monster_zombie"))      return "Zombie";
+
+	if (FStrEq(cls, "monster_ichthyosaur")) return "Ichthyosaur";
+	if (FStrEq(cls, "monster_barnacle"))    return "Barnacle";
+
+	if (FStrEq(cls, "monster_snark"))       return "Snark";
+	if (FStrEq(cls, "monster_tentacle"))    return "Tentacle";
+
+	if (FStrEq(cls, "monster_gargantua"))   return "Gargantua";
+	if (FStrEq(cls, "monster_nihilanth"))   return "Nihilanth";
+
+	if (FStrEq(cls, "monster_bigmomma"))    return "Gonarch";
+
+	if (FStrEq(cls, "monster_leech"))       return "Leech";
+
+	// =========================================================
 	// CITIZENS (Generated)
 	// =========================================================
 	if (FStrEq(cls, "npc_citizen"))
@@ -3060,8 +3091,8 @@ bool CAI_BaseNPC::PreThink( void )
 			tTextParam.y			= 0.65;
 			tTextParam.effect		= 0;
 			tTextParam.r1			= 255;
-			tTextParam.g1			= 255;
-			tTextParam.b1			= 255;
+			tTextParam.g1			= 0;
+			tTextParam.b1			= 0;
 			tTextParam.a1			= 255;
 			tTextParam.r2			= 255;
 			tTextParam.g2			= 255;
@@ -3886,6 +3917,13 @@ bool CAI_BaseNPC::PreNPCThink()
 	return true;
 }
 
+ConVar gabeplus_npcnames(
+	"gabeplus_npcnames",
+	"1",
+	FCVAR_ARCHIVE | FCVAR_REPLICATED | FCVAR_NOTIFY,
+	"Show names for NPCs."
+);
+
 void CAI_BaseNPC::PostNPCThink(void)
 {
 	if (g_StartTimeCurThink != 0.0 && VCRGetMode() == VCR_Disabled)
@@ -3917,7 +3955,10 @@ void CAI_BaseNPC::PostNPCThink(void)
 
 	const char* name = GetPrettyNPCName(this);
 
-	NDebugOverlay::EntityTextAtPosition(pos, 0, name, duration);
+	if(gabeplus_npcnames.GetBool())
+	{
+		NDebugOverlay::EntityTextAtPosition(pos, 0, name, duration);
+	}
 }
 
 void CAI_BaseNPC::CallNPCThink( void ) 

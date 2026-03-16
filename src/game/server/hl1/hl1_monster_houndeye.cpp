@@ -129,7 +129,7 @@ END_DATADESC();
 
 Class_T	CHL1Houndeye::Classify(void)
 {
-	return	CLASS_ALIEN_MONSTER;
+	return	CLASS_HEADCRAB;
 }
 
 bool CHL1Houndeye::FValidateHintType(CAI_Hint *sHint)
