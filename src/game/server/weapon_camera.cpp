@@ -37,6 +37,22 @@ void CWeaponCamera::Precache(void)
     BaseClass::Precache();
 }
 
+bool CWeaponCamera::Deploy(void)
+{
+    bool bResult = BaseClass::Deploy();
+
+    if (bResult)
+    {
+        CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+        if (pOwner)
+        {
+            pOwner->ShowViewModel(false);
+        }
+    }
+
+    return bResult;
+}
+
 void CWeaponCamera::PrimaryAttack(void)
 {
     TakeScreenshot();
@@ -120,6 +136,9 @@ void CWeaponCamera::ItemPostFrame()
     if (!pPlayer)
         return;
 
+    // Force-hide the viewmodel every frame
+    pPlayer->ShowViewModel(false);
+
     if (!(pPlayer->m_nButtons & IN_ATTACK2))  // If the right mouse button is not pressed
     {
         // Reset the FOV to the default value (90 degrees) if R is pressed
@@ -158,9 +177,9 @@ void CWeaponCamera::TakeScreenshot(void)
         return;
 
     std::string randomString = GenerateRandomString(10);
-    std::string screenshotFilename = "screenshots/" + randomString + ".tga";
+    std::string screenshotFilename = "screenshots/" + randomString + ".jpg";
     std::string screenshotname = randomString;
-    std::string screenshotCommand = "screenshot " + screenshotname;
+    std::string screenshotCommand = "jpeg " + screenshotname;
 
     engine->ClientCommand(pPlayer->edict(), screenshotCommand.c_str());
 

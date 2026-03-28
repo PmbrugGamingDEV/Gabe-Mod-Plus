@@ -476,6 +476,7 @@ public:
 #endif
 
 	virtual void	UpdateOnRemove(void);
+	virtual bool	Deploy() override;
 	void PrimaryAttack(void);
 	void SecondaryAttack(void);
 	void ItemPreFrame(void);
@@ -717,6 +718,11 @@ void CWeaponGravityGun::UpdateOnRemove(void)
 	EffectDestroy();
 	SoundDestroy();
 	BaseClass::UpdateOnRemove();
+}
+
+bool CWeaponGravityGun::Deploy()
+{
+	return BaseClass::Deploy();
 }
 
 //-----------------------------------------------------------------------------
@@ -1256,6 +1262,8 @@ void CWeaponGravityGun::DetachObject(void)
 	}
 }
 
+/*
+
 struct WeightRange_t
 {
 	float minKg;
@@ -1306,6 +1314,7 @@ const char* GetWeightComparison(float massKg)
 	}
 	return "something of unknown weight";
 }
+*/
 
 
 void CWeaponGravityGun::AttachObject(
@@ -1410,8 +1419,9 @@ void CWeaponGravityGun::AttachObject(
 	{
 		PhysSetGameFlags(pList[i], FVPHYSICS_PLAYER_HELD);
 	}
-
-	Msg("Object mass: %.2f lbs (%.2f kg) '%s'\n", kg2lbs(mass), mass, GetWeightComparison(mass));
+	
+	/*Msg("Object mass: %.2f lbs (%.2f kg) '%s'\n", kg2lbs(mass), mass, GetWeightComparison(mass));*/// NO
+	
 
 #ifndef CLIENT_DLL
 	Pickup_OnPhysGunPickup(pObject, pOwner);

@@ -301,10 +301,12 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="c_func_lod.cpp" />
     <ClCompile Include="c_weapon_proplauncher.cpp" />
     <ClCompile Include="c_weapon__stubs_gabemod.cpp" />
+    <ClCompile Include="gabeplus_fps.cpp" />
     <ClCompile Include="gabeplus_friendslist.cpp" />
     <ClCompile Include="gabeplus_issues.cpp" />
     <ClCompile Include="gabeplus_spawnmenu.cpp" />
     <ClCompile Include="gabeplus_tutorial.cpp" />
+    <ClCompile Include="gabe_mainmenu.cpp" />
     <ClCompile Include="gabe_newgamedialog.cpp" />
     <ClCompile Include="ge_createserver.cpp" />
     <ClCompile Include="guitest.cpp" />
@@ -463,6 +465,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="..\shared\hintmessage.cpp" />
     <ClCompile Include="..\shared\hintsystem.cpp" />
     <ClCompile Include="history_resource.cpp" />
+    <ClCompile Include="hl2\c_weapon_gravitygun.cpp" />
     <ClCompile Include="hltvcamera.cpp" />
     <ClCompile Include="hud.cpp" />
     <ClCompile Include="hud_animationinfo.cpp" />
@@ -646,6 +649,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="..\shared\SoundEmitterSystem.cpp" />
     <ClCompile Include="..\shared\soundenvelope.cpp" />
     <ClCompile Include="..\..\public\SoundParametersInternal.cpp" />
+    <ClCompile Include="spdruntimer.cpp" />
     <ClCompile Include="splinepatch.cpp" />
     <ClCompile Include="..\shared\Sprite.cpp" />
     <ClCompile Include="spritemodel.cpp" />
@@ -722,6 +726,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="..\shared\weapon_parse.cpp" />
     <ClCompile Include="weapon_selection.cpp" />
     <ClCompile Include="weapons_resource.cpp" />
+    <ClCompile Include="we_msg.cpp" />
     <ClCompile Include="WorldDimsProxy.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -928,6 +933,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="..\shared\point_bonusmaps_accessor.h" />
     <ClInclude Include="..\shared\predicted_viewmodel.h" />
     <ClInclude Include="c_weapon_proplauncher.h" />
+    <ClInclude Include="gplus_fps.h" />
     <ClInclude Include="hl1\hud_numbers.h" />
     <ClInclude Include="hud_killfeed.h" />
     <ClInclude Include="IHTMLView.h" />

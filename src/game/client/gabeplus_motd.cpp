@@ -21,7 +21,7 @@ public:
 	CMOTDPanel( VPANEL parent ) : BaseClass( NULL, "MOTDPanel" )
 	{
 		SetParent( parent );
-		SetTitle( "GABE MOD 0.7", true );
+		SetTitle( "GABE MOD 0.81", true );
 		SetSize( 640, 480 );
 		SetMoveable( true );
 		SetSizeable( false );

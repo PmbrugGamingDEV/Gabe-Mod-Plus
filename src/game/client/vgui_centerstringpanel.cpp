@@ -1,306 +1,272 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
-//
-// Purpose: 
-//
-// $Workfile:     $
-// $Date:         $
-// $NoKeywords: $
-//=============================================================================//
 #include "cbase.h"
-#include <stdarg.h>
 #include "vguicenterprint.h"
-#include "ivrenderview.h"
-#include <vgui/IVgui.h>
-#include "VguiMatSurface/IMatSystemSurface.h"
-#include <vgui_controls/Label.h>
-#include <vgui_controls/Controls.h>
+#include <vgui/IVGui.h>
 #include <vgui/ISurface.h>
 #include <vgui/IScheme.h>
-
-// memdbgon must be the last include file in a .cpp file!!!
+#include <vgui/ILocalize.h>
 #include "tier0/memdbgon.h"
 
-
-#ifdef TF_CLIENT_DLL
-static ConVar		scr_centertime( "scr_centertime", "5" );
-#else
-static ConVar		scr_centertime( "scr_centertime", "2" );
-#endif
-
 //-----------------------------------------------------------------------------
-// Purpose: Implements Center String printing
+// ConVars
 //-----------------------------------------------------------------------------
-class CCenterStringLabel : public vgui::Label
+static ConVar scr_centertime("scr_centertime", "3");
+static ConVar scr_centerfade("scr_centerfade", "1");
+
+//=========================================================
+// CCenterStringLabel
+//=========================================================
+CCenterStringLabel::CCenterStringLabel(vgui::VPANEL parent)
+	: BaseClass(NULL, "CCenterStringLabel")
 {
-	DECLARE_CLASS_SIMPLE( CCenterStringLabel, vgui::Label );
+	SetParent(parent);
 
-public:
-						CCenterStringLabel( vgui::VPANEL parent );
-	virtual				~CCenterStringLabel( void );
-
-	// vgui::Panel
-	virtual void		ApplySchemeSettings(vgui::IScheme *pScheme);
-	virtual void		OnTick( void );
-	virtual bool		ShouldDraw( void );
-
-	// CVGuiCenterPrint
-	virtual void		SetTextColor( int r, int g, int b, int a );
-	virtual void		Print( char *text );
-	virtual void		Print( wchar_t *text );
-	virtual void		ColorPrint( int r, int g, int b, int a, char *text );
-	virtual void		ColorPrint( int r, int g, int b, int a, wchar_t *text );
-	virtual void		Clear( void );
-
-protected:
-	MESSAGE_FUNC_INT_INT( OnScreenSizeChanged, "OnScreenSizeChanged", oldwide, oldtall );
-
-private:
-	void ComputeSize( void );
-
-	vgui::HFont			m_hFont;
-
-	float				m_flCentertimeOff;
-};
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *parent - 
-//-----------------------------------------------------------------------------
-CCenterStringLabel::CCenterStringLabel( vgui::VPANEL parent ) : 
-	BaseClass( NULL, "CCenterStringLabel", " " )
-{
-	SetParent( parent );
-	ComputeSize();
-	SetVisible( false );
-	SetCursor( null );
-	SetKeyBoardInputEnabled( false );
-	SetMouseInputEnabled( false );
-	SetContentAlignment( vgui::Label::a_center );
+	SetPaintBackgroundEnabled(false);
+	SetMouseInputEnabled(false);
+	SetKeyBoardInputEnabled(false);
 
 	m_hFont = 0;
-	SetFgColor( Color( 255, 255, 255, 255 ) );
 
-	SetPaintBackgroundEnabled( false );
+	ComputeSize();
 
-	m_flCentertimeOff = 0.0;
-
-	vgui::ivgui()->AddTickSignal( GetVPanel(), 100 );
+	vgui::ivgui()->AddTickSignal(GetVPanel(), 16);
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-CCenterStringLabel::~CCenterStringLabel( void )
+CCenterStringLabel::~CCenterStringLabel()
 {
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: Updates panel to handle the new screen size
-//-----------------------------------------------------------------------------
-void CCenterStringLabel::OnScreenSizeChanged(int iOldWide, int iOldTall)
+void CCenterStringLabel::OnScreenSizeChanged(int oldwide, int oldtall)
 {
-	BaseClass::OnScreenSizeChanged(iOldWide, iOldTall);
+	BaseClass::OnScreenSizeChanged(oldwide, oldtall);
 	ComputeSize();
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: Computes panel's desired size and position
-//-----------------------------------------------------------------------------
-void CCenterStringLabel::ComputeSize( void )
+void CCenterStringLabel::ComputeSize(void)
 {
-	int w, h;
-	w = ScreenWidth();
-	h = ScreenHeight();
+	int w = ScreenWidth();
+	int h = ScreenHeight();
 
-	int iHeight = (int)(h * 0.3);
-
-	SetSize( w, iHeight );
-	SetPos( 0, ( h * 0.35 ) - ( iHeight / 2 ) );
+	SetSize(w, h);
+	SetPos(0, 0);
 }
 
-void CCenterStringLabel::ApplySchemeSettings(vgui::IScheme *pScheme)
+void CCenterStringLabel::ApplySchemeSettings(vgui::IScheme* pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
-	// Use a large font
-	m_hFont = pScheme->GetFont( "Trebuchet24" );
-	assert( m_hFont );
-	SetFont( m_hFont );
+	m_hFont = pScheme->GetFont("Trebuchet24");
 
-	int w, h;
-	w = ScreenWidth();
-	h = ScreenHeight();
-	int iHeight = (int)(h * 0.3);
-	SetSize( w, iHeight );
-	SetPos( 0, ( h * 0.35 ) - ( iHeight / 2 ) );
+	if (!m_hFont)
+		m_hFont = pScheme->GetFont("Default");
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : r - 
-//			g - 
-//			b - 
-//			a - 
-//-----------------------------------------------------------------------------
-void CCenterStringLabel::SetTextColor( int r, int g, int b, int a )
+//=========================================================
+// MESSAGE SYSTEM
+//=========================================================
+void CCenterStringLabel::AddMsg(const wchar_t* txt, Color col)
 {
-	SetFgColor( Color( r, g, b, a ) );
+	if (!txt || !txt[0])
+		return;
+
+	CenterMsg_t msg;
+
+	wcsncpy(msg.text, txt, 511);
+	msg.text[511] = 0;
+
+	msg.color = col;
+	msg.start = gpGlobals->curtime;
+	msg.end = gpGlobals->curtime + scr_centertime.GetFloat();
+
+	m_Messages.push_back(msg);
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CCenterStringLabel::Print( char *text )
+//=========================================================
+// API
+//=========================================================
+void CCenterStringLabel::SetTextColor(int r, int g, int b, int a)
 {
-	SetText( text );
-	
-	m_flCentertimeOff = scr_centertime.GetFloat() + gpGlobals->curtime;
+	// no-op (handled per message)
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CCenterStringLabel::Print( wchar_t *text )
+void CCenterStringLabel::Print(char* text)
 {
-	SetText( text );
-	
-	m_flCentertimeOff = scr_centertime.GetFloat() + gpGlobals->curtime;
+	wchar_t w[512];
+	g_pVGuiLocalize->ConvertANSIToUnicode(text, w, sizeof(w) / sizeof(wchar_t));
+	AddMsg(w, Color(255, 255, 255, 255));
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CCenterStringLabel::ColorPrint( int r, int g, int b, int a, char *text )
+void CCenterStringLabel::Print(wchar_t* text)
 {
-	SetTextColor( r, g, b, a );
-	Print( text );
+	AddMsg(text, Color(255, 255, 255, 255));
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CCenterStringLabel::ColorPrint( int r, int g, int b, int a, wchar_t *text )
+void CCenterStringLabel::ColorPrint(int r, int g, int b, int a, char* text)
 {
-	SetTextColor( r, g, b, a );
-	Print( text );
+	wchar_t w[512];
+	g_pVGuiLocalize->ConvertANSIToUnicode(text, w, sizeof(w) / sizeof(wchar_t));
+	AddMsg(w, Color(r, g, b, a));
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CCenterStringLabel::Clear( void )
+void CCenterStringLabel::ColorPrint(int r, int g, int b, int a, wchar_t* text)
 {
-	m_flCentertimeOff = 0;
+	AddMsg(text, Color(r, g, b, a));
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CCenterStringLabel::OnTick( void )
+void CCenterStringLabel::Clear(void)
 {
-	SetVisible( ShouldDraw() );
+	m_Messages.clear();
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : Returns true on success, false on failure.
-// FIXME, this has dependencies on the engine that should go away
-//-----------------------------------------------------------------------------
-bool CCenterStringLabel::ShouldDraw( void )
+//=========================================================
+// UPDATE
+//=========================================================
+void CCenterStringLabel::OnTick(void)
 {
-	if ( engine->IsDrawingLoadingImage() )
+	float cur = gpGlobals->curtime;
+
+	for (int i = (int)m_Messages.size() - 1; i >= 0; --i)
 	{
-		return false;
+		if (cur > m_Messages[i].end)
+			m_Messages.erase(m_Messages.begin() + i);
 	}
 
-	if ( m_flCentertimeOff <= gpGlobals->curtime )
-	{
-		// not time to turn off the message yet
-		return false;
-	}
-
-	return true;
+	SetVisible(!m_Messages.empty());
 }
 
+//=========================================================
+// DRAW
+//=========================================================
+void CCenterStringLabel::Paint(void)
+{
+	if (!m_hFont)
+		return;
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : 
-//-----------------------------------------------------------------------------
-CCenterPrint::CCenterPrint( void )
+	int screenW = ScreenWidth();
+	int screenH = ScreenHeight();
+
+	int baseY = (int)(screenH * 0.4f);
+
+	for (int i = 0; i < (int)m_Messages.size(); i++)
+	{
+		CenterMsg_t& msg = m_Messages[i];
+
+		float life = msg.end - msg.start;
+		if (life <= 0.0f)
+			continue;
+
+		float t = (gpGlobals->curtime - msg.start) / life;
+
+		float alpha = 255.0f;
+
+		if (scr_centerfade.GetBool())
+		{
+			if (t < 0.1f)
+				alpha = t * 10.0f * 255.0f;
+			else if (t > 0.8f)
+				alpha = (1.0f - t) * 5.0f * 255.0f;
+		}
+
+		alpha = clamp(alpha, 0.0f, 255.0f);
+
+		int yOffset = i * 40;
+
+		int textW, textH;
+		vgui::surface()->GetTextSize(m_hFont, msg.text, textW, textH);
+
+		int x = (screenW - textW) / 2;
+		int y = baseY - yOffset;
+
+		vgui::surface()->DrawSetTextFont(m_hFont);
+
+		// Shadow
+		vgui::surface()->DrawSetTextColor(0, 0, 0, (int)(alpha * 0.8f));
+		vgui::surface()->DrawSetTextPos(x + 2, y + 2);
+		vgui::surface()->DrawPrintText(msg.text, wcslen(msg.text));
+
+		// Glow
+		vgui::surface()->DrawSetTextColor(msg.color.r(), msg.color.g(), msg.color.b(), (int)(alpha * 0.25f));
+		vgui::surface()->DrawSetTextPos(x - 1, y);
+		vgui::surface()->DrawPrintText(msg.text, wcslen(msg.text));
+		vgui::surface()->DrawSetTextPos(x + 1, y);
+		vgui::surface()->DrawPrintText(msg.text, wcslen(msg.text));
+
+		// Main
+		vgui::surface()->DrawSetTextColor(msg.color.r(), msg.color.g(), msg.color.b(), (int)alpha);
+		vgui::surface()->DrawSetTextPos(x, y);
+		vgui::surface()->DrawPrintText(msg.text, wcslen(msg.text));
+	}
+}
+
+//=========================================================
+// CCenterPrint WRAPPER (UNCHANGED BEHAVIOR)
+//=========================================================
+CCenterPrint::CCenterPrint(void)
 {
 	vguiCenterString = NULL;
 }
 
-void CCenterPrint::SetTextColor( int r, int g, int b, int a )
+void CCenterPrint::Create(vgui::VPANEL parent)
 {
-	if ( vguiCenterString )
+	if (!vguiCenterString)
 	{
-		vguiCenterString->SetTextColor( r, g, b, a );
+		vguiCenterString = new CCenterStringLabel(parent);
 	}
 }
 
-void CCenterPrint::Print( char *text )
+void CCenterPrint::Destroy(void)
 {
-	if ( vguiCenterString )
+	if (vguiCenterString)
 	{
-		vguiCenterString->ColorPrint( 255, 255, 255, 255, text );
-	}
-}
-
-void CCenterPrint::Print( wchar_t *text )
-{
-	if ( vguiCenterString )
-	{
-		vguiCenterString->ColorPrint( 255, 255, 255, 255, text );
-	}
-}
-
-void CCenterPrint::ColorPrint( int r, int g, int b, int a, char *text )
-{
-	if ( vguiCenterString )
-	{
-		vguiCenterString->ColorPrint( r, g, b, a, text );
-	}
-}
-
-void CCenterPrint::ColorPrint( int r, int g, int b, int a, wchar_t *text )
-{
-	if ( vguiCenterString )
-	{
-		vguiCenterString->ColorPrint( r, g, b, a, text );
-	}
-}
-
-void CCenterPrint::Clear( void )
-{
-	if ( vguiCenterString )
-	{
-		vguiCenterString->Clear();
-	}
-}
-
-void CCenterPrint::Create( vgui::VPANEL parent )
-{
-	if ( vguiCenterString )
-	{
-		Destroy();
-	}
-
-	vguiCenterString = new CCenterStringLabel( parent );
-}
-
-void CCenterPrint::Destroy( void )
-{
-	if ( vguiCenterString )
-	{
-		vguiCenterString->SetParent( (vgui::Panel *)NULL );
+		vguiCenterString->SetParent((vgui::Panel*)NULL);
 		delete vguiCenterString;
 		vguiCenterString = NULL;
 	}
 }
 
-static CCenterPrint g_CenterString;
-CCenterPrint *internalCenterPrint = &g_CenterString;
+void CCenterPrint::SetTextColor(int r, int g, int b, int a)
+{
+	if (vguiCenterString)
+		vguiCenterString->SetTextColor(r, g, b, a);
+}
 
-EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CCenterPrint, ICenterPrint, VCENTERPRINT_INTERFACE_VERSION, g_CenterString );
+void CCenterPrint::Print(char* text)
+{
+	if (vguiCenterString)
+		vguiCenterString->Print(text);
+}
+
+void CCenterPrint::Print(wchar_t* text)
+{
+	if (vguiCenterString)
+		vguiCenterString->Print(text);
+}
+
+void CCenterPrint::ColorPrint(int r, int g, int b, int a, char* text)
+{
+	if (vguiCenterString)
+		vguiCenterString->ColorPrint(r, g, b, a, text);
+}
+
+void CCenterPrint::ColorPrint(int r, int g, int b, int a, wchar_t* text)
+{
+	if (vguiCenterString)
+		vguiCenterString->ColorPrint(r, g, b, a, text);
+}
+
+void CCenterPrint::Clear(void)
+{
+	if (vguiCenterString)
+		vguiCenterString->Clear();
+}
+
+//=========================================================
+// GLOBAL
+//=========================================================
+static CCenterPrint g_CenterPrint;
+CCenterPrint* internalCenterPrint = &g_CenterPrint;
+
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(
+	CCenterPrint,
+	ICenterPrint,
+	VCENTERPRINT_INTERFACE_VERSION,
+	g_CenterPrint);

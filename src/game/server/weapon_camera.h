@@ -21,6 +21,7 @@ public:
          ~CWeaponCamera() {}
 
     void Precache(void) override;
+    virtual bool Deploy(void) override;
     void PrimaryAttack(void) override;
     void SecondaryAttack(void) override;
 private:

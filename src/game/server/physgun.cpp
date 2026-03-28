@@ -30,13 +30,13 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar phys_gunmass("gabe+_physgun_mass", "50000");
-ConVar phys_gunvel("gabe+_physgun_velocity", "50000");
-ConVar phys_gunforce("gabe+_physgun_force", "10e10" );
-ConVar phys_guntorque("gabe+_physgun_torque", "50000" );
-ConVar phys_gunglueradius("gabe+_physgun_glueradius", "128" );
-ConVar phys_gunsounds("gabe+_physgun_togglesound", "0" );
-ConVar phys_gunzapnpcs("gabe+_physgun_zapnpcs", "0" );
+ConVar phys_gunmass("gabe+_oldphysgun_mass", "50000");
+ConVar phys_gunvel("gabe+_oldphysgun_velocity", "50000");
+ConVar phys_gunforce("gabe+_oldphysgun_force", "10e10" );
+ConVar phys_guntorque("gabe+_oldphysgun_torque", "50000" );
+ConVar phys_gunglueradius("gabe+_oldphysgun_glueradius", "128" );
+ConVar phys_gunsounds("gabe+_oldphysgun_togglesound", "0" );
+ConVar phys_gunzapnpcs("gabe+_oldphysgun_zapnpcs", "0" );
 
 enum PhysgunMode_t
 {

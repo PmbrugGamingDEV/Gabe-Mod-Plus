@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+﻿//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -915,23 +915,55 @@ int CStudioHdr::GetNumSeq( void ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-mstudioseqdesc_t &CStudioHdr::pSeqdesc( int i ) const
+mstudioseqdesc_t& CStudioHdr::pSeqdesc(int i) const
 {
-	Assert( i >= 0 && i < GetNumSeq() );
-	if ( i < 0 || i >= GetNumSeq() )
+	// Validate studio header
+	if (!m_pStudioHdr)
 	{
-		// Avoid reading random memory.
+		static mstudioseqdesc_t dummy;
+		return dummy;
+	}
+
+	int numSeq = GetNumSeq();
+
+	// Clamp index
+	if (i < 0 || i >= numSeq)
+	{
 		i = 0;
 	}
-	
+
+	// No virtual model → simple path
 	if (m_pVModel == NULL)
 	{
-		return *m_pStudioHdr->pLocalSeqdesc( i );
+		mstudioseqdesc_t* pSeq = m_pStudioHdr->pLocalSeqdesc(i);
+		if (!pSeq)
+		{
+			static mstudioseqdesc_t dummy;
+			return dummy;
+		}
+		return *pSeq;
 	}
 
-	const studiohdr_t *pStudioHdr = GroupStudioHdr( m_pVModel->m_seq[i].group );
+	// 🔥 Source 2007 uses virtualsequence_t directly
+	virtualsequence_t* pSeqMap = &m_pVModel->m_seq[i];
 
-	return *pStudioHdr->pLocalSeqdesc( m_pVModel->m_seq[i].index );
+	// Validate group
+	const studiohdr_t* pStudioHdr = GroupStudioHdr(pSeqMap->group);
+	if (!pStudioHdr)
+	{
+		static mstudioseqdesc_t dummy;
+		return dummy;
+	}
+
+	// Get actual sequence
+	mstudioseqdesc_t* pSeq = pStudioHdr->pLocalSeqdesc(pSeqMap->index);
+	if (!pSeq)
+	{
+		static mstudioseqdesc_t dummy;
+		return dummy;
+	}
+
+	return *pSeq;
 }
 
 //-----------------------------------------------------------------------------

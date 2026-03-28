@@ -525,34 +525,39 @@ void CHL2MP_Player::Spawn(void)
 		RemoveEffects( EF_NODRAW );
 	}
 
-	// Different Gamemodes
-	if (gabeplus_deathmatch.GetBool())
-	{
-		GiveDefaultItems(); // Deathmatch
-		engine->ClientCommand( this->edict(), "sv_infinite_aux_power 0" );
-	}
-	else if (gabeplus_sandbox.GetBool())
-	{
-		GiveAllItems(); // Sandbox
-		engine->ClientCommand( this->edict(), "sv_infinite_aux_power 1" );
-		engine->ClientCommand( this->edict(), "god" );
-	}
-	else if (gabeplus_hl1.GetBool())
-	{
-		RemoveHL2Weapons();
-		GiveHL1Items(); // Sandbox as well but hl1 weapons
-		engine->ClientCommand(this->edict(), "sv_infinite_aux_power 1");
-		engine->ClientCommand(this->edict(), "god");
-	}
-	else
-	{
-		GiveNoItems(); // HL2 Campaign
-		engine->ClientCommand( this->edict(), "sv_infinite_aux_power 0" );
-	}
+	edict_t* pEdict = edict();
 
-	if (gabeplus_chlogatspawn.GetBool())
+	if (pEdict)
 	{
-		engine->ClientCommand( this->edict(), "gabeplus_chlog\n" );
+		// Different Gamemodes
+		if (gabeplus_deathmatch.GetBool())
+		{
+			GiveDefaultItems(); // Deathmatch
+			engine->ClientCommand(pEdict, "sv_infinite_aux_power 0");
+		}
+		else if (gabeplus_sandbox.GetBool())
+		{
+			GiveAllItems(); // Sandbox
+			engine->ClientCommand(pEdict, "sv_infinite_aux_power 1");
+			engine->ClientCommand(pEdict, "god");
+		}
+		else if (gabeplus_hl1.GetBool())
+		{
+			RemoveHL2Weapons();
+			GiveHL1Items(); // Sandbox as well but hl1 weapons
+			engine->ClientCommand(pEdict, "sv_infinite_aux_power 1");
+			engine->ClientCommand(pEdict, "god");
+		}
+		else
+		{
+			GiveNoItems(); // HL2 Campaign
+			engine->ClientCommand(pEdict, "sv_infinite_aux_power 0");
+		}
+
+		if (gabeplus_chlogatspawn.GetBool())
+		{
+			engine->ClientCommand(pEdict, "gabeplus_chlog\n");
+		}
 	}
 
 	Weapon_Switch(Weapon_OwnsThisType("weapon_physcannon"));

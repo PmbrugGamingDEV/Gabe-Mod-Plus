@@ -212,7 +212,6 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\public\vgui_controls\vgui_controls.cpp" />
     <ClCompile Include="..\shared\achievement_saverestore.cpp" />
     <ClCompile Include="..\shared\achievementmgr.cpp" />
     <ClCompile Include="..\shared\achievements_hlx.cpp" />
@@ -339,6 +338,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\decals.cpp" />
     <ClCompile Include="edictfiller.cpp" />
     <ClCompile Include="ent_test.cpp" />
+    <ClCompile Include="fartcmd.cpp" />
     <ClCompile Include="gabeplus_chaosent.cpp" />
     <ClCompile Include="gabeplus_debugobjects.cpp" />
     <ClCompile Include="doors.cpp" />
@@ -632,6 +632,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\particlesystemquery.cpp" />
     <ClCompile Include="pathcorner.cpp" />
     <ClCompile Include="pathtrack.cpp" />
+    <ClCompile Include="physgun.cpp" />
     <ClCompile Include="phys_controller.cpp" />
     <ClCompile Include="physconstraint.cpp" />
     <ClCompile Include="physics.cpp" />

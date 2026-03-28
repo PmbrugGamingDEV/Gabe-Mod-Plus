@@ -143,7 +143,7 @@ private:
 	C_BeamQuadraticOther	m_beam;
 };
 
-STUB_WEAPON_CLASS_IMPLEMENT( weapon_physgun, C_WeaponGravityGunOther );
+STUB_WEAPON_CLASS_IMPLEMENT( weapon_oldphysgun, C_WeaponGravityGunOther );
 
 IMPLEMENT_CLIENTCLASS_DT( C_WeaponGravityGunOther, DT_WeaponGravityGunOther, CWeaponGravityGunOther )
 	RecvPropVector( RECVINFO_NAME(m_beam.m_targetPosition,m_targetPosition) ),

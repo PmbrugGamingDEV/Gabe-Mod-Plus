@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+﻿//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -117,6 +117,33 @@ static RPGLaunchItem g_RPGLaunchItems[] =
 };
 
 #define RPG_LAUNCH_COUNT ARRAYSIZE( g_RPGLaunchItems )
+
+
+enum RPGSpeedMode
+{
+	RPG_SPEED_SLOW = 0,
+	RPG_SPEED_MED,
+	RPG_SPEED_FAST,
+	RPG_SPEED_FLASH,
+
+	RPG_SPEED_COUNT
+};
+
+static const float g_RPGFireRates[RPG_SPEED_COUNT] =
+{
+	0.5f,   // Slow
+	0.2f,   // Medium
+	0.1f,   // Fast
+	0.02f   // Flash 😈
+};
+
+static const char* g_RPGSpeedNames[RPG_SPEED_COUNT] =
+{
+	"Slow",
+	"Medium",
+	"Fast",
+	"Flash"
+};
 
 #ifdef CLIENT_DLL
 #define CLaserDot C_LaserDot
@@ -1401,6 +1428,8 @@ CWeaponRPG::CWeaponRPG()
 	m_bGuiding = false;
 	m_iLaunchIndex = 0;
 	m_iLaunchItem = 0;
+	m_iSpeedMode = RPG_SPEED_MED;
+	m_flNextReload = 0.0f;
 
 	m_fMinRange1 = m_fMinRange2 = 40*12;
 	m_fMaxRange1 = m_fMaxRange2 = 500*12;
@@ -1498,7 +1527,7 @@ void CWeaponRPG::PrimaryAttack( void )
     if ( !pPlayer )
         return;
 
-    m_flNextPrimaryAttack = gpGlobals->curtime + 0.1f;
+	m_flNextPrimaryAttack = gpGlobals->curtime + g_RPGFireRates[m_iSpeedMode];
 
     const RPGLaunchItem &item = g_RPGLaunchItems[m_iLaunchItem];
 
@@ -1666,6 +1695,12 @@ void CWeaponRPG::ItemPostFrame( void )
 	else
 	{
 		SuppressGuiding( false );
+	}
+
+	if ((pPlayer->m_afButtonPressed & IN_RELOAD) && gpGlobals->curtime >= m_flNextReload)
+	{
+		Reload();
+		m_flNextReload = gpGlobals->curtime + 1.0f;
 	}
 
 	//Move the laser
@@ -1918,26 +1953,43 @@ void CWeaponRPG::NotifyRocketDied( void )
 
 	if ( GetActivity() == ACT_VM_RELOAD )
 		return;
-
-	Reload();
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool CWeaponRPG::Reload( void )
+
+bool CWeaponRPG::Reload(void)
 {
-	CBaseCombatCharacter *pOwner = GetOwner();
-	
-	if ( pOwner == NULL )
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
 		return false;
 
-	if ( pOwner->GetAmmoCount(m_iPrimaryAmmoType) <= 0 )
-		return false;
+	// Cycle mode
+	m_iSpeedMode++;
+	if (m_iSpeedMode >= RPG_SPEED_COUNT)
+		m_iSpeedMode = 0;
 
-	WeaponSound( RELOAD );
-	
-	SendWeaponAnim( ACT_VM_RELOAD );
+#ifndef CLIENT_DLL
+	// Center print (BIG text)
+	ClientPrint(pPlayer, HUD_PRINTCENTER,
+		CFmtStr("RPG Speed: %s", g_RPGSpeedNames[m_iSpeedMode]));
+
+	// Optional: chat print too
+	ClientPrint(pPlayer, HUD_PRINTTALK,
+		CFmtStr("\x04RPG SPEED:\x01 %s\n", g_RPGSpeedNames[m_iSpeedMode]));
+#endif
+
+	// Small delay so you can't spam reload
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2f;
+
+	switch (m_iSpeedMode)
+	{
+		case RPG_SPEED_SLOW:  EmitSound("buttons/button1.wav"); break;
+		case RPG_SPEED_MED:   EmitSound("buttons/button3.wav"); break;
+		case RPG_SPEED_FAST:  EmitSound("buttons/button5.wav"); break;
+		case RPG_SPEED_FLASH: EmitSound("buttons/button9.wav"); break;
+	}
 
 	return true;
 }

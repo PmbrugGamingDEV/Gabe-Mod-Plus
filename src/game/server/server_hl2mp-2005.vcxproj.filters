@@ -1899,9 +1899,6 @@
     <ClCompile Include="baseprojectile.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\public\vgui_controls\vgui_controls.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="hl2\grenade_spit.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\NPCs</Filter>
     </ClCompile>
@@ -2075,6 +2072,12 @@
     </ClCompile>
     <ClCompile Include="hl1\hl1_weaponbox.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="fartcmd.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="physgun.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

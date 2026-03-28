@@ -21,6 +21,7 @@
 #include <vgui/IInput.h>
 #include "tier0/vprof.h"
 #include "iclientmode.h"
+#include "gplus_fps.h"
 #include <vgui_controls/Panel.h>
 #include <KeyValues.h>
 #include "FileSystem.h"
@@ -177,9 +178,11 @@ void VGui_CreateGlobalPanels( void )
 	// Part of game
 	internalCenterPrint->Create( gameToolParent );
 	loadingdisc->Create( gameToolParent );
-	messagechars->Create( gameToolParent );
+	messagechars->Create(gameToolParent);
 
 	htmlview->Create(gameParent);
+
+	GabeFPS_Create(gameParent);
 
 	InventoryPanel->Create(gameParent); // Creates the panel.
 

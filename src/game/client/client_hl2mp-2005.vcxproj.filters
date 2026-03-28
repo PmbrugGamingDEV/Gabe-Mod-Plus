@@ -94,6 +94,9 @@
     <Filter Include="Goldeneye">
       <UniqueIdentifier>{33fd760b-4226-4ab1-8884-d6033562259b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Main Menu">
+      <UniqueIdentifier>{75a07d21-a7fd-44c4-8905-937a11bdbfb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">
@@ -1703,6 +1706,21 @@
     </ClCompile>
     <ClCompile Include="ge_createserver.cpp">
       <Filter>Goldeneye</Filter>
+    </ClCompile>
+    <ClCompile Include="we_msg.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabeplus_fps.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabe_mainmenu.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Main Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="spdruntimer.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\c_weapon_gravitygun.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3553,6 +3571,9 @@
     </ClInclude>
     <ClInclude Include="hl1\hud_numbers.h">
       <Filter>Source Files\Gabe Mod + Stuff\HL1</Filter>
+    </ClInclude>
+    <ClInclude Include="gplus_fps.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

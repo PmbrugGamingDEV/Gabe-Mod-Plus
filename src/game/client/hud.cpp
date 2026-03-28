@@ -20,7 +20,9 @@
 #include <vgui/ISurface.h>
 #include <KeyValues.h>
 #include "itextmessage.h"
+#include "vguicenterprint.h"
 #include "mempool.h"
+#include "iclientmode.h"
 #include <KeyValues.h>
 #include "filesystem.h"
 #include <vgui_controls/AnimationController.h>

@@ -263,6 +263,8 @@ protected:
 
 	int					m_iLaunchIndex;
 	int					m_iLaunchItem;
+	int					m_iSpeedMode;
+	float				m_flNextReload;
 
 private:
 	CWeaponRPG( const CWeaponRPG & );

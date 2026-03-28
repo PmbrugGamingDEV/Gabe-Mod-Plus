@@ -3,8 +3,40 @@
   "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\ge_createserver.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\ge_createserver.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\weapon_physgun.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\shared\\hl2mp\\weapon_physgun.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\hl2\\c_weapon_gravitygun.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\hl2\\c_weapon_gravitygun.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\physgun.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\physgun.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\hl2\\hud_weaponselection.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\hl2\\hud_weaponselection.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\fartcmd.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\fartcmd.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\weapon_camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\weapon_camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\weapon_camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\weapon_camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\public\\studio.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:public\\studio.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\spdruntimer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\spdruntimer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +46,60 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "weapon_physgun.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
+              "RelativeDocumentMoniker": "game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
+              "RelativeToolTip": "game\\shared\\hl2mp\\WEAPON_PHYSGUN.CPP",
+              "ViewState": "AgIAAM0CAAAAAAAAAAAvwNMCAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-28T03:52:26.026Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "physgun.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\physgun.cpp",
+              "RelativeDocumentMoniker": "game\\server\\physgun.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\physgun.cpp",
+              "RelativeToolTip": "game\\server\\physgun.cpp",
+              "ViewState": "AgIAAEkCAAAAAAAAAAAcwFUCAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-28T03:44:53.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "c_weapon_gravitygun.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\hl2\\c_weapon_gravitygun.cpp",
+              "RelativeDocumentMoniker": "game\\client\\hl2\\c_weapon_gravitygun.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\hl2\\c_weapon_gravitygun.cpp",
+              "RelativeToolTip": "game\\client\\hl2\\c_weapon_gravitygun.cpp",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAvwJEAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-28T03:44:09.003Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "hud_weaponselection.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\hl2\\hud_weaponselection.cpp",
+              "RelativeDocumentMoniker": "game\\client\\hl2\\hud_weaponselection.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\hl2\\hud_weaponselection.cpp",
+              "RelativeToolTip": "game\\client\\hl2\\hud_weaponselection.cpp",
+              "ViewState": "AgIAAH0CAAAAAAAAAAAvwIgCAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-28T03:31:26.37Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
@@ -26,16 +110,64 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ge_createserver.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\ge_createserver.cpp",
-              "RelativeDocumentMoniker": "game\\client\\ge_createserver.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\ge_createserver.cpp",
-              "RelativeToolTip": "game\\client\\ge_createserver.cpp",
-              "ViewState": "AgIAAHkAAAAAAAAAAADwv5MAAAABAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "fartcmd.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\fartcmd.cpp",
+              "RelativeDocumentMoniker": "game\\server\\fartcmd.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\fartcmd.cpp",
+              "RelativeToolTip": "game\\server\\fartcmd.cpp",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAADAAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-03-16T00:55:36.589Z",
+              "WhenOpened": "2026-03-28T02:55:47.312Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "weapon_camera.h",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\weapon_camera.h",
+              "RelativeDocumentMoniker": "game\\server\\weapon_camera.h",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\weapon_camera.h",
+              "RelativeToolTip": "game\\server\\weapon_camera.h",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAcwBcAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-03-27T21:52:59.28Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "weapon_camera.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\weapon_camera.cpp",
+              "RelativeDocumentMoniker": "game\\server\\weapon_camera.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\weapon_camera.cpp",
+              "RelativeToolTip": "game\\server\\weapon_camera.cpp",
+              "ViewState": "AgIAAK4AAAAAAAAAAAAAALAAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-27T21:52:53.474Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "studio.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\public\\studio.cpp",
+              "RelativeDocumentMoniker": "public\\studio.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\public\\studio.cpp",
+              "RelativeToolTip": "public\\studio.cpp",
+              "ViewState": "AgIAALQDAAAAAAAAAAAcwMYDAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-27T21:47:22.812Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "spdruntimer.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\spdruntimer.cpp",
+              "RelativeDocumentMoniker": "game\\client\\spdruntimer.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\spdruntimer.cpp",
+              "RelativeToolTip": "game\\client\\spdruntimer.cpp",
+              "ViewState": "AgIAAOgAAAAAAAAAAAAcwPoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-27T20:48:56.593Z"
             }
           ]
         }
