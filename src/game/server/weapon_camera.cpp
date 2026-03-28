@@ -53,6 +53,22 @@ bool CWeaponCamera::Deploy(void)
     return bResult;
 }
 
+bool CWeaponCamera::Holster(CBaseCombatWeapon* pSwitchingTo)
+{
+    bool bResult = BaseClass::Holster(pSwitchingTo);
+
+    if (bResult)
+    {
+        CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+        if (pOwner)
+        {
+            pOwner->ShowViewModel(true);
+        }
+    }
+
+    return bResult;
+}
+
 void CWeaponCamera::PrimaryAttack(void)
 {
     TakeScreenshot();

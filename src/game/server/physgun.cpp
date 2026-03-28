@@ -1,9 +1,13 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+ï»¿//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
 // $NoKeywords: $
 //=============================================================================//
+
+//////////////////////////////////////
+// JBMOD PHYSICS GUN REPLICA - v1.0 //
+//////////////////////////////////////
 
 #include "cbase.h"
 #include "beam_shared.h"
@@ -13,107 +17,131 @@
 #include "baseviewmodel.h"
 #include "vphysics/constraints.h"
 #include "physics.h"
-#include "ai_basenpc.h"
 #include "in_buttons.h"
 #include "IEffects.h"
 #include "engine/IEngineSound.h"
 #include "ndebugoverlay.h"
 #include "physics_saverestore.h"
 #include "player_pickup.h"
+#include "rope.h"
 #include "soundemittersystem/isoundemittersystembase.h"
-#include "utlvector.h"
-#include "te_effect_dispatch.h"
-#include "soundenvelope.h"
-#include "util.h"
-#include "tier1/strtools.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar phys_gunmass("gabe+_oldphysgun_mass", "50000");
-ConVar phys_gunvel("gabe+_oldphysgun_velocity", "50000");
-ConVar phys_gunforce("gabe+_oldphysgun_force", "10e10" );
-ConVar phys_guntorque("gabe+_oldphysgun_torque", "50000" );
-ConVar phys_gunglueradius("gabe+_oldphysgun_glueradius", "128" );
-ConVar phys_gunsounds("gabe+_oldphysgun_togglesound", "0" );
-ConVar phys_gunzapnpcs("gabe+_oldphysgun_zapnpcs", "0" );
-
-enum PhysgunMode_t
-{
-	MODE_FREEZE = 0,
-	MODE_PELLET
-};
-
-enum ConstraintMode_t
-{
-	CONSTRAINT_FIXED = 0,
-	CONSTRAINT_BALLSOCKET,
-	CONSTRAINT_ROPE,
-
-	CONSTRAINT_COUNT
-};
+ConVar phys_gunmass("phys_gunmass", "200");
+ConVar phys_gunvel("phys_gunvel", "400");
+ConVar phys_gunforce("phys_gunforce", "5e5");
+ConVar phys_guntorque("phys_guntorque", "100");
+ConVar phys_gunglueradius("phys_gunglueradius", "128");
 
 static int g_physgunBeam;
 #define PHYSGUN_BEAM_SPRITE		"sprites/physbeam.vmt"
-#define nullptr NULL
-#define MAX_PELLETS	2048
 
-class CWeaponGravityGunOther;
+#define MAX_PELLETS 512 // Same as jbmod
 
-static CHandle<CWeaponGravityGunOther> g_hActivePhysgun;
+enum physgun_constraint_mode
+{
+	CONSTRAINT_WELD = 0,
+	CONSTRAINT_BALLSOCKET,
+	CONSTRAINT_ROPE,
+	CONSTRAINT_COUNT
+};
+
+static int g_iConstraintMode = CONSTRAINT_WELD;
+
+void CC_PhysgunCycleConstraint()
+{
+	g_iConstraintMode++;
+
+	if (g_iConstraintMode >= CONSTRAINT_COUNT)
+		g_iConstraintMode = 0;
+
+	const char* name = "unknown";
+
+	switch (g_iConstraintMode)
+	{
+	case CONSTRAINT_WELD:       name = "Fixed Mode"; break;
+	case CONSTRAINT_BALLSOCKET: name = "Ballsocket Mode"; break;
+	case CONSTRAINT_ROPE:       name = "Rope Mode"; break;
+	}
+
+	CBasePlayer* pPlayer = UTIL_GetLocalPlayer();
+	if (!pPlayer)
+		return;
+
+	hudtextparms_t params;
+
+	params.channel = 3;      // SAME channel = replaces previous message
+	params.x = 0.10f;        // left side like your screenshot
+	params.y = 0.75f;        // above health HUD
+	params.effect = 0;
+
+	params.fadeinTime = 0.0f;   // important
+	params.fadeoutTime = 0.0f;  // important
+	params.holdTime = 1.0f;
+	params.fxTime = 0.0f;
+
+	params.a1 = 255;
+	params.a2 = 255;
+
+	// Mode colors
+	switch (g_iConstraintMode)
+	{
+	case CONSTRAINT_WELD:
+		params.r1 = 255; params.g1 = 80;  params.b1 = 80;
+		break;
+
+	case CONSTRAINT_ROPE:
+		params.r1 = 80;  params.g1 = 200; params.b1 = 255;
+		break;
+
+	case CONSTRAINT_BALLSOCKET:
+		params.r1 = 255; params.g1 = 120; params.b1 = 255;
+		break;
+	}
+
+	params.r2 = params.r1;
+	params.g2 = params.g1;
+	params.b2 = params.b1;
+
+	UTIL_HudMessage(pPlayer, params, name);
+}
+
+static ConCommand physgun_cycleconstraint(
+	"sbox_cycleconstraint",
+	CC_PhysgunCycleConstraint,
+	"Cycle physgun constraint type",
+	FCVAR_CHEAT
+);
+
+class CJBWeaponGravityGun;
 
 class CGravityPellet : public CBaseAnimating
 {
-	DECLARE_CLASS( CGravityPellet, CBaseAnimating );
+	DECLARE_CLASS(CGravityPellet, CBaseAnimating);
 public:
 	DECLARE_DATADESC();
 
 	~CGravityPellet();
 	void Precache()
 	{
-		SetModelName( MAKE_STRING( "models/weapons/w_bugbait.mdl" ) );
-		PrecacheModel( STRING( GetModelName() ) );
+		SetModelName(MAKE_STRING("models/weapons/w_bugbait.mdl"));
+		PrecacheModel(STRING(GetModelName()));
 		BaseClass::Precache();
 	}
 	void Spawn()
 	{
 		Precache();
-		SetModel( STRING( GetModelName() ) );
-		SetSolid( SOLID_BBOX );
-		SetMoveType( MOVETYPE_NONE );
-		AddEffects( EF_NOSHADOW );
-		SetRenderColor( 255, 0, 0 );
+		SetModel(STRING(GetModelName()));
+		SetSolid(SOLID_BBOX);
+		UTIL_SetSize(this, Vector(-4, -4, -4), Vector(4, 4, 4));
+		SetMoveType(MOVETYPE_NONE);
+		SetCollisionGroup(COLLISION_GROUP_DEBRIS);
+		AddEffects(EF_NOSHADOW);
+		SetRenderColor(255, 0, 0);
+		g_pEffects->Sparks(this->WorldSpaceCenter());
 		m_isInert = false;
-		SetThink(&CGravityPellet::PelletThink);
-		SetNextThink(gpGlobals->curtime + 0.01f);
-	}
-
-	void CGravityPellet::PelletThink()
-	{
-		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
-		if (!pPlayer)
-			return;
-
-		Vector start = pPlayer->EyePosition();
-		Vector forward;
-		pPlayer->EyeVectors(&forward);
-
-		Vector end = start + forward * 2048.0f;
-
-		trace_t tr;
-		UTIL_TraceLine(start, end, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
-
-		
-		if (tr.m_pEnt == this && !m_isInert)
-		{
-			SetRenderColor(0, 0, 255);
-		}
-		else if (!m_isInert)
-		{
-			SetRenderColor(255, 0, 0);
-		}
-
-		SetNextThink(gpGlobals->curtime + 0.1f);
 	}
 
 	bool IsInert()
@@ -121,75 +149,81 @@ public:
 		return m_isInert;
 	}
 
-	bool CGravityPellet::MakeConstraint( CBaseEntity *pObject );
+	void SetHighlight(bool active)
+	{
+		if (active)
+		{
+			SetRenderColor(0, 128, 255); // blue highlight
+		}
+		else if (!m_isInert)
+		{
+			SetRenderColor(255, 0, 0); // default red
+		}
+	}
+
+	bool MakeConstraint(CBaseEntity* pObject);
 
 	void MakeInert()
 	{
-		SetRenderColor( 64, 64, 128 );
+		SetRenderColor(64, 64, 128);
 		m_isInert = true;
 	}
 
-	void InputOnBreak( inputdata_t &inputdata )
+	void InputOnBreak(inputdata_t& inputdata)
 	{
 		UTIL_Remove(this);
 	}
 
-	void CreateRopeVisual( CBaseEntity *pAttachedEnt );
-	void DestroyRopeVisual();
-
-	IPhysicsConstraint	*m_pConstraint;
+	IPhysicsConstraint* m_pConstraint;
 	bool				m_isInert;
-
-	EHANDLE m_hRopeStart;
-	EHANDLE m_hRopeMid;
-	EHANDLE m_hRopeEnd;
+	CJBWeaponGravityGun* m_pGun;
 };
 
 LINK_ENTITY_TO_CLASS(gravity_pellet, CGravityPellet);
 PRECACHE_REGISTER(gravity_pellet);
 
-BEGIN_DATADESC( CGravityPellet )
+BEGIN_DATADESC(CGravityPellet)
 
-	DEFINE_PHYSPTR( m_pConstraint ),
-	DEFINE_FIELD( m_isInert, FIELD_BOOLEAN ),
-	// physics system will fire this input if the constraint breaks due to physics
-	DEFINE_INPUTFUNC( FIELD_VOID, "ConstraintBroken", InputOnBreak ),
+DEFINE_PHYSPTR(m_pConstraint),
+DEFINE_FIELD(m_isInert, FIELD_BOOLEAN),
+// physics system will fire this input if the constraint breaks due to physics
+DEFINE_INPUTFUNC(FIELD_VOID, "ConstraintBroken", InputOnBreak),
 
 END_DATADESC()
 
 
 CGravityPellet::~CGravityPellet()
 {
-	if ( m_pConstraint )
+	if (m_pConstraint)
 	{
-		physenv->DestroyConstraint( m_pConstraint );
+		physenv->DestroyConstraint(m_pConstraint);
 	}
 }
 
-class CGravControllerPointOther : public IMotionEvent
+class CJBGravControllerPoint : public IMotionEvent
 {
 	DECLARE_SIMPLE_DATADESC();
 
 public:
-	CGravControllerPointOther( void );
-	~CGravControllerPointOther( void );
-	void AttachEntity( CBaseEntity *pEntity, IPhysicsObject *pPhys, const Vector &position );
-	void DetachEntity( void );
-	void SetMaxVelocity( float maxVel )
+	CJBGravControllerPoint(void);
+	~CJBGravControllerPoint(void);
+	void AttachEntity(CBaseEntity* pEntity, IPhysicsObject* pPhys, const Vector& position);
+	void DetachEntity(void);
+	void SetMaxVelocity(float maxVel)
 	{
 		m_maxVel = maxVel;
 	}
-	void SetTargetPosition( const Vector &target )
+	void SetTargetPosition(const Vector& target)
 	{
 		m_targetPosition = target;
-		if ( m_attachedEntity == NULL )
+		if (m_attachedEntity == NULL)
 		{
 			m_worldPosition = target;
 		}
 		m_timeToArrive = gpGlobals->frametime;
 	}
 
-	void SetAutoAlign( const Vector &localDir, const Vector &localPos, const Vector &worldAlignDir, const Vector &worldAlignPos )
+	void SetAutoAlign(const Vector& localDir, const Vector& localPos, const Vector& worldAlignDir, const Vector& worldAlignPos)
 	{
 		m_align = true;
 		m_localAlignNormal = -localDir;
@@ -203,7 +237,7 @@ public:
 		m_align = false;
 	}
 
-	IMotionEvent::simresult_e Simulate( IPhysicsMotionController *pController, IPhysicsObject *pObject, float deltaTime, Vector &linear, AngularImpulse &angular );
+	IMotionEvent::simresult_e Simulate(IPhysicsMotionController* pController, IPhysicsObject* pObject, float deltaTime, Vector& linear, AngularImpulse& angular);
 	Vector			m_localPosition;
 	Vector			m_targetPosition;
 	Vector			m_worldPosition;
@@ -220,78 +254,78 @@ public:
 	QAngle			m_targetRotation;
 	float			m_timeToArrive;
 
-	IPhysicsMotionController *m_controller;
+	IPhysicsMotionController* m_controller;
 };
 
 
-BEGIN_SIMPLE_DATADESC( CGravControllerPointOther )
+BEGIN_SIMPLE_DATADESC(CJBGravControllerPoint)
 
-	DEFINE_FIELD( m_localPosition,		FIELD_VECTOR ),
-	DEFINE_FIELD( m_targetPosition,		FIELD_POSITION_VECTOR ),
-	DEFINE_FIELD( m_worldPosition,		FIELD_POSITION_VECTOR ),
-	DEFINE_FIELD( m_localAlignNormal,		FIELD_VECTOR ),
-	DEFINE_FIELD( m_localAlignPosition,	FIELD_VECTOR ),
-	DEFINE_FIELD( m_targetAlignNormal,	FIELD_VECTOR ),
-	DEFINE_FIELD( m_targetAlignPosition,	FIELD_POSITION_VECTOR ),
-	DEFINE_FIELD( m_align,				FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_saveDamping,			FIELD_FLOAT ),
-	DEFINE_FIELD( m_maxVel,				FIELD_FLOAT ),
-	DEFINE_FIELD( m_maxAcceleration,		FIELD_FLOAT ),
-	DEFINE_FIELD( m_maxAngularAcceleration,	FIELD_VECTOR ),
-	DEFINE_FIELD( m_attachedEntity,		FIELD_EHANDLE ),
-	DEFINE_FIELD( m_targetRotation,		FIELD_VECTOR ),
-	DEFINE_FIELD( m_timeToArrive,			FIELD_FLOAT ),
+DEFINE_FIELD(m_localPosition, FIELD_VECTOR),
+DEFINE_FIELD(m_targetPosition, FIELD_POSITION_VECTOR),
+DEFINE_FIELD(m_worldPosition, FIELD_POSITION_VECTOR),
+DEFINE_FIELD(m_localAlignNormal, FIELD_VECTOR),
+DEFINE_FIELD(m_localAlignPosition, FIELD_VECTOR),
+DEFINE_FIELD(m_targetAlignNormal, FIELD_VECTOR),
+DEFINE_FIELD(m_targetAlignPosition, FIELD_POSITION_VECTOR),
+DEFINE_FIELD(m_align, FIELD_BOOLEAN),
+DEFINE_FIELD(m_saveDamping, FIELD_FLOAT),
+DEFINE_FIELD(m_maxVel, FIELD_FLOAT),
+DEFINE_FIELD(m_maxAcceleration, FIELD_FLOAT),
+DEFINE_FIELD(m_maxAngularAcceleration, FIELD_VECTOR),
+DEFINE_FIELD(m_attachedEntity, FIELD_EHANDLE),
+DEFINE_FIELD(m_targetRotation, FIELD_VECTOR),
+DEFINE_FIELD(m_timeToArrive, FIELD_FLOAT),
 
-	// Physptrs can't be saved in embedded classes... this is to silence classcheck
-	// DEFINE_PHYSPTR( m_controller ),
+// Physptrs can't be saved in embedded classes... this is to silence classcheck
+// DEFINE_PHYSPTR( m_controller ),
 
 END_DATADESC()
 
 
-CGravControllerPointOther::CGravControllerPointOther( void )
+CJBGravControllerPoint::CJBGravControllerPoint(void)
 {
 	m_attachedEntity = NULL;
 }
 
-CGravControllerPointOther::~CGravControllerPointOther( void )
+CJBGravControllerPoint::~CJBGravControllerPoint(void)
 {
 	DetachEntity();
 }
 
 
-void CGravControllerPointOther::AttachEntity( CBaseEntity *pEntity, IPhysicsObject *pPhys, const Vector &position )
+void CJBGravControllerPoint::AttachEntity(CBaseEntity* pEntity, IPhysicsObject* pPhys, const Vector& position)
 {
 	m_attachedEntity = pEntity;
-	pPhys->WorldToLocal( &m_localPosition, position );
+	pPhys->WorldToLocal(&m_localPosition, position);
 	m_worldPosition = position;
-	pPhys->GetDamping( NULL, &m_saveDamping );
+	pPhys->GetDamping(NULL, &m_saveDamping);
 	float damping = 2;
-	pPhys->SetDamping( NULL, &damping );
-	m_controller = physenv->CreateMotionController( this );
-	m_controller->AttachObject( pPhys, true );
-	m_controller->SetPriority( IPhysicsMotionController::HIGH_PRIORITY );
-	SetTargetPosition( position );
+	pPhys->SetDamping(NULL, &damping);
+	m_controller = physenv->CreateMotionController(this);
+	m_controller->AttachObject(pPhys, true);
+	m_controller->SetPriority(IPhysicsMotionController::HIGH_PRIORITY);
+	SetTargetPosition(position);
 	m_maxAcceleration = phys_gunforce.GetFloat() * pPhys->GetInvMass();
 	m_targetRotation = pEntity->GetAbsAngles();
 	float torque = phys_guntorque.GetFloat();
 	m_maxAngularAcceleration = torque * pPhys->GetInvInertia();
 }
 
-void CGravControllerPointOther::DetachEntity( void )
+void CJBGravControllerPoint::DetachEntity(void)
 {
-	CBaseEntity *pEntity = m_attachedEntity;
-	if ( pEntity )
+	CBaseEntity* pEntity = m_attachedEntity;
+	if (pEntity)
 	{
-		IPhysicsObject *pPhys = pEntity->VPhysicsGetObject();
-		if ( pPhys )
+		IPhysicsObject* pPhys = pEntity->VPhysicsGetObject();
+		if (pPhys)
 		{
 			// on the odd chance that it's gone to sleep while under anti-gravity
 			pPhys->Wake();
-			pPhys->SetDamping( NULL, &m_saveDamping );
+			pPhys->SetDamping(NULL, &m_saveDamping);
 		}
 	}
 	m_attachedEntity = NULL;
-	physenv->DestroyMotionController( m_controller );
+	physenv->DestroyMotionController(m_controller);
 	m_controller = NULL;
 
 	// UNDONE: Does this help the networking?
@@ -299,104 +333,187 @@ void CGravControllerPointOther::DetachEntity( void )
 	m_worldPosition = vec3_origin;
 }
 
-void AxisAngleQAngleOther( const Vector &axis, float angle, QAngle &outAngles )
+IMotionEvent::simresult_e CJBGravControllerPoint::Simulate(IPhysicsMotionController* pController, IPhysicsObject* pObject, float deltaTime, Vector& linear, AngularImpulse& angular)
 {
-	// map back to HL rotation axes
-	outAngles.z = axis.x * angle;
-	outAngles.x = axis.y * angle;
-	outAngles.y = axis.z * angle;
+	Vector vel;
+	AngularImpulse angVel;
+
+	float fracRemainingSimTime = 1.0;
+	if (m_timeToArrive > 0)
+	{
+		fracRemainingSimTime *= deltaTime / m_timeToArrive;
+		if (fracRemainingSimTime > 1)
+		{
+			fracRemainingSimTime = 1;
+		}
+	}
+
+	m_timeToArrive -= deltaTime;
+	if (m_timeToArrive < 0)
+	{
+		m_timeToArrive = 0;
+	}
+
+	float invDeltaTime = (1.0f / deltaTime);
+	Vector world;
+	pObject->LocalToWorld(&world, m_localPosition);
+	m_worldPosition = world;
+	pObject->GetVelocity(&vel, &angVel);
+	//pObject->GetVelocityAtPoint( world, vel );
+	float damping = 1.0;
+	world += vel * deltaTime * damping;
+	Vector delta = (m_targetPosition - world) * fracRemainingSimTime * invDeltaTime;
+	Vector alignDir;
+	linear = vec3_origin;
+	angular = vec3_origin;
+
+	if (m_align)
+	{
+		QAngle angles;
+		Vector origin;
+		Vector axis;
+		AngularImpulse torque;
+
+		pObject->GetShadowPosition(&origin, &angles);
+		// align local normal to target normal
+		VMatrix tmp = SetupMatrixOrgAngles(origin, angles);
+		Vector worldNormal = tmp.VMul3x3(m_localAlignNormal);
+		axis = CrossProduct(worldNormal, m_targetAlignNormal);
+		float trig = VectorNormalize(axis);
+		float alignRotation = RAD2DEG(asin(trig));
+		axis *= alignRotation;
+		if (alignRotation < 10)
+		{
+			float dot = DotProduct(worldNormal, m_targetAlignNormal);
+			// probably 180 degrees off
+			if (dot < 0)
+			{
+				if (worldNormal.x < 0.5)
+				{
+					axis.Init(10, 0, 0);
+				}
+				else
+				{
+					axis.Init(0, 0, 10);
+				}
+				alignRotation = 10;
+			}
+		}
+
+		// Solve for the rotation around the target normal (at the local align pos) that will 
+		// move the grabbed spot to the destination.
+		Vector worldRotCenter = tmp.VMul4x3(m_localAlignPosition);
+		Vector rotSrc = world - worldRotCenter;
+		Vector rotDest = m_targetPosition - worldRotCenter;
+
+		// Get a basis in the plane perpendicular to m_targetAlignNormal
+		Vector srcN = rotSrc;
+		VectorNormalize(srcN);
+		Vector tangent = CrossProduct(srcN, m_targetAlignNormal);
+		float len = VectorNormalize(tangent);
+
+		// needs at least ~5 degrees, or forget rotation (0.08 ~= sin(5))
+		if (len > 0.08)
+		{
+			Vector binormal = CrossProduct(m_targetAlignNormal, tangent);
+
+			// Now project the src & dest positions into that plane
+			Vector planeSrc(DotProduct(rotSrc, tangent), DotProduct(rotSrc, binormal), 0);
+			Vector planeDest(DotProduct(rotDest, tangent), DotProduct(rotDest, binormal), 0);
+
+			float rotRadius = VectorNormalize(planeSrc);
+			float destRadius = VectorNormalize(planeDest);
+			if (rotRadius > 0.1)
+			{
+				if (destRadius < rotRadius)
+				{
+					destRadius = rotRadius;
+				}
+				//float ratio = rotRadius / destRadius;
+				float angleSrc = atan2(planeSrc.y, planeSrc.x);
+				float angleDest = atan2(planeDest.y, planeDest.x);
+				float angleDiff = angleDest - angleSrc;
+				angleDiff = RAD2DEG(angleDiff);
+				axis += m_targetAlignNormal * angleDiff;
+				//world = m_targetPosition;// + rotDest * (1-ratio);
+//				NDebugOverlay::Line( worldRotCenter, worldRotCenter-m_targetAlignNormal*50, 255, 0, 0, false, 0.1 );
+//				NDebugOverlay::Line( worldRotCenter, worldRotCenter+tangent*50, 0, 255, 0, false, 0.1 );
+//				NDebugOverlay::Line( worldRotCenter, worldRotCenter+binormal*50, 0, 0, 255, false, 0.1 );
+			}
+		}
+
+		torque = WorldToLocalRotation(tmp, axis, 1);
+		torque *= fracRemainingSimTime * invDeltaTime;
+		torque -= angVel * 1.0;	 // damping
+		for (int i = 0; i < 3; i++)
+		{
+			if (torque[i] > 0)
+			{
+				if (torque[i] > m_maxAngularAcceleration[i])
+					torque[i] = m_maxAngularAcceleration[i];
+			}
+			else
+			{
+				if (torque[i] < -m_maxAngularAcceleration[i])
+					torque[i] = -m_maxAngularAcceleration[i];
+			}
+		}
+		torque *= invDeltaTime;
+		angular += torque;
+		// Calculate an acceleration that pulls the object toward the constraint
+		// When you're out of alignment, don't pull very hard
+		float factor = fabsf(alignRotation);
+		if (factor < 5)
+		{
+			factor = clamp(factor, 0, 5) * (1 / 5);
+			alignDir = m_targetAlignPosition - worldRotCenter;
+			// Limit movement to the part along m_targetAlignNormal if worldRotCenter is on the backside of 
+			// of the target plane (one inch epsilon)!
+			float planeForward = DotProduct(alignDir, m_targetAlignNormal);
+			if (planeForward > 1)
+			{
+				alignDir = m_targetAlignNormal * planeForward;
+			}
+			Vector accel = alignDir * invDeltaTime * fracRemainingSimTime * (1 - factor) * 0.20 * invDeltaTime;
+			float mag = accel.Length();
+			if (mag > m_maxAcceleration)
+			{
+				accel *= (m_maxAcceleration / mag);
+			}
+			linear += accel;
+		}
+		linear -= vel * damping * invDeltaTime;
+		// UNDONE: Factor in the change in worldRotCenter due to applied torque!
+	}
+	else
+	{
+		// clamp future velocity to max speed
+		Vector nextVel = delta + vel;
+		float nextSpeed = nextVel.Length();
+		if (nextSpeed > m_maxVel)
+		{
+			nextVel *= (m_maxVel / nextSpeed);
+			delta = nextVel - vel;
+		}
+
+		delta *= invDeltaTime;
+
+		float linearAccel = delta.Length();
+		if (linearAccel > m_maxAcceleration)
+		{
+			delta *= m_maxAcceleration / linearAccel;
+		}
+
+		Vector accel;
+		AngularImpulse angAccel;
+		pObject->CalculateForceOffset(delta, world, &accel, &angAccel);
+
+		linear += accel;
+		angular += angAccel;
+	}
+
+	return SIM_GLOBAL_ACCELERATION;
 }
-
-IMotionEvent::simresult_e CGravControllerPointOther::Simulate(
-    IPhysicsMotionController *pController,
-    IPhysicsObject *pObject,
-    float deltaTime,
-    Vector &linear,
-    AngularImpulse &angular )
-{
-    if ( deltaTime < 0.001f )
-        return SIM_GLOBAL_ACCELERATION;
-
-    pObject->Wake();
-
-    Vector vel;
-    AngularImpulse angVel;
-    pObject->GetVelocity( &vel, &angVel );
-
-    Vector world;
-    pObject->LocalToWorld( &world, m_localPosition );
-    m_worldPosition = world;
-
-    linear.Init();
-    angular.Init();
-
-    // =====================================
-    // HARD VELOCITY SERVO (NO DROOP)
-    // =====================================
-    Vector error = m_targetPosition - world;
-
-    // Desired velocity directly toward target
-    const float velocityGain = 120.0f;   // << VERY STRONG
-    Vector desiredVel = error * velocityGain;
-
-    // Clamp desired velocity
-    float desiredSpeed = desiredVel.Length();
-    if ( desiredSpeed > m_maxVel )
-        desiredVel *= ( m_maxVel / desiredSpeed );
-
-    // Drive current velocity toward desired velocity
-    const float velocityDamping = 20.0f;  // << Strong correction
-    Vector accel = ( desiredVel - vel ) * velocityDamping;
-
-    // Clamp acceleration (still mass-independent)
-    float accelLen = accel.Length();
-    if ( accelLen > m_maxAcceleration )
-        accel *= ( m_maxAcceleration / accelLen );
-
-    linear += accel;
-
-    // =====================================
-    // ANGULAR ALIGNMENT (STIFF, NO SAG)
-    // =====================================
-    if ( m_align )
-    {
-        QAngle angles;
-        Vector origin;
-        pObject->GetShadowPosition( &origin, &angles );
-
-        VMatrix mat = SetupMatrixOrgAngles( origin, angles );
-        Vector worldNormal = mat.VMul3x3( m_localAlignNormal );
-
-        Vector axis = CrossProduct( worldNormal, m_targetAlignNormal );
-        float sinAngle = VectorNormalize( axis );
-
-        if ( sinAngle > 0.001f )
-        {
-            float angleDeg = RAD2DEG( asin( clamp( sinAngle, -1.f, 1.f ) ) );
-            axis *= angleDeg;
-
-            AngularImpulse desiredAngVel = WorldToLocalRotation( mat, axis, 1 );
-
-            const float angVelocityGain = 30.0f;
-            AngularImpulse torque =
-                ( desiredAngVel * angVelocityGain ) -
-                ( angVel * 10.0f );
-
-            for ( int i = 0; i < 3; i++ )
-            {
-                torque[i] = clamp(
-                    torque[i],
-                    -m_maxAngularAcceleration[i],
-                     m_maxAngularAcceleration[i] );
-            }
-
-            angular += torque;
-        }
-    }
-
-    return SIM_GLOBAL_ACCELERATION;
-}
-
 
 
 struct pelletlist_t
@@ -408,81 +525,125 @@ struct pelletlist_t
 	EHANDLE						parent;
 };
 
-class CWeaponGravityGunOther : public CBaseHLCombatWeapon
+class CJBWeaponGravityGun : public CBaseHLCombatWeapon
 {
 	DECLARE_DATADESC();
 
 public:
-	DECLARE_CLASS( CWeaponGravityGunOther, CBaseHLCombatWeapon );
+	DECLARE_CLASS(CJBWeaponGravityGun, CBaseHLCombatWeapon);
 
-	CWeaponGravityGunOther();
-	void Spawn( void );
-	void OnRestore( void );
-	void Precache( void );
+	CJBWeaponGravityGun();
+	void Spawn(void);
+	virtual bool Deploy();
+	void OnRestore(void);
+	void Precache(void);
 
-	void PrimaryAttack( void );
-	void SecondaryAttack( void );
-	void WeaponIdle( void );
-	void ItemPostFrame( void );
-
-	virtual bool Holster( CBaseHLCombatWeapon *pSwitchingTo )
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+	void WeaponIdle(void);
+	void ItemPostFrame(void);
+	virtual bool Holster(CBaseCombatWeapon* pSwitchingTo)
 	{
 		EffectDestroy();
 		return BaseClass::Holster(pSwitchingTo);
 	}
 
-	bool Reload( void );
-	void Equip( CBaseCombatCharacter *pOwner )
+	CGravityPellet* GetPelletHeld()
+	{
+		if (m_pelletHeld < 0) return NULL;
+		return m_activePellets[m_pelletHeld].pellet;
+	}
+
+	CGravityPellet* GetPelletAttract()
+	{
+		if (m_pelletAttract < 0) return NULL;
+		return m_activePellets[m_pelletAttract].pellet;
+	}
+
+	bool Reload(void);
+	void Equip(CBaseCombatCharacter* pOwner)
 	{
 		// add constraint ammo
-		pOwner->SetAmmoCount( MAX_PELLETS, m_iSecondaryAmmoType );
-		BaseClass::Equip( pOwner );
+		pOwner->SetAmmoCount(MAX_PELLETS, m_iSecondaryAmmoType);
+		BaseClass::Equip(pOwner);
 	}
-	void Drop(const Vector &vecVelocity)
+	void Drop(const Vector& vecVelocity)
 	{
-		CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-		if (!pOwner)
-		{
-			return;
-		}
-		pOwner->SetAmmoCount( 0, m_iSecondaryAmmoType );
+		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+		pOwner->SetAmmoCount(0, m_iSecondaryAmmoType);
 		// destroy all constraints
 		BaseClass::Drop(vecVelocity);
 	}
 
-	bool HasAnyAmmo( void );
-
-	void AttachObject( CBaseEntity *pEdict, const Vector& start, const Vector &end, float distance );
-	void DetachObject( void );
-
-	void EffectCreate( void );
-	void EffectUpdate( void );
-	void EffectDestroy( void );
-
-	void SoundCreate( void );
-	void SoundDestroy( void );
-	void SoundStop( void );
-	void SoundStart( void );
-	void SoundUpdate( void );
-	void AddPellet( CGravityPellet *pPellet, CBaseEntity *pParent, const Vector &surfaceNormal );
-	void DeleteActivePellets();
-	void SortPelletsForObject( CBaseEntity *pObject );
-	void SetObjectPelletsColor( int r, int g, int b );
-	void CreatePelletAttraction( float radius, CBaseEntity *pObject );
-	IPhysicsObject *GetPelletPhysObject( int pelletIndex );
-	void GetPelletWorldCoords( int pelletIndex, Vector *worldPos, Vector *worldNormal )
+	void UpdatePelletHighlight()
 	{
-		if ( worldPos )
+		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+		if (!pOwner)
+			return;
+
+		Vector start, forward;
+		trace_t tr;
+
+		start = pOwner->Weapon_ShootPosition();
+		pOwner->EyeVectors(&forward);
+
+		Vector end = start + forward * 4096;
+
+		UTIL_TraceLine(start, end, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr);
+
+		CGravityPellet* pAimPellet = dynamic_cast<CGravityPellet*>(tr.m_pEnt);
+
+		for (int i = 0; i < m_pelletCount; i++)
+		{
+			CGravityPellet* pPellet = m_activePellets[i].pellet;
+
+			if (!pPellet)
+				continue;
+
+			if (pPellet == pAimPellet)
+			{
+				pPellet->SetRenderColor(0, 0, 255); // blue
+			}
+			else if (!pPellet->IsInert())
+			{
+				pPellet->SetRenderColor(255, 0, 0); // red
+			}
+		}
+	}
+
+	bool HasAnyAmmo(void);
+
+	void AttachObject(CBaseEntity* pEdict, const Vector& start, const Vector& end, float distance);
+	void DetachObject(void);
+
+	void EffectCreate(void);
+	void EffectUpdate(void);
+	void EffectDestroy(void);
+
+	void SoundCreate(void);
+	void SoundDestroy(void);
+	void SoundStop(void);
+	void SoundStart(void);
+	void SoundUpdate(void);
+	void AddPellet(CGravityPellet* pPellet, CBaseEntity* pParent, const Vector& surfaceNormal);
+	void DeleteActivePellets();
+	void SortPelletsForObject(CBaseEntity* pObject);
+	void SetObjectPelletsColor(int r, int g, int b);
+	void CreatePelletAttraction(float radius, CBaseEntity* pObject);
+	IPhysicsObject* GetPelletPhysObject(int pelletIndex);
+	void GetPelletWorldCoords(int pelletIndex, Vector* worldPos, Vector* worldNormal)
+	{
+		if (worldPos)
 		{
 			*worldPos = m_activePellets[pelletIndex].pellet->GetAbsOrigin();
 		}
-		if ( worldNormal )
+		if (worldNormal)
 		{
-			if ( m_activePellets[pelletIndex].parent )
+			if (m_activePellets[pelletIndex].parent)
 			{
 				EntityMatrix tmp;
-				tmp.InitFromEntity( m_activePellets[pelletIndex].parent );
-				*worldNormal = tmp.LocalToWorldRotation( m_activePellets[pelletIndex].localNormal );
+				tmp.InitFromEntity(m_activePellets[pelletIndex].parent);
+				*worldNormal = tmp.LocalToWorldRotation(m_activePellets[pelletIndex].localNormal);
 			}
 			else
 			{
@@ -491,140 +652,85 @@ public:
 		}
 	}
 
-	int ObjectCaps( void ) 
-	{ 
+	int ObjectCaps(void)
+	{
 		int caps = BaseClass::ObjectCaps();
-		if ( m_active )
+		if (m_active)
 		{
 			caps |= FCAP_DIRECTIONAL_USE;
 		}
 		return caps;
 	}
 
-	void ShowConstraintHUD()
-	{
-		CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-		if ( !pPlayer )
-			return;
-
-		const char *modeName = "UNKNOWN";
-
-		switch ( m_iConstraintMode )
-		{
-			case CONSTRAINT_FIXED:      modeName = "FIXED"; break;
-			case CONSTRAINT_BALLSOCKET: modeName = "BALL SOCKET"; break;
-			case CONSTRAINT_ROPE:       modeName = "ROPE"; break;
-		}
-
-		hudtextparms_t params;
-		Q_memset( &params, 0, sizeof( params ) );
-
-		params.x = -1;
-		params.y = 0.8f;
-		params.r1 = 0;
-		params.g1 = 255;
-		params.b1 = 255;
-		params.a1 = 255;
-		params.fadeinTime = 0.01f;
-		params.fadeoutTime = 0.2f;
-		params.holdTime = 1.0f;
-		params.channel = 4;
-
-		char msg[64];
-		Q_snprintf( msg, sizeof(msg), "Constraint: %s", modeName );
-
-		UTIL_HudMessage( pPlayer, params, msg );
-	}
-
-
-	void CycleConstraintMode()
-	{
-		m_iConstraintMode =
-			(ConstraintMode_t)(( m_iConstraintMode + 1 ) % CONSTRAINT_COUNT);
-
-		ShowConstraintHUD();
-	}
-
-	ConstraintMode_t GetConstraintMode() const
-	{
-		return m_iConstraintMode;
-	}
-
-	CBaseEntity *GetBeamEntity();
+	CBaseEntity* GetBeamEntity();
 
 	DECLARE_SERVERCLASS();
 
 private:
-	CNetworkVar( int, m_active );
+	CNetworkVar(int, m_active);
 	bool		m_useDown;
-	bool m_bBurningSoundPlaying;
 	EHANDLE		m_hObject;
 	float		m_distance;
 	float		m_movementLength;
 	float		m_lastYaw;
 	int			m_soundState;
-	CNetworkVar( int, m_viewModelIndex );
+	CNetworkVar(int, m_viewModelIndex);
 	Vector		m_originalObjectPosition;
 
-	CGravControllerPointOther		m_gravCallback;
+	CJBGravControllerPoint		m_gravCallback;
 	pelletlist_t m_activePellets[MAX_PELLETS];
 	int			m_pelletCount;
 	int			m_objectPelletCount;
 
-	ConstraintMode_t m_iConstraintMode;
-	
 	int			m_pelletHeld;
 	int			m_pelletAttract;
 	float		m_glueTime;
-	CNetworkVar( bool, m_glueTouching );
-	CUtlVector<EHANDLE> m_FrozenObjects;
-	EHANDLE m_hLastShockedNPC;
-	int m_iMode;
+	CNetworkVar(bool, m_glueTouching);
 };
 
-IMPLEMENT_SERVERCLASS_ST( CWeaponGravityGunOther, DT_WeaponGravityGunOther )
-	SendPropVector( SENDINFO_NAME(m_gravCallback.m_targetPosition, m_targetPosition), -1, SPROP_COORD ),
-	SendPropVector( SENDINFO_NAME(m_gravCallback.m_worldPosition, m_worldPosition), -1, SPROP_COORD ),
-	SendPropInt( SENDINFO(m_active), 1, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO(m_glueTouching), 1, SPROP_UNSIGNED ),
-	SendPropModelIndex( SENDINFO(m_viewModelIndex) ),
+IMPLEMENT_SERVERCLASS_ST(CJBWeaponGravityGun, DT_JBWeaponGravityGun)
+SendPropVector(SENDINFO_NAME(m_gravCallback.m_targetPosition, m_targetPosition), -1, SPROP_COORD),
+SendPropVector(SENDINFO_NAME(m_gravCallback.m_worldPosition, m_worldPosition), -1, SPROP_COORD),
+SendPropInt(SENDINFO(m_active), 1, SPROP_UNSIGNED),
+SendPropInt(SENDINFO(m_glueTouching), 1, SPROP_UNSIGNED),
+SendPropModelIndex(SENDINFO(m_viewModelIndex)),
 END_SEND_TABLE()
 
-LINK_ENTITY_TO_CLASS( weapon_oldphysgun, CWeaponGravityGunOther );
-PRECACHE_WEAPON_REGISTER(weapon_oldphysgun);
+LINK_ENTITY_TO_CLASS(weapon_jbphysgun, CJBWeaponGravityGun);
+PRECACHE_WEAPON_REGISTER(weapon_jbphysgun);
 
 //---------------------------------------------------------
 // Save/Restore
 //---------------------------------------------------------
-BEGIN_SIMPLE_DATADESC( pelletlist_t )
+BEGIN_SIMPLE_DATADESC(pelletlist_t)
 
-	DEFINE_FIELD( localNormal,				FIELD_VECTOR ),
-	DEFINE_FIELD( pellet,						FIELD_EHANDLE ),
-	DEFINE_FIELD( parent,						FIELD_EHANDLE ),
+DEFINE_FIELD(localNormal, FIELD_VECTOR),
+DEFINE_FIELD(pellet, FIELD_EHANDLE),
+DEFINE_FIELD(parent, FIELD_EHANDLE),
 
 END_DATADESC()
 
-BEGIN_DATADESC( CWeaponGravityGunOther )
+BEGIN_DATADESC(CJBWeaponGravityGun)
 
-	DEFINE_FIELD( m_active,				FIELD_INTEGER ),
-	DEFINE_FIELD( m_useDown,				FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_hObject,				FIELD_EHANDLE ),
-	DEFINE_FIELD( m_distance,			FIELD_FLOAT ),
-	DEFINE_FIELD( m_movementLength,		FIELD_FLOAT ),
-	DEFINE_FIELD( m_lastYaw,				FIELD_FLOAT ),
-	DEFINE_FIELD( m_soundState,			FIELD_INTEGER ),
-	DEFINE_FIELD( m_viewModelIndex,		FIELD_INTEGER ),
-	DEFINE_FIELD( m_originalObjectPosition,	FIELD_POSITION_VECTOR ),
-	DEFINE_EMBEDDED( m_gravCallback ),
-	// Physptrs can't be saved in embedded classes..
-	DEFINE_PHYSPTR( m_gravCallback.m_controller ),
-	DEFINE_EMBEDDED_AUTO_ARRAY( m_activePellets ),
-	DEFINE_FIELD( m_pelletCount,			FIELD_INTEGER ),
-	DEFINE_FIELD( m_objectPelletCount,	FIELD_INTEGER ),
-	DEFINE_FIELD( m_pelletHeld,			FIELD_INTEGER ),
-	DEFINE_FIELD( m_pelletAttract,		FIELD_INTEGER ),
-	DEFINE_FIELD( m_glueTime,			FIELD_TIME ),
-	DEFINE_FIELD( m_glueTouching,		FIELD_BOOLEAN ),
+DEFINE_FIELD(m_active, FIELD_INTEGER),
+DEFINE_FIELD(m_useDown, FIELD_BOOLEAN),
+DEFINE_FIELD(m_hObject, FIELD_EHANDLE),
+DEFINE_FIELD(m_distance, FIELD_FLOAT),
+DEFINE_FIELD(m_movementLength, FIELD_FLOAT),
+DEFINE_FIELD(m_lastYaw, FIELD_FLOAT),
+DEFINE_FIELD(m_soundState, FIELD_INTEGER),
+DEFINE_FIELD(m_viewModelIndex, FIELD_INTEGER),
+DEFINE_FIELD(m_originalObjectPosition, FIELD_POSITION_VECTOR),
+DEFINE_EMBEDDED(m_gravCallback),
+// Physptrs can't be saved in embedded classes..
+DEFINE_PHYSPTR(m_gravCallback.m_controller),
+DEFINE_EMBEDDED_AUTO_ARRAY(m_activePellets),
+DEFINE_FIELD(m_pelletCount, FIELD_INTEGER),
+DEFINE_FIELD(m_objectPelletCount, FIELD_INTEGER),
+DEFINE_FIELD(m_pelletHeld, FIELD_INTEGER),
+DEFINE_FIELD(m_pelletAttract, FIELD_INTEGER),
+DEFINE_FIELD(m_glueTime, FIELD_TIME),
+DEFINE_FIELD(m_glueTouching, FIELD_BOOLEAN),
 
 END_DATADESC()
 
@@ -632,246 +738,67 @@ END_DATADESC()
 enum physgun_soundstate { SS_SCANNING, SS_LOCKEDON };
 enum physgun_soundIndex { SI_LOCKEDON = 0, SI_SCANNING = 1, SI_LIGHTOBJECT = 2, SI_HEAVYOBJECT = 3, SI_ON, SI_OFF };
 
-void CGravityPellet::CreateRopeVisual( CBaseEntity *pAttachedEnt )
-{
-	DestroyRopeVisual();
-
-	if ( !pAttachedEnt )
-		return;
-
-	char startName[64], midName[64], endName[64];
-	Q_snprintf( startName, sizeof(startName), "rope_start_%d", entindex() );
-	Q_snprintf( midName,   sizeof(midName),   "rope_mid_%d",   entindex() );
-	Q_snprintf( endName,   sizeof(endName),   "rope_end_%d",   entindex() );
-
-	Vector startPos = GetAbsOrigin();
-	Vector endPos   = pAttachedEnt->WorldSpaceCenter();
-
-	// ---- start anchor (pellet) ----
-	CBaseEntity *pStart = CreateEntityByName( "move_rope" );
-	if ( !pStart ) return;
-
-	pStart->SetAbsOrigin( startPos );
-	pStart->SetName( AllocPooledString( startName ) );
-	pStart->SetParent( this );
-	pStart->KeyValue( "Slack", "256" );
-	pStart->KeyValue( "Width", "2" );
-	DispatchSpawn( pStart );
-	pStart->Activate();
-
-	// ---- end anchor (object) ----
-	CBaseEntity *pEnd = CreateEntityByName( "move_rope" );
-	if ( !pEnd )
-	{
-		UTIL_Remove( pStart );
-		return;
-	}
-
-	pEnd->SetAbsOrigin( endPos );
-	pEnd->SetName( AllocPooledString( endName ) );
-	pEnd->SetParent( pAttachedEnt );
-	pEnd->KeyValue( "Slack", "256" );
-	pEnd->KeyValue( "Width", "2" );
-	DispatchSpawn( pEnd );
-	pEnd->Activate();
-
-	// ---- rope body ----
-	CBaseEntity *pMid = CreateEntityByName( "keyframe_rope" );
-	if ( !pMid )
-	{
-		UTIL_Remove( pStart );
-		UTIL_Remove( pEnd );
-		return;
-	}
-
-	pMid->SetAbsOrigin( (startPos + endPos) * 0.5f );
-	pMid->SetName( AllocPooledString( midName ) );
-
-	pMid->KeyValue( "NextKey", endName );
-	pMid->KeyValue( "RopeMaterial", "cable/cable.vmt" );
-	pMid->KeyValue( "Slack", "256" );
-	pMid->KeyValue( "Width", "2" );
-	pMid->KeyValue( "Subdivisions", "8" );
-
-	DispatchSpawn( pMid );
-	pMid->Activate();
-
-	// link start to mid
-	pStart->KeyValue( "NextKey", midName );
-
-	m_hRopeStart = pStart;
-	m_hRopeMid   = pMid;
-	m_hRopeEnd   = pEnd;
-}
-
-void CGravityPellet::DestroyRopeVisual()
-{
-	if ( m_hRopeMid )   UTIL_Remove( m_hRopeMid );
-	if ( m_hRopeStart ) UTIL_Remove( m_hRopeStart );
-	if ( m_hRopeEnd )   UTIL_Remove( m_hRopeEnd );
-
-	m_hRopeMid = NULL;
-	m_hRopeStart = NULL;
-	m_hRopeEnd = NULL;
-}
-
-
-
-bool CGravityPellet::MakeConstraint( CBaseEntity *pObject )
-{
-	IPhysicsObject *pReference = g_PhysWorldObject;
-	if ( GetMoveParent() )
-		pReference = GetMoveParent()->VPhysicsGetObject();
-
-	IPhysicsObject *pAttached = pObject->VPhysicsGetObject();
-	if ( !pReference || !pAttached )
-		return false;
-
-	Vector refPos, attPos;
-	pReference->GetPosition( &refPos, NULL );
-	pAttached->GetPosition( &attPos, NULL );
-	Vector constraintPos = ( refPos + attPos ) * 0.5f;
-
-	CWeaponGravityGunOther *pGun =
-	static_cast<CWeaponGravityGunOther *>( GetOwnerEntity() );
-
-
-	if ( !pGun )
-		return false;
-
-	switch ( pGun->GetConstraintMode() )
-	{
-		case CONSTRAINT_FIXED:
-		{
-			constraint_fixedparams_t fixed;
-			fixed.Defaults();
-			fixed.InitWithCurrentObjectState( pReference, pAttached );
-
-			m_pConstraint =
-				physenv->CreateFixedConstraint(
-					pReference, pAttached, NULL, fixed );
-			break;
-		}
-
-		case CONSTRAINT_BALLSOCKET:
-		{
-			constraint_ballsocketparams_t ball;
-			ball.Defaults();
-			ball.InitWithCurrentObjectState(
-				pReference, pAttached, constraintPos );
-
-			m_pConstraint =
-				physenv->CreateBallsocketConstraint(
-					pReference, pAttached, NULL, ball );
-			break;
-		}
-
-		case CONSTRAINT_ROPE:
-		{
-			Vector ropeAnchor = GetAbsOrigin();
-
-			constraint_lengthparams_t rope;
-			rope.Defaults();
-
-			rope.InitWorldspace(
-				pReference,
-				pAttached,
-				ropeAnchor,
-				ropeAnchor,
-				false
-			);
-
-			// Force rope length to 256 units regardless of current distance
-			rope.totalLength = 256.0f;
-			rope.minLength   = 0.0f; // slack allowed
-
-			m_pConstraint = physenv->CreateLengthConstraint( pReference, pAttached, NULL, rope );
-
-			// visuals (see section B)
-			CreateRopeVisual( pObject );
-
-			break;
-		}
-	}
-
-	if ( !m_pConstraint )
-		return false;
-
-	m_pConstraint->SetGameData( this );
-
-	MakeInert();
-	EmitSound( "Flare.Touch" );
-	g_pEffects->Sparks( constraintPos );
-
-	return true;
-}
-
 
 //=========================================================
 //=========================================================
 
-CWeaponGravityGunOther::CWeaponGravityGunOther()
+CJBWeaponGravityGun::CJBWeaponGravityGun()
 {
 	m_active = false;
 	m_bFiresUnderwater = true;
 	m_pelletAttract = -1;
 	m_pelletHeld = -1;
-	m_hLastShockedNPC = NULL;
-	m_iMode = MODE_FREEZE;
 }
 
 //=========================================================
 //=========================================================
-void CWeaponGravityGunOther::Spawn( )
+void CJBWeaponGravityGun::Spawn()
 {
 	BaseClass::Spawn();
-//	SetModel( GetWorldModel() );
-	CBasePlayer *pPlayer = ToBasePlayer(GetOwner());
+	//	SetModel( GetWorldModel() );
 
-	    ClientPrint(
-        pPlayer,
-        HUD_PRINTCENTER,
-		"PRIMARY FIRE: HOLD OBJECTS\n SECONDARY FIRE: LAUNCH PELLET OR FREEZE OBJECT\n"
-    );
 	FallInit();
 }
 
-void CWeaponGravityGunOther::OnRestore( void )
+bool CJBWeaponGravityGun::Deploy()
+{
+	return BaseClass::Deploy();
+}
+
+void CJBWeaponGravityGun::OnRestore(void)
 {
 	BaseClass::OnRestore();
 
-	if ( m_gravCallback.m_controller )
+	if (m_gravCallback.m_controller)
 	{
-		m_gravCallback.m_controller->SetEventHandler( &m_gravCallback );
+		m_gravCallback.m_controller->SetEventHandler(&m_gravCallback);
 	}
 }
 
 
 //=========================================================
 //=========================================================
-void CWeaponGravityGunOther::Precache( void )
+void CJBWeaponGravityGun::Precache(void)
 {
 	BaseClass::Precache();
 
 	g_physgunBeam = PrecacheModel(PHYSGUN_BEAM_SPRITE);
-	PrecacheScriptSound( "Weapon_AR2.Special2" );
-	PrecacheScriptSound( "Weapon_Physgun.Scanning" );
-	PrecacheScriptSound( "Weapon_Physgun.LockedOn" );
-	PrecacheScriptSound( "Weapon_Physgun.LightObject" );
-	PrecacheScriptSound( "Weapon_Physgun.HeavyObject" );
-	PrecacheScriptSound( "Weapon_Physgun.On" );
-	PrecacheScriptSound( "Weapon_Physgun.Off" );
-	PrecacheScriptSound( "Weapon_Physgun.Special1" );
-    PrecacheScriptSound( "NPC_Stalker.Burn" );
+
+	PrecacheScriptSound("Weapon_Physgun.Scanning");
+	PrecacheScriptSound("Weapon_Physgun.LockedOn");
+	PrecacheScriptSound("Weapon_Physgun.Scanning");
+	PrecacheScriptSound("Weapon_Physgun.LightObject");
+	PrecacheScriptSound("Weapon_Physgun.HeavyObject");
 }
 
-void CWeaponGravityGunOther::EffectCreate( void )
+void CJBWeaponGravityGun::EffectCreate(void)
 {
 	EffectUpdate();
 	m_active = true;
 }
 
-void CWeaponGravityGunOther::EffectUpdate(void)
+
+void CJBWeaponGravityGun::EffectUpdate(void)
 {
 	Vector start, angles, forward, right;
 	trace_t tr;
@@ -881,6 +808,7 @@ void CWeaponGravityGunOther::EffectUpdate(void)
 		return;
 
 	m_viewModelIndex = pOwner->entindex();
+	// Make sure I've got a view model
 	CBaseViewModel* vm = pOwner->GetViewModel();
 	if (vm)
 	{
@@ -895,51 +823,28 @@ void CWeaponGravityGunOther::EffectUpdate(void)
 	UTIL_TraceLine(start, end, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr);
 	end = tr.endpos;
 	float distance = tr.fraction * 4096;
+	if (tr.fraction != 1)
+	{
+		// too close to the player, drop the object
+		if (distance < 36)
+		{
+			DetachObject();
+			return;
+		}
+	}
 
 	if (m_hObject == NULL && tr.DidHitNonWorldEntity())
 	{
 		CBaseEntity* pEntity = tr.m_pEnt;
+		// inform the object what was hit
 		ClearMultiDamage();
-		pEntity->DispatchTraceAttack(
-			CTakeDamageInfo(pOwner, pOwner, 0, DMG_PHYSGUN),
-			forward, &tr);
+		pEntity->DispatchTraceAttack(CTakeDamageInfo(pOwner, pOwner, 0, DMG_PHYSGUN), forward, &tr);
 		ApplyMultiDamage();
-
 		AttachObject(pEntity, start, tr.endpos, distance);
 		m_lastYaw = pOwner->EyeAngles().y;
 	}
 
-	if (phys_gunzapnpcs.GetBool())
-	{
-		if (tr.m_pEnt && tr.m_pEnt->IsNPC())
-		{
-			CAI_BaseNPC* pNPC = tr.m_pEnt->MyNPCPointer();
-			CTakeDamageInfo dmgInfo(this, tr.m_pEnt, 100.0f, DMG_SHOCK);
-			pNPC->TakeDamage(dmgInfo);
-			g_pEffects->Sparks(tr.endpos, 2, 2);
-			UTIL_Smoke(tr.endpos, random->RandomInt(20, 35), 10);
-			m_hLastShockedNPC = pNPC;
-		}
-
-		if (m_hLastShockedNPC && m_hLastShockedNPC->m_lifeState == LIFE_DEAD)
-		{
-			CBaseEntity* pRagdoll = gEntList.FindEntityByClassnameNearest("prop_ragdoll",
-				m_hLastShockedNPC->GetAbsOrigin(), 64);
-
-			if (pRagdoll)
-			{
-				IPhysicsObject* pPhys = pRagdoll->VPhysicsGetObject();
-				if (pPhys)
-				{
-					pPhys->SetVelocity(&vec3_origin, &vec3_origin);
-				}
-				AttachObject(pRagdoll, start, pRagdoll->GetAbsOrigin(), 64);
-				m_hLastShockedNPC = nullptr;
-			}
-		}
-	}
-
-	// --- yaw accumulation unchanged ---
+	// Add the incremental player yaw to the target transform
 	matrix3x4_t curMatrix, incMatrix, nextMatrix;
 	AngleMatrix(m_gravCallback.m_targetRotation, curMatrix);
 	AngleMatrix(QAngle(0, pOwner->EyeAngles().y - m_lastYaw, 0), incMatrix);
@@ -950,130 +855,107 @@ void CWeaponGravityGunOther::EffectUpdate(void)
 	CBaseEntity* pObject = m_hObject;
 	if (pObject)
 	{
-		// ----------------------------
-		// INPUT HANDLING (unchanged)
-		// ----------------------------
 		if (m_useDown)
 		{
 			if (pOwner->m_afButtonPressed & IN_USE)
+			{
 				m_useDown = false;
+			}
 		}
 		else
 		{
 			if (pOwner->m_afButtonPressed & IN_USE)
+			{
 				m_useDown = true;
+			}
 		}
 
 		if (m_useDown)
 		{
 			pOwner->SetPhysicsFlag(PFLAG_DIROVERRIDE, true);
 			if (pOwner->m_nButtons & IN_FORWARD)
+			{
 				m_distance = UTIL_Approach(1024, m_distance, gpGlobals->frametime * 100);
+			}
 			if (pOwner->m_nButtons & IN_BACK)
+			{
 				m_distance = UTIL_Approach(40, m_distance, gpGlobals->frametime * 100);
+			}
 		}
 
 		if (pOwner->m_nButtons & IN_WEAPON1)
-			m_distance = UTIL_Approach(1024, m_distance, m_distance * 0.1f);
-		if (pOwner->m_nButtons & IN_WEAPON2)
-			m_distance = UTIL_Approach(40, m_distance, m_distance * 0.1f);
-
-		pObject->TakeDamage(
-			CTakeDamageInfo(this, pOwner, 0, DMG_PHYSGUN));
-
-		// ==================================================
-		// FIXED TARGET POSITION LOGIC (NO SNAPPING)
-		// ==================================================
-
-		Vector desiredPos = start + forward * m_distance;
-		Vector awayFromPlayer = start + forward * 24.0f;
-
-		bool bBlocked = false;
-
-		UTIL_TraceLine(
-			start,
-			awayFromPlayer,
-			MASK_SOLID,
-			pOwner,
-			COLLISION_GROUP_NONE,
-			&tr
-		);
-
-		if (tr.fraction == 1.0f)
 		{
-			UTIL_TraceLine(
-				awayFromPlayer,
-				desiredPos,
-				MASK_SOLID,
-				pObject,
-				COLLISION_GROUP_NONE,
-				&tr
-			);
+			m_distance = UTIL_Approach(1024, m_distance, m_distance * 0.1);
+		}
+		if (pOwner->m_nButtons & IN_WEAPON2)
+		{
+			m_distance = UTIL_Approach(40, m_distance, m_distance * 0.1);
+		}
 
-			if (tr.fraction < 1.0f)
+		// Send the object a physics damage message (0 damage). Some objects interpret this 
+		// as something else being in control of their physics temporarily.
+		pObject->TakeDamage(CTakeDamageInfo(this, pOwner, 0, DMG_PHYSGUN));
+
+		Vector newPosition = start + forward * m_distance;
+		// 24 is a little larger than 16 * sqrt(2) (extent of player bbox)
+		// HACKHACK: We do this so we can "ignore" the player and the object we're manipulating
+		// If we had a filter for tracelines, we could simply filter both ents and start from "start"
+		Vector awayfromPlayer = start + forward * 24;
+
+		UTIL_TraceLine(start, awayfromPlayer, MASK_SOLID, pOwner, COLLISION_GROUP_NONE, &tr);
+		if (tr.fraction == 1)
+		{
+			UTIL_TraceLine(awayfromPlayer, newPosition, MASK_SOLID, pObject, COLLISION_GROUP_NONE, &tr);
+			Vector dir = tr.endpos - newPosition;
+			float distance = VectorNormalize(dir);
+			float maxDist = m_gravCallback.m_maxVel * gpGlobals->frametime;
+			if (distance > maxDist)
 			{
-				// obstruction: keep last target
-				desiredPos = m_gravCallback.m_targetPosition;
-				bBlocked = true;
+				newPosition += dir * maxDist;
 			}
 			else
 			{
-				// clear path: update distance
-				m_distance = (desiredPos - start).Length();
+				newPosition = tr.endpos;
 			}
 		}
 		else
 		{
-			// player space blocked
-			desiredPos = m_gravCallback.m_targetPosition;
-			bBlocked = true;
+			newPosition = tr.endpos;
 		}
 
-		// --------------------------------------------------
-		// Clamp per-frame movement (prevents violence)
-		// --------------------------------------------------
+		CreatePelletAttraction(phys_gunglueradius.GetFloat(), pObject);
 
-		Vector delta = desiredPos - m_gravCallback.m_targetPosition;
-		const float maxStep = 100.0f;
-
-		float len = delta.Length();
-		if (len > maxStep)
+		// If I'm looking more than 20 degrees away from the glue point, then give up
+		// This lets the player "gesture" for the glue to let go.
+		Vector pelletDir = m_gravCallback.m_worldPosition - start;
+		VectorNormalize(pelletDir);
+		if (DotProduct(pelletDir, forward) < 0.939)	// 0.939 ~= cos(20deg)
 		{
-			delta *= (maxStep / len);
-			desiredPos = m_gravCallback.m_targetPosition + delta;
+			// lose attach for 2 seconds if you're too far away
+			m_glueTime = gpGlobals->curtime + 1;
 		}
 
-		m_gravCallback.SetTargetPosition(desiredPos);
-		m_movementLength = delta.Length();
+		if (m_pelletHeld >= 0 && gpGlobals->curtime > m_glueTime)
+		{
+			CGravityPellet* pPelletAttract = m_activePellets[m_pelletAttract].pellet;
 
-		// --------------------------------------------------
+			g_pEffects->Sparks(pPelletAttract->GetAbsOrigin());
+		}
 
-		CreatePelletAttraction(
-			phys_gunglueradius.GetFloat(),
-			pObject
-		);
+		m_gravCallback.SetTargetPosition(newPosition);
+		Vector dir = (newPosition - pObject->GetLocalOrigin());
+		m_movementLength = dir.Length();
 	}
 	else
 	{
 		m_gravCallback.SetTargetPosition(end);
 	}
-
-	// --- auto-align logic unchanged ---
 	if (m_pelletHeld >= 0 && gpGlobals->curtime > m_glueTime)
 	{
 		Vector worldNormal, worldPos;
-		GetPelletWorldCoords(
-			m_pelletAttract,
-			&worldPos,
-			&worldNormal
-		);
+		GetPelletWorldCoords(m_pelletAttract, &worldPos, &worldNormal);
 
-		m_gravCallback.SetAutoAlign(
-			m_activePellets[m_pelletHeld].localNormal,
-			m_activePellets[m_pelletHeld].pellet->GetLocalOrigin(),
-			worldNormal,
-			worldPos
-		);
+		m_gravCallback.SetAutoAlign(m_activePellets[m_pelletHeld].localNormal, m_activePellets[m_pelletHeld].pellet->GetLocalOrigin(), worldNormal, worldPos);
 	}
 	else
 	{
@@ -1083,34 +965,31 @@ void CWeaponGravityGunOther::EffectUpdate(void)
 	NetworkStateChanged();
 }
 
-void CWeaponGravityGunOther::SoundCreate( void )
+void CJBWeaponGravityGun::SoundCreate(void)
 {
-	if( phys_gunsounds.GetBool() )
-	{
-	    m_soundState = SS_SCANNING;
-		SoundStart();
-	}
+	m_soundState = SS_SCANNING;
+	SoundStart();
 }
 
 
-void CWeaponGravityGunOther::SoundDestroy( void )
+void CJBWeaponGravityGun::SoundDestroy(void)
 {
 	SoundStop();
 }
 
 
-void CWeaponGravityGunOther::SoundStop( void )
+void CJBWeaponGravityGun::SoundStop(void)
 {
-	switch( m_soundState )
+	switch (m_soundState)
 	{
 	case SS_SCANNING:
-		GetOwner()->StopSound( "Weapon_Physgun.Scanning" );
+		GetOwner()->StopSound("Weapon_Physgun.Scanning");
 		break;
 	case SS_LOCKEDON:
-		GetOwner()->StopSound( "Weapon_Physgun.Scanning" );
-		GetOwner()->StopSound( "Weapon_Physgun.LockedOn" );
-		GetOwner()->StopSound( "Weapon_Physgun.LightObject" );
-		GetOwner()->StopSound( "Weapon_Physgun.HeavyObject" );
+		GetOwner()->StopSound("Weapon_Physgun.Scanning");
+		GetOwner()->StopSound("Weapon_Physgun.LockedOn");
+		GetOwner()->StopSound("Weapon_Physgun.LightObject");
+		GetOwner()->StopSound("Weapon_Physgun.HeavyObject");
 		break;
 	}
 }
@@ -1127,146 +1006,142 @@ void CWeaponGravityGunOther::SoundStop( void )
 //			scale - the output scale
 // Output : parametric fraction between low & high
 //-----------------------------------------------------------------------------
-static float UTIL_LineFraction( float value, float low, float high, float scale )
+static float UTIL_LineFraction(float value, float low, float high, float scale)
 {
-	if ( value < low )
+	if (value < low)
 		value = low;
-	if ( value > high )
+	if (value > high)
 		value = high;
 
 	float delta = high - low;
-	if ( delta == 0 )
+	if (delta == 0)
 		return 0;
-	
-	return scale * (value-low) / delta;
+
+	return scale * (value - low) / delta;
 }
 
-void CWeaponGravityGunOther::SoundStart( void )
-{	
-	CPASAttenuationFilter filter( GetOwner() );
+void CJBWeaponGravityGun::SoundStart(void)
+{
+	CPASAttenuationFilter filter(GetOwner());
 	filter.MakeReliable();
 
-	switch( m_soundState )
+	switch (m_soundState)
 	{
 	case SS_SCANNING:
-		{
-			EmitSound( filter, GetOwner()->entindex(), "Weapon_Physgun.Scanning" );
-		}
-		break;
+	{
+		EmitSound(filter, GetOwner()->entindex(), "Weapon_Physgun.Scanning");
+	}
+	break;
 	case SS_LOCKEDON:
-		{
-			// BUGBUG - If you start a sound with a pitch of 100, the pitch shift doesn't work!
-			
-			EmitSound( filter, GetOwner()->entindex(), "Weapon_Physgun.LockedOn" );
-			EmitSound( filter, GetOwner()->entindex(), "Weapon_Physgun.Scanning" );
-			EmitSound( filter, GetOwner()->entindex(), "Weapon_Physgun.LightObject" );
-			EmitSound( filter, GetOwner()->entindex(), "Weapon_Physgun.HeavyObject" );
-		}
-		break;
+	{
+		// BUGBUG - If you start a sound with a pitch of 100, the pitch shift doesn't work!
+
+		EmitSound(filter, GetOwner()->entindex(), "Weapon_Physgun.LockedOn");
+		EmitSound(filter, GetOwner()->entindex(), "Weapon_Physgun.Scanning");
+		EmitSound(filter, GetOwner()->entindex(), "Weapon_Physgun.LightObject");
+		EmitSound(filter, GetOwner()->entindex(), "Weapon_Physgun.HeavyObject");
+	}
+	break;
 	}
 	//   volume, att, flags, pitch
 }
 
-void CWeaponGravityGunOther::SoundUpdate( void )
+void CJBWeaponGravityGun::SoundUpdate(void)
 {
-	if( phys_gunsounds.GetBool() )
+	int newState;
+
+	if (m_hObject)
+		newState = SS_LOCKEDON;
+	else
+		newState = SS_SCANNING;
+
+	if (newState != m_soundState)
 	{
-		int newState;
-		
-		if ( m_hObject )
-			newState = SS_LOCKEDON;
-		else
-			newState = SS_SCANNING;
-
-		if ( newState != m_soundState )
-		{
-			SoundStop();
-			m_soundState = newState;
-			SoundStart();
-		}
-
-		switch( m_soundState )
-		{
-		case SS_SCANNING:
-			break;
-		case SS_LOCKEDON:
-			{
-				CPASAttenuationFilter filter( GetOwner() );
-				filter.MakeReliable();
-
-				float height = m_hObject->GetAbsOrigin().z - m_originalObjectPosition.z;
-
-				// go from pitch 90 to 150 over a height of 500
-				int pitch = 90 + (int)UTIL_LineFraction( height, 0, 500, 60 );
-
-				CSoundParameters params;
-				if ( GetParametersForSound( "Weapon_Physgun.LockedOn", params, NULL ) )
-				{
-					EmitSound_t ep( params );
-					ep.m_nFlags = SND_CHANGE_VOL | SND_CHANGE_PITCH;
-					ep.m_nPitch = pitch;
-
-					EmitSound( filter, GetOwner()->entindex(), ep );
-				}
-
-				// attenutate the movement sounds over 200 units of movement
-				float distance = UTIL_LineFraction( m_movementLength, 0, 200, 1.0 );
-
-				// blend the "mass" sounds between 50 and 500 kg
-				IPhysicsObject *pPhys = m_hObject->VPhysicsGetObject();
-				
-				float fade = UTIL_LineFraction( pPhys->GetMass(), 50, 500, 1.0 );
-
-				if ( GetParametersForSound( "Weapon_Physgun.LightObject", params, NULL ) )
-				{
-					EmitSound_t ep( params );
-					ep.m_nFlags = SND_CHANGE_VOL;
-					ep.m_flVolume = fade * distance;
-
-					EmitSound( filter, GetOwner()->entindex(), ep );
-				}
-
-				if ( GetParametersForSound( "Weapon_Physgun.HeavyObject", params, NULL ) )
-				{
-					EmitSound_t ep( params );
-					ep.m_nFlags = SND_CHANGE_VOL;
-					ep.m_flVolume = (1.0 - fade) * distance;
-
-					EmitSound( filter, GetOwner()->entindex(), ep );
-				}
-			}
-			break;
-		}
+		SoundStop();
+		m_soundState = newState;
+		SoundStart();
 	}
 
-	else { return; }
+	switch (m_soundState)
+	{
+	case SS_SCANNING:
+		break;
+	case SS_LOCKEDON:
+	{
+		CPASAttenuationFilter filter(GetOwner());
+		filter.MakeReliable();
+
+		float height = m_hObject->GetAbsOrigin().z - m_originalObjectPosition.z;
+
+		// go from pitch 90 to 150 over a height of 500
+		int pitch = 90 + (int)UTIL_LineFraction(height, 0, 500, 60);
+
+		CSoundParameters params;
+		if (GetParametersForSound("Weapon_Physgun.LockedOn", params, NULL))
+		{
+			EmitSound_t ep(params);
+			ep.m_nFlags = SND_CHANGE_VOL | SND_CHANGE_PITCH;
+			ep.m_nPitch = pitch;
+
+			EmitSound(filter, GetOwner()->entindex(), ep);
+		}
+
+		// attenutate the movement sounds over 200 units of movement
+		float distance = UTIL_LineFraction(m_movementLength, 0, 200, 1.0);
+
+		// blend the "mass" sounds between 50 and 500 kg
+		IPhysicsObject* pPhys = m_hObject->VPhysicsGetObject();
+
+		float fade = UTIL_LineFraction(pPhys->GetMass(), 50, 500, 1.0);
+
+		if (GetParametersForSound("Weapon_Physgun.LightObject", params, NULL))
+		{
+			EmitSound_t ep(params);
+			ep.m_nFlags = SND_CHANGE_VOL;
+			ep.m_flVolume = fade * distance;
+
+			EmitSound(filter, GetOwner()->entindex(), ep);
+		}
+
+		if (GetParametersForSound("Weapon_Physgun.HeavyObject", params, NULL))
+		{
+			EmitSound_t ep(params);
+			ep.m_nFlags = SND_CHANGE_VOL;
+			ep.m_flVolume = (1.0 - fade) * distance;
+
+			EmitSound(filter, GetOwner()->entindex(), ep);
+		}
+	}
+	break;
+	}
 }
 
-void CWeaponGravityGunOther::AddPellet( CGravityPellet *pPellet, CBaseEntity *pAttach, const Vector &surfaceNormal )
+
+void CJBWeaponGravityGun::AddPellet(CGravityPellet* pPellet, CBaseEntity* pAttach, const Vector& surfaceNormal)
 {
-	Assert(m_pelletCount<MAX_PELLETS);
+	Assert(m_pelletCount < MAX_PELLETS);
 
 	m_activePellets[m_pelletCount].localNormal = surfaceNormal;
-	if ( pAttach )
+	if (pAttach)
 	{
 		EntityMatrix tmp;
-		tmp.InitFromEntity( pAttach );
-		m_activePellets[m_pelletCount].localNormal = tmp.WorldToLocalRotation( surfaceNormal );
+		tmp.InitFromEntity(pAttach);
+		m_activePellets[m_pelletCount].localNormal = tmp.WorldToLocalRotation(surfaceNormal);
 	}
 	m_activePellets[m_pelletCount].pellet = pPellet;
 	m_activePellets[m_pelletCount].parent = pAttach;
 	m_pelletCount++;
 }
 
-void CWeaponGravityGunOther::SortPelletsForObject( CBaseEntity *pObject )
+void CJBWeaponGravityGun::SortPelletsForObject(CBaseEntity* pObject)
 {
 	m_objectPelletCount = 0;
-	for ( int i = 0; i < m_pelletCount; i++ )
+	for (int i = 0; i < m_pelletCount; i++)
 	{
 		// move pellets attached to the active object to the front of the list
-		if ( m_activePellets[i].parent == pObject && !m_activePellets[i].pellet->IsInert() )
+		if (m_activePellets[i].parent == pObject && !m_activePellets[i].pellet->IsInert())
 		{
-			if ( i != 0 )
+			if (i != 0)
 			{
 				pelletlist_t tmp = m_activePellets[m_objectPelletCount];
 				m_activePellets[m_objectPelletCount] = m_activePellets[i];
@@ -1276,10 +1151,10 @@ void CWeaponGravityGunOther::SortPelletsForObject( CBaseEntity *pObject )
 		}
 	}
 
-	SetObjectPelletsColor( 192, 255, 192 );
+	SetObjectPelletsColor(192, 255, 192);
 }
 
-void CWeaponGravityGunOther::SetObjectPelletsColor( int r, int g, int b )
+void CJBWeaponGravityGun::SetObjectPelletsColor(int r, int g, int b)
 {
 	color32 color;
 	color.r = r;
@@ -1287,78 +1162,72 @@ void CWeaponGravityGunOther::SetObjectPelletsColor( int r, int g, int b )
 	color.b = b;
 	color.a = 255;
 
-	for ( int i = 0; i < m_objectPelletCount; i++ )
+	for (int i = 0; i < m_objectPelletCount; i++)
 	{
-		CGravityPellet *pPellet = m_activePellets[i].pellet;
-		if ( !pPellet || pPellet->IsInert() )
+		CGravityPellet* pPellet = m_activePellets[i].pellet;
+		if (!pPellet || pPellet->IsInert())
 			continue;
 
 		pPellet->m_clrRender = color;
 	}
 }
 
-CBaseEntity *CWeaponGravityGunOther::GetBeamEntity()
+CBaseEntity* CJBWeaponGravityGun::GetBeamEntity()
 {
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	if ( !pOwner )
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+	if (!pOwner)
 		return NULL;
 
 	// Make sure I've got a view model
-	CBaseViewModel *vm = pOwner->GetViewModel();
-	if ( vm )
+	CBaseViewModel* vm = pOwner->GetViewModel();
+	if (vm)
 		return vm;
 
 	return pOwner;
 }
 
-void CWeaponGravityGunOther::DeleteActivePellets()
+void CJBWeaponGravityGun::DeleteActivePellets()
 {
-	CBaseEntity *pEnt = GetBeamEntity();
+	CBaseEntity* pEnt = GetBeamEntity();
 
-	for ( int i = 0; i < m_pelletCount; i++ )
+	for (int i = 0; i < m_pelletCount; i++)
 	{
-		CGravityPellet *pPellet = m_activePellets[i].pellet;
-		if ( !pPellet )
+		CGravityPellet* pPellet = m_activePellets[i].pellet;
+		if (!pPellet)
 			continue;
 
 		Vector forward;
-		AngleVectors( pPellet->GetAbsAngles(), &forward );
-		g_pEffects->Dust( pPellet->GetAbsOrigin(), forward, 32, 30 );
+		AngleVectors(pPellet->GetAbsAngles(), &forward);
 
 		// UNDONE: Probably should just do this client side
-		CBeam *pBeam = CBeam::BeamCreate( PHYSGUN_BEAM_SPRITE, 1.5 );
-		pBeam->PointEntInit( pPellet->GetAbsOrigin(), pEnt );
-		pBeam->SetEndAttachment( 1 );
-		pBeam->SetBrightness( 255 );
-		pBeam->SetColor( 0, 255, 0 );
+		CBeam* pBeam = CBeam::BeamCreate(PHYSGUN_BEAM_SPRITE, 3);
+		pBeam->PointEntInit(pPellet->GetAbsOrigin(), pEnt);
+		pBeam->SetEndAttachment(1);
+		pBeam->SetBrightness(255);
+		pBeam->SetColor(0, 255, 0);
 		pBeam->RelinkBeam();
-		pBeam->LiveForTime( 0.1 );
+		pBeam->LiveForTime(0.1);
 
-		CEffectData data;
-		data.m_vOrigin = pPellet->GetAbsOrigin();
-		data.m_vNormal = Vector(0, 0, 1);
-		DispatchEffect("cball_explode", data);
+		g_pEffects->EnergySplash(pPellet->GetAbsOrigin(), Vector(0, 0, 1));
 
-		g_pEffects->Sparks(pPellet->GetAbsOrigin());
-
-		UTIL_Remove( pPellet );
+		UTIL_Remove(pPellet);
 	}
 	m_pelletCount = 0;
 }
 
-void CWeaponGravityGunOther::CreatePelletAttraction( float radius, CBaseEntity *pObject )
+void CJBWeaponGravityGun::CreatePelletAttraction(float radius, CBaseEntity* pObject)
 {
 	int nearPellet = -1;
 	int objectPellet = -1;
-	float best = radius*radius;
+	float best = radius * radius;
 	// already have a pellet, check for in range
-	if ( m_pelletAttract >= 0 )
+	if (m_pelletAttract >= 0)
 	{
 		Vector attract, held;
-		GetPelletWorldCoords( m_pelletAttract, &attract, NULL );
-		GetPelletWorldCoords( m_pelletHeld, &held, NULL );
+		GetPelletWorldCoords(m_pelletAttract, &attract, NULL);
+		GetPelletWorldCoords(m_pelletHeld, &held, NULL);
 		float dist = (attract - held).Length();
-		if ( dist < radius * 2 )
+		if (dist < radius * 2)
 		{
 			nearPellet = m_pelletAttract;
 			objectPellet = m_pelletHeld;
@@ -1366,32 +1235,32 @@ void CWeaponGravityGunOther::CreatePelletAttraction( float radius, CBaseEntity *
 		}
 	}
 
-	if ( nearPellet < 0 )
+	if (nearPellet < 0)
 	{
 
-		for ( int i = 0; i < m_objectPelletCount; i++ )
-	{
-		CGravityPellet *pPellet = m_activePellets[i].pellet;
-			if ( !pPellet )
-				continue;
-			for ( int j = m_objectPelletCount; j < m_pelletCount; j++ )
+		for (int i = 0; i < m_objectPelletCount; i++)
 		{
-				CGravityPellet *pTest = m_activePellets[j].pellet;
-				if ( !pTest )
+			CGravityPellet* pPellet = m_activePellets[i].pellet;
+			if (!pPellet)
 				continue;
+			for (int j = m_objectPelletCount; j < m_pelletCount; j++)
+			{
+				CGravityPellet* pTest = m_activePellets[j].pellet;
+				if (!pTest)
+					continue;
 
-				if ( pTest->IsInert() )
+				if (pTest->IsInert())
 					continue;
 				float distSqr = (pTest->GetAbsOrigin() - pPellet->GetAbsOrigin()).LengthSqr();
-			if ( distSqr < best )
-			{
+				if (distSqr < best)
+				{
 					Vector worldPos, worldNormal;
-					GetPelletWorldCoords( j, &worldPos, &worldNormal );
+					GetPelletWorldCoords(j, &worldPos, &worldNormal);
 					// don't attract backside pellets (unless current pellet - prevent oscillation)
-					float dist = DotProduct( worldPos, worldNormal );
-					if ( m_pelletAttract == j || DotProduct( pPellet->GetAbsOrigin(), worldNormal ) - dist >= 0 )
+					float dist = DotProduct(worldPos, worldNormal);
+					if (m_pelletAttract == j || DotProduct(pPellet->GetAbsOrigin(), worldNormal) - dist >= 0)
 					{
-				best = distSqr;
+						best = distSqr;
 						nearPellet = j;
 						objectPellet = i;
 					}
@@ -1401,15 +1270,15 @@ void CWeaponGravityGunOther::CreatePelletAttraction( float radius, CBaseEntity *
 	}
 
 	m_glueTouching = false;
-	if ( nearPellet < 0 || objectPellet < 0 )
+	if (nearPellet < 0 || objectPellet < 0)
 	{
 		m_pelletAttract = -1;
 		m_pelletHeld = -1;
 		return;
 	}
 
-	if ( nearPellet != m_pelletAttract || objectPellet != m_pelletHeld )
-			{
+	if (nearPellet != m_pelletAttract || objectPellet != m_pelletHeld)
+	{
 		m_glueTime = gpGlobals->curtime;
 
 		m_pelletAttract = nearPellet;
@@ -1417,126 +1286,73 @@ void CWeaponGravityGunOther::CreatePelletAttraction( float radius, CBaseEntity *
 	}
 
 	// check for bonding
-	if ( best < 3*3 )
-				{
-					// This makes the pull towards the pellet stop getting stronger since some part of 
-					// the object is touching
+	if (best < 3 * 3)
+	{
+		// This makes the pull towards the pellet stop getting stronger since some part of 
+		// the object is touching
 		m_glueTouching = true;
-		}
 	}
+}
 
 
-IPhysicsObject *CWeaponGravityGunOther::GetPelletPhysObject( int pelletIndex )
+IPhysicsObject* CJBWeaponGravityGun::GetPelletPhysObject(int pelletIndex)
 {
-	if ( pelletIndex < 0 )
+	if (pelletIndex < 0)
 		return NULL;
 
-	CBaseEntity *pEntity = m_activePellets[pelletIndex].parent;
-	if ( pEntity )
+	CBaseEntity* pEntity = m_activePellets[pelletIndex].parent;
+	if (pEntity)
 		return pEntity->VPhysicsGetObject();
-	
+
 	return g_PhysWorldObject;
 }
 
-void CWeaponGravityGunOther::EffectDestroy( void )
+void CJBWeaponGravityGun::EffectDestroy(void)
 {
 	m_active = false;
 	SoundStop();
+
 	DetachObject();
 }
 
-void CWeaponGravityGunOther::DetachObject( void )
+void CJBWeaponGravityGun::DetachObject(void)
 {
 	m_pelletHeld = -1;
 	m_pelletAttract = -1;
 	m_glueTouching = false;
-	SetObjectPelletsColor( 255, 0, 0 );
+	SetObjectPelletsColor(255, 0, 0);
 	m_objectPelletCount = 0;
 
-	if ( m_hObject )
+	if (m_hObject)
 	{
-		CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-		if ( !pOwner || !pOwner->IsAlive() )
-		return;
-
-		Pickup_OnPhysGunDrop( m_hObject, pOwner, DROPPED_BY_CANNON );
+		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+		Pickup_OnPhysGunDrop(m_hObject, pOwner, DROPPED_BY_CANNON);
 
 		m_gravCallback.DetachEntity();
 		m_hObject = NULL;
 	}
 }
 
-struct WeightRange_t
-{
-    float minKg;
-    float maxKg;
-    const char *desc;
-};
-
-static const WeightRange_t weightRanges[] =
-{
-    { 0.0f,    0.005f,   "about as heavy as a feather" },
-    { 0.005f,  0.02f,    "about as heavy as a sheet of paper" },
-    { 0.02f,   0.05f,    "about as heavy as a paperclip" },
-    { 0.05f,   0.15f,    "about as heavy as a AA battery" },
-    { 0.15f,   0.3f,     "about as heavy as a smartphone" },
-    { 0.3f,    0.6f,     "about as heavy as a loaf of bread" },
-    { 0.6f,    1.0f,     "about as heavy as a football" },
-    { 1.0f,    1.5f,     "about as heavy as a pair of boots" },
-    { 1.5f,    2.5f,     "about as heavy as a laptop" },
-    { 2.5f,    4.0f,     "about as heavy as a newborn baby" },
-    { 4.0f,    6.0f,     "about as heavy as a small cat" },
-    { 6.0f,    8.0f,     "about as heavy as a bowling ball" },
-    { 8.0f,    10.0f,    "about as heavy as a large watermelon" },
-    { 10.0f,   15.0f,    "about as heavy as a car tire" },
-    { 15.0f,   20.0f,    "about as heavy as a mountain bike" },
-    { 20.0f,   30.0f,    "about as heavy as a small dog" },
-    { 30.0f,   50.0f,    "about as heavy as a large dog" },
-    { 50.0f,   80.0f,    "about as heavy as a washing machine" },
-    { 80.0f,   120.0f,   "about as heavy as a refrigerator" },
-    { 120.0f,  200.0f,   "about as heavy as a vending machine" },
-    { 200.0f,  350.0f,   "about as heavy as a motorcycle" },
-    { 350.0f,  600.0f,   "about as heavy as a small piano" },
-    { 600.0f,  1000.0f,  "about as heavy as a small car" },
-    { 1000.0f, 2000.0f,  "about as heavy as a full-size car" },
-    { 2000.0f, 5000.0f,  "about as heavy as a delivery van" },
-    { 5000.0f, 10000.0f, "about as heavy as a bus" },
-    { 10000.0f, 25000.0f, "about as heavy as a small truck" },
-    { 25000.0f, 50000.0f, "about as heavy as a loaded semi-truck" },
-    { 50000.0f, 100000.0f, "about as heavy as a tank" },
-    { 100000.0f, FLT_MAX, "about as heavy as a building" }
-};
-
-const char* GetWeightComparison( float massKg )
-{
-    for ( int i = 0; i < ARRAYSIZE(weightRanges); i++ )
-    {
-        if ( massKg >= weightRanges[i].minKg && massKg < weightRanges[i].maxKg )
-            return weightRanges[i].desc;
-    }
-    return "something of unknown weight";
-}
-
-void CWeaponGravityGunOther::AttachObject( CBaseEntity *pObject, const Vector& start, const Vector &end, float distance )
+void CJBWeaponGravityGun::AttachObject(CBaseEntity* pObject, const Vector& start, const Vector& end, float distance)
 {
 	m_hObject = pObject;
 	m_useDown = false;
-	IPhysicsObject *pPhysics = pObject ? (pObject->VPhysicsGetObject()) : NULL;
-	if ( pPhysics && pObject->GetMoveType() == MOVETYPE_VPHYSICS )
+	IPhysicsObject* pPhysics = pObject ? (pObject->VPhysicsGetObject()) : NULL;
+	if (pPhysics && pObject->GetMoveType() == MOVETYPE_VPHYSICS)
 	{
 		m_distance = distance;
 
-		m_gravCallback.AttachEntity( pObject, pPhysics, end );
+		m_gravCallback.AttachEntity(pObject, pPhysics, end);
 		float mass = pPhysics->GetMass();
-		Msg( "Object mass: %.2f lbs (%.2f kg) '%s'\n", kg2lbs(mass), mass, GetWeightComparison(mass) );
-		float vel = 5e5;
-		//if ( mass > phys_gunmass.GetFloat() )
-		//{
-			//vel = (vel*phys_gunmass.GetFloat())/mass;
-		//}
-		m_gravCallback.SetMaxVelocity( vel );
-		//Msg( "Object mass: %.2f lbs (%.2f kg), '%s', Located at: %f %f %f\n", kg2lbs(mass), mass, GetWeightComparison(mass), pObject->GetAbsOrigin().x, pObject->GetAbsOrigin().y, pObject->GetAbsOrigin().z );
-		//Msg( "ANG: %f %f %f\n", pObject->GetAbsAngles().x, pObject->GetAbsAngles().y, pObject->GetAbsAngles().z );
+		Msg("Object mass: %.2f lbs (%.2f kg)\n", kg2lbs(mass), mass);
+		float vel = phys_gunvel.GetFloat();
+		if (mass > phys_gunmass.GetFloat())
+		{
+			vel = (vel * phys_gunmass.GetFloat()) / mass;
+		}
+		m_gravCallback.SetMaxVelocity(vel);
+		//		Msg( "Object mass: %.2f lbs (%.2f kg) %f %f %f\n", kg2lbs(mass), mass, pObject->GetAbsOrigin().x, pObject->GetAbsOrigin().y, pObject->GetAbsOrigin().z );
+		//		Msg( "ANG: %f %f %f\n", pObject->GetAbsAngles().x, pObject->GetAbsAngles().y, pObject->GetAbsAngles().z );
 
 		m_originalObjectPosition = pObject->GetAbsOrigin();
 
@@ -1544,12 +1360,12 @@ void CWeaponGravityGunOther::AttachObject( CBaseEntity *pObject, const Vector& s
 		m_pelletHeld = -1;
 
 		pPhysics->Wake();
-		SortPelletsForObject( pObject );
-		
-		CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-		if( pOwner )
+		SortPelletsForObject(pObject);
+
+		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+		if (pOwner)
 		{
-			Pickup_OnPhysGunPickup( pObject, pOwner );
+			Pickup_OnPhysGunPickup(pObject, pOwner);
 		}
 	}
 	else
@@ -1560,11 +1376,11 @@ void CWeaponGravityGunOther::AttachObject( CBaseEntity *pObject, const Vector& s
 
 //=========================================================
 //=========================================================
-void CWeaponGravityGunOther::PrimaryAttack( void )
+void CJBWeaponGravityGun::PrimaryAttack(void)
 {
-	if ( !m_active )
+	if (!m_active)
 	{
-		SendWeaponAnim( ACT_VM_PRIMARYATTACK );
+		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 		EffectCreate();
 		SoundCreate();
 	}
@@ -1575,153 +1391,96 @@ void CWeaponGravityGunOther::PrimaryAttack( void )
 	}
 }
 
-void CWeaponGravityGunOther::SecondaryAttack( void )
+void CJBWeaponGravityGun::SecondaryAttack(void)
 {
-    m_flNextSecondaryAttack = gpGlobals->curtime + 0.15f;
-
-    CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-    if ( !pOwner )
-        return;
-
-    // Aim ray
-    Vector vFwd; pOwner->EyeVectors( &vFwd );
-    const Vector vStart = pOwner->Weapon_ShootPosition();
-    const Vector vEnd   = vStart + vFwd * 2048.0f;
-
-    trace_t tr;
-    UTIL_TraceLine( vStart, vEnd, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
-    if ( tr.fraction == 1.0f || (tr.surface.flags & SURF_SKY) )
-        return;
-
-	if (m_iMode == MODE_FREEZE)
+	m_flNextSecondaryAttack = gpGlobals->curtime + 0.1;
+	if (m_active)
 	{
-
-		CBaseEntity *pHit = m_hObject;
-		if ( !pHit ) { return; }
-
-		IPhysicsObject *pPhys = pHit->VPhysicsGetObject();
-		if ( !pPhys ) { return; }
-
-		const char *pszClass = pHit->GetClassname();
-
-		// Check if it's a buggy / jeep
-		if (FStrEq(pszClass, "prop_vehicle_jeep"))
-		{
-			// Temporary debug overlay message attached to the entity
-			NDebugOverlay::EntityText(
-				pHit->entindex(), // entity index
-				0,                   // text line
-				"Im sorry, but freezing me will crash the game!",
-				5.0f,                 // duration (seconds)
-				255, 0, 0, 255 // color
-			);
-
-			return; // Skip freezing
-		}
-
-
-		// Toggle motion
-		const bool bWasMotionEnabled = pPhys->IsMotionEnabled();
-
-		if ( bWasMotionEnabled )
-		{
-			// Freeze
-			pPhys->EnableMotion( false );
-			pPhys->Sleep();                 // settle immediately
-
-			if ( m_FrozenObjects.Find( pHit ) == m_FrozenObjects.InvalidIndex() )
-			{
-				m_FrozenObjects.AddToTail( pHit );
-			}
-		}
-		else
-		{
-			// Unfreeze
-			pPhys->EnableMotion( true );
-			pPhys->Wake();                  // wake so gravity applies
-			AngularImpulse ang( 0, 0, 0 );
-			Vector vel( 0, 0, 0 );
-			pPhys->SetVelocity( &vel, &ang );
-			m_FrozenObjects.FindAndRemove( pHit );
-		}
+		EffectDestroy();
+		SoundDestroy();
+		return;
 	}
-	else
-	{
+
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+	Assert(pOwner);
+
+	if (pOwner->GetAmmoCount(m_iSecondaryAmmoType) <= 0)
+		return;
+
 	m_viewModelIndex = pOwner->entindex();
 	// Make sure I've got a view model
-	CBaseViewModel *vm = pOwner->GetViewModel();
-	if ( vm )
+	CBaseViewModel* vm = pOwner->GetViewModel();
+	if (vm)
 	{
 		m_viewModelIndex = vm->entindex();
 	}
 
 	Vector forward;
-	pOwner->EyeVectors( &forward );
+	pOwner->EyeVectors(&forward);
 
 	Vector start = pOwner->Weapon_ShootPosition();
 	Vector end = start + forward * 4096;
 
 	trace_t tr;
-	UTIL_TraceLine( start, end, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
-	if ( tr.fraction == 1.0 || (tr.surface.flags & SURF_SKY) )
+	UTIL_TraceLine(start, end, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr);
+	if (tr.fraction == 1.0 || (tr.surface.flags & SURF_SKY))
 		return;
 
-	CBaseEntity *pHit = tr.m_pEnt;
-	
-	if ( pHit->entindex() == 0 )
+	CBaseEntity* pHit = tr.m_pEnt;
+
+	if (pHit->entindex() == 0)
 	{
 		pHit = NULL;
 	}
-	/*
 	else
 	{
 		// if the object has no physics object, or isn't a physprop or brush entity, then don't glue
-		if ( !pHit->VPhysicsGetObject() || pHit->GetMoveType() != MOVETYPE_VPHYSICS )
+		if (!pHit->VPhysicsGetObject() || pHit->GetMoveType() != MOVETYPE_VPHYSICS)
 			return;
-	} */ // Everything is glued
+	}
 
 	QAngle angles;
-	WeaponSound( SINGLE );
-	pOwner->RemoveAmmo( 1, m_iSecondaryAmmoType );
+	WeaponSound(SINGLE);
+	pOwner->RemoveAmmo(1, m_iSecondaryAmmoType);
 
-	VectorAngles( tr.plane.normal, angles );
+	VectorAngles(tr.plane.normal, angles);
 	Vector endPoint = tr.endpos + tr.plane.normal;
-	CGravityPellet *pPellet = (CGravityPellet *)CBaseEntity::Create( "gravity_pellet", endPoint, angles, this );
-	if ( pHit )
+	CGravityPellet* pPellet = (CGravityPellet*)CBaseEntity::Create("gravity_pellet", endPoint, angles, this);
+	if (pHit)
 	{
-		pPellet->SetParent( pHit );
+		pPellet->SetParent(pHit);
 	}
-	AddPellet( pPellet, pHit, tr.plane.normal );
+	AddPellet(pPellet, pHit, tr.plane.normal);
 
-	g_pEffects->Sparks(pPellet->GetAbsOrigin());
+	pPellet->m_pGun = this;
 
 	// UNDONE: Probably should just do this client side
-	CBaseEntity *pEnt = GetBeamEntity();
-	CBeam *pBeam = CBeam::BeamCreate( PHYSGUN_BEAM_SPRITE, 1.5 );
-	pBeam->PointEntInit( endPoint, pEnt );
-	pBeam->SetEndAttachment( 1 );
-	pBeam->SetBrightness( 255 );
-	pBeam->SetColor( 255, 0, 0 );
+	CBaseEntity* pEnt = GetBeamEntity();
+	CBeam* pBeam = CBeam::BeamCreate(PHYSGUN_BEAM_SPRITE, 1.5);
+	pBeam->PointEntInit(endPoint, pEnt);
+	pBeam->SetEndAttachment(1);
+	pBeam->SetBrightness(255);
+	pBeam->SetColor(255, 0, 0);
 	pBeam->RelinkBeam();
-	pBeam->LiveForTime( 0.1 );
-	}
+	pBeam->LiveForTime(0.1);
+
 }
 
-void CWeaponGravityGunOther::WeaponIdle( void )
+void CJBWeaponGravityGun::WeaponIdle(void)
 {
-	if ( HasWeaponIdleTimeElapsed() )
+	if (HasWeaponIdleTimeElapsed())
 	{
-		SendWeaponAnim( ACT_VM_IDLE );
-		if ( m_active )
+		SendWeaponAnim(ACT_VM_IDLE);
+		if (m_active)
 		{
-			CBaseEntity *pObject = m_hObject;
+			CBaseEntity* pObject = m_hObject;
 			// pellet is touching object, so glue it
-			if ( pObject && m_glueTouching )
+			if (pObject && m_glueTouching)
 			{
-				CGravityPellet *pPellet = m_activePellets[m_pelletAttract].pellet;
-				if ( pPellet->MakeConstraint( pObject ) )
+				CGravityPellet* pPellet = m_activePellets[m_pelletAttract].pellet;
+				if (pPellet->MakeConstraint(pObject))
 				{
-					WeaponSound( SPECIAL1 );
+					WeaponSound(SPECIAL1);
 					m_flNextPrimaryAttack = gpGlobals->curtime + 0.75;
 					m_activePellets[m_pelletHeld].pellet->MakeInert();
 				}
@@ -1733,42 +1492,32 @@ void CWeaponGravityGunOther::WeaponIdle( void )
 	}
 }
 
-void CWeaponGravityGunOther::ItemPostFrame( void )
+void CJBWeaponGravityGun::ItemPostFrame(void)
 {
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
 	if (!pOwner)
 		return;
 
-	if ( pOwner->m_afButtonPressed & IN_ATTACK2 )
+	UpdatePelletHighlight();
+
+	if (pOwner->m_afButtonPressed & IN_ATTACK2)
 	{
 		SecondaryAttack();
 	}
-	else if ( pOwner->m_nButtons & IN_ATTACK )
+	else if (pOwner->m_nButtons & IN_ATTACK)
 	{
 		PrimaryAttack();
 	}
-	else if ( pOwner->m_afButtonPressed & IN_RELOAD )
+	else if (pOwner->m_afButtonPressed & IN_RELOAD)
 	{
 		Reload();
 	}
-	else if ( ( pOwner->m_nButtons & IN_USE ) &&
-		( pOwner->m_nButtons & IN_SPEED ) )
-    {
-        if ( m_iMode == MODE_FREEZE )
-            m_iMode = MODE_PELLET;
-        else
-            m_iMode = MODE_FREEZE;
-
-        ClientPrint( pOwner, HUD_PRINTCENTER,
-            (m_iMode == MODE_FREEZE) ? "Mode: Freeze" : "Mode: Pellet" );
-    }
-
 	// -----------------------
 	//  No buttons down
 	// -----------------------
-	else 
+	else
 	{
-		WeaponIdle( );
+		WeaponIdle();
 		return;
 	}
 }
@@ -1777,7 +1526,7 @@ void CWeaponGravityGunOther::ItemPostFrame( void )
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CWeaponGravityGunOther::HasAnyAmmo( void )
+bool CJBWeaponGravityGun::HasAnyAmmo(void)
 {
 	//Always report that we have ammo
 	return true;
@@ -1785,77 +1534,25 @@ bool CWeaponGravityGunOther::HasAnyAmmo( void )
 
 //=========================================================
 //=========================================================
-bool CWeaponGravityGunOther::Reload( void )
+bool CJBWeaponGravityGun::Reload(void)
 {
-    CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-    if ( !pOwner )
-        return false;
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
 
-	if ( m_iMode == MODE_FREEZE )
+	if (pOwner->GetAmmoCount(m_iSecondaryAmmoType) != MAX_PELLETS)
 	{
-		for ( int i = 0; i < m_FrozenObjects.Count(); i++ )
-		{
-			CBaseEntity *pEnt = m_FrozenObjects[i].Get();
-			if ( !pEnt )
-				continue;
-
-			IPhysicsObject *pPhys = pEnt->VPhysicsGetObject();
-			if ( !pPhys )
-				continue;
-
-			pPhys->EnableMotion( true );
-			pPhys->Wake();
-		}
-
-		m_FrozenObjects.Purge();
-
-		EmitSound("Weapon_Physgun.Off");
-
-		/*
-		hudtextparms_t textParams;
-		textParams.channel = 0;
-		textParams.x = -1;
-		textParams.y = 0.25;
-		textParams.effect = 0;
-		textParams.r1 = textParams.g1 = 255;
-		textParams.b1 = 100;
-		textParams.a1 = 255;
-		textParams.r2 = textParams.g2 = 255;
-		textParams.b2 = 100;
-		textParams.a2 = 255;
-		textParams.fadeinTime = 0.1f;
-		textParams.fadeoutTime = 0.5f;
-		textParams.holdTime = 2.0f;
-		textParams.fxTime = 0.0f;
-
-		UTIL_HudMessage( pOwner, textParams, "All frozen objects unfrozen!" );
-		*/
+		pOwner->SetAmmoCount(MAX_PELLETS, m_iSecondaryAmmoType);
+		DeleteActivePellets();
+		WeaponSound(RELOAD);
+		return true;
 	}
-	else
-	{
-		if ( pOwner->GetAmmoCount(m_iSecondaryAmmoType) != MAX_PELLETS )
-		{
-			pOwner->SetAmmoCount( MAX_PELLETS, m_iSecondaryAmmoType );
-			DeleteActivePellets();
-			CGravityPellet *pPellet;
-			for ( int i = 0; i < m_pelletCount; i++ )
-			{
-				CGravityPellet *pPellet = m_activePellets[i].pellet;
-				if ( pPellet )
-				{
-					pPellet->DestroyRopeVisual();
-				}
-			}
-			WeaponSound( RELOAD );
-			return true;
-		}
-	}
+
 	return false;
 }
 
 /*
+
 #define NUM_COLLISION_TESTS 2500
-void CC_CollisionTest( const CCommand &args )
+void CC_CollisionTest( void )
 {
 	if ( !physenv )
 		return;
@@ -1881,7 +1578,7 @@ void CC_CollisionTest( const CCommand &args )
 			theta = fabs(fmod(theta, DEG2RAD(360)));
 			phi += NUM_COLLISION_TESTS * 1997.99;
 			phi = fabs(fmod(phi, DEG2RAD(180)));
-			
+
 			float st, ct, sp, cp;
 			SinCos( theta, &st, &ct );
 			SinCos( phi, &sp, &cp );
@@ -1889,7 +1586,7 @@ void CC_CollisionTest( const CCommand &args )
 			targets[i].x = radius * ct * sp;
 			targets[i].y = radius * st * sp;
 			targets[i].z = radius * cp;
-			
+
 			// make the trace 1024 units long
 			Vector dir = targets[i] - start;
 			VectorNormalize(dir);
@@ -1901,9 +1598,9 @@ void CC_CollisionTest( const CCommand &args )
 	//Vector results[NUM_COLLISION_TESTS];
 
 	int testType = 0;
-	if ( args.ArgC() >= 2 )
+	if ( engine->Cmd_Argc() >= 2 )
 	{
-		testType = atoi( args[1] );
+		testType = atoi(engine->Cmd_Argv(1));
 	}
 	float duration = 0;
 	Vector size[2];
@@ -1953,28 +1650,141 @@ void CC_CollisionTest( const CCommand &args )
 #endif
 }
 static ConCommand collision_test("collision_test", CC_CollisionTest, "Tests collision system", FCVAR_CHEAT );
+
 */
 
-void physgun_cycleconstraint_sv()
+bool CGravityPellet::MakeConstraint(CBaseEntity* pObject)
 {
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
-	if ( !pPlayer )
-		return;
+	IPhysicsObject* pReference = g_PhysWorldObject;
+	if (GetMoveParent())
+	{
+		pReference = GetMoveParent()->VPhysicsGetObject();
+	}
+	IPhysicsObject* pAttached = pObject->VPhysicsGetObject();
+	if (!pReference || !pAttached)
+	{
+		return false;
+	}
 
-	CBaseCombatWeapon *pWpn = pPlayer->GetActiveWeapon();
-	if ( !pWpn )
-		return;
+	switch (g_iConstraintMode)
+	{
+	case CONSTRAINT_WELD:
+	{
+		constraint_fixedparams_t fixed;
+		fixed.Defaults();
+		fixed.InitWithCurrentObjectState(pReference, pAttached);
 
-	if ( !pWpn->ClassMatches( "weapon_physgun" ) )
-		return;
+		m_pConstraint = physenv->CreateFixedConstraint(
+			pReference,
+			pAttached,
+			NULL,
+			fixed
+		);
+	}
+	break;
 
-	CWeaponGravityGunOther *pGun = static_cast<CWeaponGravityGunOther *>( pWpn );
-	pGun->CycleConstraintMode();
+	case CONSTRAINT_BALLSOCKET:
+	{
+		Vector posA, posB;
+		pReference->GetPosition(&posA, NULL);
+		pAttached->GetPosition(&posB, NULL);
+
+		Vector midpoint = (posA + posB) * 0.5f;
+
+		constraint_ballsocketparams_t ball;
+		ball.Defaults();
+		ball.InitWithCurrentObjectState(pReference, pAttached, midpoint);
+
+		m_pConstraint = physenv->CreateBallsocketConstraint(
+			pReference,
+			pAttached,
+			NULL,
+			ball
+		);
+	}
+	break;
+
+	case CONSTRAINT_ROPE:
+	{
+		Vector posA, posB;
+		pReference->GetPosition(&posA, NULL);
+		pAttached->GetPosition(&posB, NULL);
+
+		constraint_lengthparams_t length;
+		length.Defaults();
+
+		// Setup attachment points
+		length.InitWorldspace(
+			pReference,
+			pAttached,
+			posA,
+			posB,
+			false
+		);
+
+		// limit rope length
+		length.totalLength = 256.0f;
+		length.minLength = 0;
+
+		length.constraint.forceLimit = 0;
+
+		m_pConstraint = physenv->CreateLengthConstraint(
+			pReference,
+			pAttached,
+			NULL,
+			length
+		);
+
+		CGravityPellet* pA = m_pGun->GetPelletHeld();
+		CGravityPellet* pB = m_pGun->GetPelletAttract();
+
+		if (pA && pB)
+		{
+			Vector posA = pA->GetAbsOrigin();
+			Vector posB = pB->GetAbsOrigin();
+
+			char startName[64];
+			char endName[64];
+
+			Q_snprintf(startName, sizeof(startName), "rope_start_%d", gpGlobals->tickcount);
+			Q_snprintf(endName, sizeof(endName), "rope_end_%d", gpGlobals->tickcount);
+
+			CBaseEntity* ropeStart = CreateEntityByName("move_rope");
+			CBaseEntity* ropeEnd = CreateEntityByName("keyframe_rope");
+
+			if (ropeStart && ropeEnd)
+			{
+				ropeStart->SetAbsOrigin(posA);
+				ropeEnd->SetAbsOrigin(posB);
+
+				ropeStart->SetName(MAKE_STRING(startName));
+				ropeEnd->SetName(MAKE_STRING(endName));
+
+				ropeStart->KeyValue("NextKey", endName);
+				ropeStart->KeyValue("Width", "3");
+				ropeStart->KeyValue("Slack", "0");
+				ropeStart->KeyValue("TextureScale", "1");
+				ropeStart->KeyValue("RopeMaterial", "cable/rope");
+
+				DispatchSpawn(ropeStart);
+				DispatchSpawn(ropeEnd);
+
+				ropeStart->SetParent(pA);
+				ropeEnd->SetParent(pB);
+
+				ropeStart->Activate();
+				ropeEnd->Activate();
+			}
+		}
+	}
+	break;
+	}
+
+	if (m_pConstraint)
+	{
+		m_pConstraint->SetGameData(this);
+	}
+
+	MakeInert();
+	return true;
 }
-
-ConCommand gabeplus_physgun_cycleconstraint(
-    "gabe+_physgun_cycleconstraint",
-    physgun_cycleconstraint_sv,
-    "Cycles physgun constraint mode",
-    FCVAR_ARCHIVE
-);

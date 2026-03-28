@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation ============//
 //
-// Purpose: Speedrun Timer HUD (Stylized)
+// Purpose: Speedrun Timer HUD (FIXED - NO RESOLUTION BUG)
 //
 //=============================================================================
 
@@ -41,6 +41,7 @@ public:
 private:
 	float m_flEndTime;
 	float m_flNextAlarmTime;
+	float m_flLastCurTime;   // 🔥 FIX: detect time reset
 
 	bool  m_bStarted;
 	bool  m_bFinished;
@@ -64,6 +65,7 @@ CHudSpeedrunTimer::CHudSpeedrunTimer(const char* pElementName)
 
 	m_flEndTime = 0.0f;
 	m_flNextAlarmTime = 0.0f;
+	m_flLastCurTime = 0.0f;
 
 	m_bStarted = false;
 	m_bFinished = false;
@@ -83,6 +85,7 @@ void CHudSpeedrunTimer::Init()
 	m_bStarted = false;
 	m_bFinished = false;
 	m_flNextAlarmTime = 0.0f;
+	m_flLastCurTime = 0.0f;
 }
 
 //------------------------------------------------------------
@@ -91,6 +94,7 @@ void CHudSpeedrunTimer::VidInit()
 	m_bStarted = false;
 	m_bFinished = false;
 	m_flNextAlarmTime = 0.0f;
+	m_flLastCurTime = gpGlobals->curtime;
 
 	m_hTitleFont = surface()->CreateFont();
 	surface()->SetFontGlyphSet(m_hTitleFont, "Tahoma", 26, 600, 0, 0, vgui::ISurface::FONTFLAG_ANTIALIAS);
@@ -128,17 +132,27 @@ void CHudSpeedrunTimer::OnThink()
 
 	C_BasePlayer* p = C_BasePlayer::GetLocalPlayer();
 
-	if (m_bFinished && p && p->IsAlive())
+	//------------------------------------------------------------
+	// 🔥 FIX: Detect resolution/video reset (curtime jump backwards)
+	//------------------------------------------------------------
+	if (gpGlobals->curtime < m_flLastCurTime)
 	{
+		// Do NOT trigger restart — just safely reset timer
 		StartTimerFromConVar();
+		m_flLastCurTime = gpGlobals->curtime;
 		return;
 	}
+
+	m_flLastCurTime = gpGlobals->curtime;
 
 	if (!m_bStarted)
 		return;
 
 	float t = m_flEndTime - gpGlobals->curtime;
 
+	//------------------------------------------------------------
+	// ALARM
+	//------------------------------------------------------------
 	if (t <= 30.0f && t > 0.0f)
 	{
 		if (gpGlobals->curtime >= m_flNextAlarmTime)
@@ -148,16 +162,19 @@ void CHudSpeedrunTimer::OnThink()
 		}
 	}
 
-	if (t <= 0.0f && !m_bFinished)
+	//------------------------------------------------------------
+	// TIMER FINISHED (SAFE)
+	//------------------------------------------------------------
+	if (t <= 0.0f && !m_bFinished && m_bStarted)
 	{
+		m_bFinished = true;
+		m_bStarted = false;
+
 		if (p)
 		{
 			ClientPrint(p, HUD_PRINTCENTER, spdrun_endmsg.GetString());
-			engine->ClientCmd("mp_restartgame 1");
+			engine->ClientCmd("mp_restartgame 1"); // safe now
 		}
-
-		m_bStarted = false;
-		m_bFinished = true;
 	}
 }
 
@@ -168,8 +185,6 @@ bool CHudSpeedrunTimer::ShouldDraw()
 	return (val && val[0] && Q_stricmp(val, "0") != 0);
 }
 
-//------------------------------------------------------------
-// 🔥 SHADOW TEXT HELPER
 //------------------------------------------------------------
 void CHudSpeedrunTimer::DrawShadowText(HFont font, int x, int y, Color col, const wchar_t* text)
 {
@@ -202,11 +217,7 @@ void CHudSpeedrunTimer::Paint()
 	char buf[32];
 	Q_snprintf(buf, sizeof(buf), "%02d:%02d", min, s);
 
-	//------------------------------------------------------------
-	// COLORS + PULSE
-	//------------------------------------------------------------
 	bool danger = (t <= 30.0f && !m_bFinished);
-
 	float pulse = fabs(sin(gpGlobals->curtime * 6.0f));
 
 	Color bg = danger ? Color(60 + pulse * 80, 0, 0, 180) : Color(20, 20, 20, 160);
@@ -217,19 +228,12 @@ void CHudSpeedrunTimer::Paint()
 		? Color(255, 80 + pulse * 100, 80, 255)
 		: Color(255, 255, 255, 255);
 
-	//------------------------------------------------------------
-	// BACK PANEL
-	//------------------------------------------------------------
 	surface()->DrawSetColor(bg);
 	surface()->DrawFilledRect(0, 0, 300, 140);
 
-	// outline
 	surface()->DrawSetColor(outline);
 	surface()->DrawOutlinedRect(0, 0, 300, 140);
 
-	//------------------------------------------------------------
-	// TEXT
-	//------------------------------------------------------------
 	wchar_t wTitle[] = L"ROUND TIME";
 
 	wchar_t wTime[32];

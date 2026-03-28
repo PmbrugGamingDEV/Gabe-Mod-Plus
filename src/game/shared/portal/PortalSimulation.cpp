@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2006, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -7,12 +7,12 @@
 
 
 #include "cbase.h"
-#include "PortalSimulation.h"
+#include "portalsimulation.h"
 #include "vphysics_interface.h"
 #include "physics.h"
 #include "portal_shareddefs.h"
 #include "StaticCollisionPolyhedronCache.h"
-#include "model_types.h"
+#include "model_types.h."
 #include "filesystem.h"
 #include "collisionutils.h"
 #include "tier1/callqueue.h"
@@ -197,10 +197,10 @@ CPortalSimulator::~CPortalSimulator( void )
 
 
 
-bool CPortalSimulator::MoveTo( const Vector &ptCenter, const QAngle &angles )
+void CPortalSimulator::MoveTo( const Vector &ptCenter, const QAngle &angles )
 {
 	if( (m_InternalData.Placement.ptCenter == ptCenter) && (m_InternalData.Placement.qAngles == angles) ) //not actually moving at all
-		return true;
+		return;
 
 	CREATEDEBUGTIMER( functionTimer );
 
@@ -318,13 +318,7 @@ bool CPortalSimulator::MoveTo( const Vector &ptCenter, const QAngle &angles )
 #endif
 
 	CreatePolyhedrons();	
-
-	if (!CreateAllCollision())
-	{
-		ClearLocalCollision();
-		return false;
-	}
-
+	CreateAllCollision();
 #ifndef CLIENT_DLL
 	CreateAllPhysics();
 #endif
@@ -351,8 +345,6 @@ bool CPortalSimulator::MoveTo( const Vector &ptCenter, const QAngle &angles )
 	STOPDEBUGTIMER( functionTimer );
 	DECREMENTTABSPACING();
 	DEBUGTIMERONLY( DevMsg( 2, "[PSDT:%d] %sCPortalSimulator::MoveTo() FINISH: %fms\n", GetPortalSimulatorGUID(), TABSPACING, functionTimer.GetDuration().GetMillisecondsF() ); );
-
-	return true;
 }
 
 
@@ -1611,7 +1603,7 @@ void CPortalSimulator::ClearLinkedEntities( void )
 #endif //#ifndef CLIENT_DLL
 
 
-bool CPortalSimulator::CreateAllCollision( void )
+void CPortalSimulator::CreateAllCollision( void )
 {
 	CREATEDEBUGTIMER( functionTimer );
 
@@ -1619,30 +1611,25 @@ bool CPortalSimulator::CreateAllCollision( void )
 	DEBUGTIMERONLY( DevMsg( 2, "[PSDT:%d] %sCPortalSimulator::CreateAllCollision() START\n", GetPortalSimulatorGUID(), TABSPACING ); );
 	INCREMENTTABSPACING();
 
-	if (!CreateLocalCollision()) 
-	{
-		return false;
-	}
+	CreateLocalCollision();
 	CreateLinkedCollision();
 
 	STOPDEBUGTIMER( functionTimer );
 	DECREMENTTABSPACING();
 	DEBUGTIMERONLY( DevMsg( 2, "[PSDT:%d] %sCPortalSimulator::CreateAllCollision() FINISH: %fms\n", GetPortalSimulatorGUID(), TABSPACING, functionTimer.GetDuration().GetMillisecondsF() ); );
-
-	return true;
 }
 
 
 
-bool CPortalSimulator::CreateLocalCollision( void )
+void CPortalSimulator::CreateLocalCollision( void )
 {
 	AssertMsg( m_bLocalDataIsReady, "Portal simulator attempting to create local collision before being placed." );
 
 	if( m_CreationChecklist.bLocalCollisionGenerated )
-		return true;
+		return;
 
 	if( IsCollisionGenerationEnabled() == false )
-		return true;
+		return;
 
 	DEBUGTIMERONLY( s_iPortalSimulatorGUID = GetPortalSimulatorGUID() );
 
@@ -1679,12 +1666,6 @@ bool CPortalSimulator::CreateLocalCollision( void )
 			
 			Assert( Representation.pCollide == NULL );
 			Representation.pCollide = ConvertPolyhedronsToCollideable( &pPolyhedronsBase[Representation.PolyhedronGroup.iStartIndex], Representation.PolyhedronGroup.iNumPolyhedrons );
-
-			if (Representation.pCollide == NULL) {
-				m_InternalData.Simulation.Static.World.Brushes.pCollideable = NULL;
-				return false;
-			}
-
 			Assert( Representation.pCollide != NULL );
 		}
 	}
@@ -1750,7 +1731,6 @@ bool CPortalSimulator::CreateLocalCollision( void )
 	DEBUGTIMERONLY( DevMsg( 2, "[PSDT:%d] %sCPortalSimulator::CreateLocalCollision() FINISH: %fms\n", GetPortalSimulatorGUID(), TABSPACING, functionTimer.GetDuration().GetMillisecondsF() ); );
 
 	m_CreationChecklist.bLocalCollisionGenerated = true;
-	return true;
 }
 
 
@@ -1963,11 +1943,7 @@ void CPortalSimulator::CreatePolyhedrons( void )
 				ICollideable *pProp = StaticProps[i];
 
 				CPolyhedron *PolyhedronArray[1024];
-				int iPolyhedronCount = 0;
-				if (pProp->GetSolid() != SOLID_NONE) // makes player not get stuck in non-solid static props
-				{
-					iPolyhedronCount = g_StaticCollisionPolyhedronCache.GetStaticPropPolyhedrons(pProp, PolyhedronArray, 1024);
-				}
+				int iPolyhedronCount = g_StaticCollisionPolyhedronCache.GetStaticPropPolyhedrons( pProp, PolyhedronArray, 1024 );
 
 				StaticPropPolyhedronGroups_t indices;
 				indices.iStartIndex = m_InternalData.Simulation.Static.World.StaticProps.Polyhedrons.Count();
@@ -2653,7 +2629,7 @@ static CPhysCollide *ConvertPolyhedronsToCollideable( CPolyhedron **pPolyhedrons
 	{
 		pConvexes[iConvexCount] = physcollision->ConvexFromConvexPolyhedron( *pPolyhedrons[i] );
 
-		// Assert( pConvexes[iConvexCount] != NULL );
+		Assert( pConvexes[iConvexCount] != NULL );
 		
 		if( pConvexes[iConvexCount] )
 			++iConvexCount;		
@@ -2917,8 +2893,7 @@ void CPSCollisionEntity::Spawn( void )
 	s_PortalSimulatorCollisionEntities[entindex()] = true;
 	VPhysicsSetObject( NULL );
 	AddFlag( FL_WORLDBRUSH );
-	AddEffects( EF_NODRAW | EF_NOSHADOW | EF_NORECEIVESHADOW );
-	IncrementInterpolationFrame();
+	AddEFlags( EF_NODRAW | EF_NOINTERP | EF_NOSHADOW | EF_NORECEIVESHADOW );
 }
 
 void CPSCollisionEntity::Activate( void )

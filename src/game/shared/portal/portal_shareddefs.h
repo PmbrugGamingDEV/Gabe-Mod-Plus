@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -28,7 +28,7 @@
 
 #define MIN_FLING_SPEED 300
 
-//#define PORTAL_HIDE_PLAYER_RAGDOLL 1
+#define PORTAL_HIDE_PLAYER_RAGDOLL 1
 
 enum PortalFizzleType_t
 {

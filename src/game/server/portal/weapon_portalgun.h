@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -40,7 +40,6 @@ public:
 	// HACK HACK! Used to make the gun visually change when going through a cleanser!
 	CNetworkVar( float,	m_fEffectsMaxSize1 );
 	CNetworkVar( float,	m_fEffectsMaxSize2 );
-	CNetworkVar(float, m_fPortalPlacementDelay); // Delay for placing portals
 
 public:
 	virtual const Vector& GetBulletSpread( void )
@@ -49,8 +48,6 @@ public:
 		return cone;
 	}
 	
-	virtual bool Lower(void);
-	virtual bool CanLower();
 	virtual void Precache ( void );
 
 	virtual void CreateSounds( void );
@@ -113,8 +110,6 @@ public:
 
 	PortalWeaponID GetWeaponID( void ) const { return WEAPON_PORTALGUN; }
 
-	void ItemPostFrame(void);
-
 protected:
 
 	void	StartEffects( void );	// Initialize all sprites and beams
@@ -140,8 +135,6 @@ public:
 private:
 	CWeaponPortalgun( const CWeaponPortalgun & );
 
-	float	m_flSoonestPrimaryAttack;
-	float	m_flSoonestSecondaryAttack;
 };
 
 

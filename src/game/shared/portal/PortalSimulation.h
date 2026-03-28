@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2006, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Provides structures and classes necessary to simulate a portal.
 //
@@ -280,7 +280,7 @@ public:
 	CPortalSimulator( void );
 	~CPortalSimulator( void );
 
-	bool				MoveTo(const Vector &ptCenter, const QAngle &angles);
+	void				MoveTo( const Vector &ptCenter, const QAngle &angles );
 	void				ClearEverything( void );
 
 	void				AttachTo( CPortalSimulator *pLinkedPortalSimulator );
@@ -374,8 +374,8 @@ protected:
 	void				ClearLinkedEntities( void ); //gets rid of transformed shadow clones
 #endif
 
-	bool				CreateAllCollision(void);
-	bool				CreateLocalCollision(void);
+	void				CreateAllCollision( void );
+	void				CreateLocalCollision( void );
 	void				CreateLinkedCollision( void );
 
 	void				ClearAllCollision( void );

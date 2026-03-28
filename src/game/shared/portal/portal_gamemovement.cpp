@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Special handling for Portal usable ladders
 //
@@ -12,11 +12,12 @@
 #include "portal_collideable_enumerator.h"
 #include "prop_portal_shared.h"
 #include "rumble_shared.h"
-#include "portal_player_shared.h"
 
 #if defined( CLIENT_DLL )
+	#include "c_portal_player.h"
 	#include "c_rumble.h"
 #else
+	#include "portal_player.h"
 	#include "env_player_surface_trigger.h"
 	#include "portal_gamestats.h"
 	#include "physicsshadowclone.h"
@@ -131,7 +132,7 @@ void CPortalGameMovement::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMov
 	// Cropping movement speed scales mv->m_fForwardSpeed etc. globally
 	// Once we crop, we don't want to recursively crop again, so we set the crop
 	//  flag globally here once per usercmd cycle.
-	m_iSpeedCropped = SPEED_CROPPED_RESET;
+	m_bSpeedCropped = false;
 
 	player = pPlayer;
 	mv = pMove;
@@ -168,6 +169,7 @@ bool CPortalGameMovement::CheckJumpButton()
 {
 	if ( BaseClass::CheckJumpButton() && GetPortalPlayer() )
 	{
+		GetPortalPlayer()->DoAnimationEvent( PLAYERANIMEVENT_JUMP, 0 );
 		return true;
 	}
 
@@ -384,7 +386,7 @@ void CPortalGameMovement::PlayerRoughLandingEffects( float fvol )
 		{
 			EmitSound_t ep( params );
 			ep.m_nPitch = 125.0f - player->m_Local.m_flFallVelocity * 0.03f;					// lower pitch the harder they land
-			ep.m_flVolume = MIN( player->m_Local.m_flFallVelocity * 0.00075f - 0.38, 1.0f );	// louder the harder they land
+			ep.m_flVolume = min( player->m_Local.m_flFallVelocity * 0.00075f - 0.38, 1.0f );	// louder the harder they land
 
 			CBaseEntity::EmitSound( filter, player->entindex(), ep );
 		}
@@ -415,7 +417,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 
 	// Check the -x, -y quadrant
 	mins = minsSrc;
-	maxs.Init( MIN( 0, maxsSrc.x ), MIN( 0, maxsSrc.y ), maxsSrc.z );
+	maxs.Init( min( 0, maxsSrc.x ), min( 0, maxsSrc.y ), maxsSrc.z );
 	ray.Init( start, end, mins, maxs );
 
 	if( pPlayerPortal )
@@ -431,7 +433,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	}
 
 	// Check the +x, +y quadrant
-	mins.Init( MAX( 0, minsSrc.x ), MAX( 0, minsSrc.y ), minsSrc.z );
+	mins.Init( max( 0, minsSrc.x ), max( 0, minsSrc.y ), minsSrc.z );
 	maxs = maxsSrc;
 	ray.Init( start, end, mins, maxs );
 
@@ -448,8 +450,8 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	}
 
 	// Check the -x, +y quadrant
-	mins.Init( minsSrc.x, MAX( 0, minsSrc.y ), minsSrc.z );
-	maxs.Init( MIN( 0, maxsSrc.x ), maxsSrc.y, maxsSrc.z );
+	mins.Init( minsSrc.x, max( 0, minsSrc.y ), minsSrc.z );
+	maxs.Init( min( 0, maxsSrc.x ), maxsSrc.y, maxsSrc.z );
 	ray.Init( start, end, mins, maxs );
 
 	if( pPlayerPortal )
@@ -465,8 +467,8 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	}
 
 	// Check the +x, -y quadrant
-	mins.Init( MAX( 0, minsSrc.x ), minsSrc.y, minsSrc.z );
-	maxs.Init( maxsSrc.x, MIN( 0, maxsSrc.y ), maxsSrc.z );
+	mins.Init( max( 0, minsSrc.x ), minsSrc.y, minsSrc.z );
+	maxs.Init( maxsSrc.x, min( 0, maxsSrc.y ), maxsSrc.z );
 	ray.Init( start, end, mins, maxs );
 
 	if( pPlayerPortal )

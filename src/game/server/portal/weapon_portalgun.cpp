@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -9,11 +9,11 @@
 #include "BasePropDoor.h"
 #include "portal_player.h"
 #include "te_effect_dispatch.h"
-#include "gameinterface.h"
+#include "GameInterface.h"
 #include "prop_combine_ball.h"
 #include "portal_shareddefs.h"
 #include "triggers.h"
-#include "collisionutils.h"
+#include "CollisionUtils.h"
 #include "cbaseanimatingprojectile.h"
 #include "weapon_physcannon.h"
 #include "prop_portal_shared.h"
@@ -21,7 +21,6 @@
 #include "weapon_portalgun_shared.h"
 #include "physicsshadowclone.h"
 #include "particle_parse.h"
-#include "rumble_shared.h"
 
 
 #define BLAST_SPEED_NON_PLAYER 1000.0f
@@ -37,7 +36,6 @@ BEGIN_NETWORK_TABLE( CWeaponPortalgun, DT_WeaponPortalgun )
 	SendPropBool( SENDINFO( m_bOpenProngs ) ),
 	SendPropFloat( SENDINFO( m_fCanPlacePortal1OnThisSurface ) ),
 	SendPropFloat( SENDINFO( m_fCanPlacePortal2OnThisSurface ) ),
-	SendPropFloat( SENDINFO( m_fPortalPlacementDelay ) ),
 	SendPropFloat( SENDINFO( m_fEffectsMaxSize1 ) ), // HACK HACK! Used to make the gun visually change when going through a cleanser!
 	SendPropFloat( SENDINFO( m_fEffectsMaxSize2 ) ),
 	SendPropInt( SENDINFO( m_EffectState ) ),
@@ -78,9 +76,7 @@ PRECACHE_WEAPON_REGISTER(weapon_portalgun);
 
 extern ConVar sv_portal_placement_debug;
 extern ConVar sv_portal_placement_never_fail;
-ConVar beta_quickinfo_show_portal_delay("beta_quickinfo_show_portal_delay", "1", FCVAR_REPLICATED | FCVAR_ARCHIVE);
-ConVar sv_portal_projectile_delay("sv_portal_projectile_delay", "0.5", FCVAR_REPLICATED | FCVAR_ARCHIVE, "Maximum delay after firing and before portal is placed. If set to a very high number behaviour will be the same as in normal Portal.");
-ConVar allow_portalgun_lowering_anim("allow_portalgun_lowering_anim", "0", FCVAR_GAMEDLL | FCVAR_ARCHIVE | FCVAR_REPLICATED, "Allows lowering animation (animation when you look at npc's) to play)");
+
 
 void CWeaponPortalgun::Spawn( void )
 {
@@ -234,85 +230,6 @@ void CWeaponPortalgun::Think( void )
 		m_fEffectsMaxSize2 -= gpGlobals->frametime * 400.0f;
 		if ( m_fEffectsMaxSize2 < 4.0f )
 			m_fEffectsMaxSize2 = 4.0f;
-	}
-
-	ConVar *beta_quickinfo = cvar->FindVar("beta_quickinfo");
-
-	if (beta_quickinfo_show_portal_delay.GetBool() && beta_quickinfo->GetBool())
-	{
-		bool bPlayer = false;
-		Vector vEye;
-		Vector vDirection;
-		Vector vTracerOrigin;
-
-		CBaseEntity *pOwner = GetOwner();
-
-		if (pOwner && pOwner->IsPlayer())
-		{
-			bPlayer = true;
-		}
-
-		if (bPlayer)
-		{
-			CPortal_Player *pPlayer = (CPortal_Player *)pOwner;
-
-			Vector forward, right, up;
-			AngleVectors(pPlayer->EyeAngles(), &forward, &right, &up);
-			pPlayer->EyeVectors(&vDirection, NULL, NULL);
-			vEye = pPlayer->EyePosition();
-
-			// Check if the players eye is behind the portal they're in and translate it
-			VMatrix matThisToLinked;
-			CProp_Portal *pPlayerPortal = pPlayer->m_hPortalEnvironment;
-
-			if (pPlayerPortal)
-			{
-				Vector ptPortalCenter;
-				Vector vPortalForward;
-
-				ptPortalCenter = pPlayerPortal->GetAbsOrigin();
-				pPlayerPortal->GetVectors(&vPortalForward, NULL, NULL);
-
-				Vector vEyeToPortalCenter = ptPortalCenter - vEye;
-
-				float fPortalDist = vPortalForward.Dot(vEyeToPortalCenter);
-				if (fPortalDist > 0.0f)
-				{
-					// Eye is behind the portal
-					matThisToLinked = pPlayerPortal->MatrixThisToLinked();
-				}
-				else
-				{
-					pPlayerPortal = NULL;
-				}
-			}
-
-			if (pPlayerPortal)
-			{
-				UTIL_Portal_VectorTransform(matThisToLinked, forward, forward);
-				UTIL_Portal_VectorTransform(matThisToLinked, right, right);
-				UTIL_Portal_VectorTransform(matThisToLinked, up, up);
-				UTIL_Portal_VectorTransform(matThisToLinked, vDirection, vDirection);
-				UTIL_Portal_PointTransform(matThisToLinked, vEye, vEye);
-			}
-
-			vTracerOrigin = vEye
-				+ forward * 30.0f
-				+ right * 4.0f
-				+ up * (-5.0f);
-
-			Vector vTraceStart = vEye + (vDirection * m_fMinRange1);
-
-			Vector vFinalPosition;
-			QAngle qFinalAngles;
-
-			PortalPlacedByType ePlacedBy = (bPlayer) ? (PORTAL_PLACED_BY_PLAYER) : (PORTAL_PLACED_BY_PEDESTAL);
-
-			trace_t tr;
-			TraceFirePortal(false, vTraceStart, vDirection, tr, vFinalPosition, qFinalAngles, ePlacedBy, false);
-
-			m_fPortalPlacementDelay = clamp((vTracerOrigin.DistTo(tr.endpos) / BLAST_SPEED), 0.0f, sv_portal_projectile_delay.GetFloat());
-		}
 	}
 }
 
@@ -605,7 +522,7 @@ float CWeaponPortalgun::FirePortal( bool bPortal2, Vector *pVector /*= 0*/, bool
 
 		if ( !bTest && pPlayer )
 		{
-			pPlayer->SetAnimation(PLAYER_ATTACK1);
+			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY, 0 );
 		}
 
 		Vector forward, right, up;
@@ -704,20 +621,8 @@ float CWeaponPortalgun::FirePortal( bool bPortal2, Vector *pVector /*= 0*/, bool
 
 		pPortal->PlacePortal( vFinalPosition, qFinalAngles, fPlacementSuccess, true );
 
-		float fDelay;
+		float fDelay = vTracerOrigin.DistTo( tr.endpos ) / ( ( bPlayer ) ? ( BLAST_SPEED ) : ( BLAST_SPEED_NON_PLAYER ) );
 
-		ConVar *beta_quickinfo = cvar->FindVar("beta_quickinfo");
-
-//		float fDelay = vTracerOrigin.DistTo( tr.endpos ) / ( ( bPlayer ) ? ( BLAST_SPEED ) : ( BLAST_SPEED_NON_PLAYER ) );
-		if (beta_quickinfo_show_portal_delay.GetBool() && beta_quickinfo->GetBool())
-		{
-			fDelay = m_fPortalPlacementDelay;
-		}
-		else
-		{
-			fDelay = clamp(vTracerOrigin.DistTo(tr.endpos) / ((bPlayer) ? (BLAST_SPEED) : (BLAST_SPEED_NON_PLAYER)), 0.0f, sv_portal_projectile_delay.GetFloat());
-		}
-		
 		QAngle qFireAngles;
 		VectorAngles( vDirection, qFireAngles );
 		DoEffectBlast( pPortal->m_bIsPortal2, ePlacedBy, vTracerOrigin, vFinalPosition, qFireAngles, fDelay );
@@ -825,106 +730,6 @@ static void change_portalgun_linkage_id_f( const CCommand &args )
 			pPortalGun->m_iPortalLinkageGroupID = iNewID;
 			break;
 		}
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Fizzle active portals
-// Input  :
-// Output :
-//-----------------------------------------------------------------------------
-bool CWeaponPortalgun::Reload(void)
-{
-	CBaseCombatCharacter *pOwner = GetOwner();
-	if (!pOwner)
-		return false;
-
-	bool bFizzledPortal = false;
-
-	if (CanFirePortal1())
-	{
-		CProp_Portal *pPortal = CProp_Portal::FindPortal(m_iPortalLinkageGroupID, false);
-
-		if (pPortal && pPortal->m_bActivated)
-		{
-			pPortal->DoFizzleEffect(PORTAL_FIZZLE_KILLED, false);
-			pPortal->Fizzle();
-			// HACK HACK! Used to make the gun visually change when going through a cleanser!
-			m_fEffectsMaxSize1 = 50.0f;
-
-			bFizzledPortal = true;
-		}
-
-		// Cancel portals that are still mid flight
-		if (pPortal && pPortal->GetNextThink(s_pDelayedPlacementContext) > gpGlobals->curtime)
-		{
-			pPortal->SetContextThink(NULL, gpGlobals->curtime, s_pDelayedPlacementContext);
-			m_fEffectsMaxSize2 = 50.0f;
-			bFizzledPortal = true;
-		}
-	}
-
-	if (CanFirePortal2())
-	{
-		CProp_Portal *pPortal = CProp_Portal::FindPortal(m_iPortalLinkageGroupID, true);
-
-		if (pPortal && pPortal->m_bActivated)
-		{
-			pPortal->DoFizzleEffect(PORTAL_FIZZLE_KILLED, false);
-			pPortal->Fizzle();
-			// HACK HACK! Used to make the gun visually change when going through a cleanser!
-			m_fEffectsMaxSize2 = 50.0f;
-
-			bFizzledPortal = true;
-		}
-
-		// Cancel portals that are still mid flight
-		if (pPortal && pPortal->GetNextThink(s_pDelayedPlacementContext) > gpGlobals->curtime)
-		{
-			pPortal->SetContextThink(NULL, gpGlobals->curtime, s_pDelayedPlacementContext);
-			m_fEffectsMaxSize2 = 50.0f;
-			bFizzledPortal = true;
-		}
-	}
-
-	if (bFizzledPortal)
-	{
-		SendWeaponAnim(ACT_VM_FIZZLE);
-		SetLastFiredPortal(0);
-		if (pOwner->IsPlayer())
-		{
-			((CBasePlayer *)pOwner)->RumbleEffect(RUMBLE_RPG_MISSILE, 0, RUMBLE_FLAG_RESTART);
-		}
-		return bFizzledPortal;
-	}
-
-	return bFizzledPortal;
-}
-
-//====================================================================================
-// WEAPON BEHAVIOUR
-//====================================================================================
-void CWeaponPortalgun::ItemPostFrame(void)
-{
-	BaseClass::ItemPostFrame();
-
-	if (m_bInReload)
-		return;
-
-	CBasePlayer *pOwner = ToBasePlayer(GetOwner());
-
-	if (pOwner == NULL)
-		return;
-
-	//Allow a refire as fast as the player can click
-	if (((pOwner->m_nButtons & IN_ATTACK) == false) && (m_flSoonestPrimaryAttack < gpGlobals->curtime))
-	{
-		m_flNextPrimaryAttack = gpGlobals->curtime - 0.1f;
-	}
-
-	if (((pOwner->m_nButtons & IN_ATTACK2) == false) && (m_flSoonestSecondaryAttack < gpGlobals->curtime))
-	{
-		m_flNextSecondaryAttack = gpGlobals->curtime - 0.1f;
 	}
 }
 

@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -9,7 +9,6 @@
 #include "npcevent.h"
 #include "in_buttons.h"
 #include "rumble_shared.h"
-#include "portal_player_shared.h"
 
 #include "prop_portal_shared.h"
 
@@ -20,21 +19,14 @@
 
 acttable_t	CWeaponPortalgun::m_acttable[] = 
 {
-	//{ ACT_MP_STAND_IDLE,				ACT_MP_STAND_PRIMARY,					false },
-	//{ ACT_MP_RUN,						ACT_MP_RUN_PRIMARY,						false },
-	//{ ACT_MP_CROUCH_IDLE,				ACT_MP_CROUCH_PRIMARY,					false },
-	//{ ACT_MP_CROUCHWALK,				ACT_MP_CROUCHWALK_PRIMARY,				false },
-	//{ ACT_MP_JUMP_START,				ACT_MP_JUMP_START_PRIMARY,				false },
-	//{ ACT_MP_JUMP_FLOAT,				ACT_MP_JUMP_FLOAT_PRIMARY,				false },
-	//{ ACT_MP_JUMP_LAND,				ACT_MP_JUMP_LAND_PRIMARY,				false },
-	//{ ACT_MP_AIRWALK,					ACT_MP_AIRWALK_PRIMARY,					false },
-	{ ACT_HL2MP_IDLE,					ACT_MP_STAND_PRIMARY,					false },
-	{ ACT_HL2MP_RUN,					ACT_MP_RUN_PRIMARY,						false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_MP_CROUCH_PRIMARY,					false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_MP_CROUCHWALK_PRIMARY,				false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_MP_ATTACK_STAND_PRIMARYFIRE,		false },
-	{ ACT_HL2MP_JUMP,					ACT_MP_JUMP_START_PRIMARY,				false },
-	{ ACT_RANGE_ATTACK1,				ACT_MP_ATTACK_STAND_PRIMARY,			false },
+	{ ACT_MP_STAND_IDLE,				ACT_MP_STAND_PRIMARY,					false },
+	{ ACT_MP_RUN,						ACT_MP_RUN_PRIMARY,						false },
+	{ ACT_MP_CROUCH_IDLE,				ACT_MP_CROUCH_PRIMARY,					false },
+	{ ACT_MP_CROUCHWALK,				ACT_MP_CROUCHWALK_PRIMARY,				false },
+	{ ACT_MP_JUMP_START,				ACT_MP_JUMP_START_PRIMARY,				false },
+	{ ACT_MP_JUMP_FLOAT,				ACT_MP_JUMP_FLOAT_PRIMARY,				false },
+	{ ACT_MP_JUMP_LAND,					ACT_MP_JUMP_LAND_PRIMARY,				false },
+	{ ACT_MP_AIRWALK,					ACT_MP_AIRWALK_PRIMARY,					false },
 };
 
 IMPLEMENT_ACTTABLE(CWeaponPortalgun);
@@ -60,13 +52,7 @@ CWeaponPortalgun::CWeaponPortalgun( void )
 	m_fMinRange2	= 0.0f;
 	m_fMaxRange2	= MAX_TRACE_LENGTH;
 
-	m_EffectState	= (int)EFFECT_NONE;
-
-#ifdef GAME_DLL
-	m_flSoonestPrimaryAttack = gpGlobals->curtime;
-	m_flSoonestSecondaryAttack = gpGlobals->curtime;
-#endif // GAME_DLL
-
+	m_EffectState	= EFFECT_NONE;
 }
 
 void CWeaponPortalgun::Precache()
@@ -108,6 +94,16 @@ bool CWeaponPortalgun::ShouldDrawCrosshair( void )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: Override so only reload one shell at a time
+// Input  :
+// Output :
+//-----------------------------------------------------------------------------
+bool CWeaponPortalgun::Reload( void )
+{
+	return true;
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Play finish reload anim and fill clip
 // Input  :
 // Output :
@@ -140,10 +136,6 @@ void CWeaponPortalgun::DryFire( void )
 	WeaponSound(EMPTY);
 	SendWeaponAnim( ACT_VM_DRYFIRE );
 	
-#ifdef GAME_DLL
-	m_flSoonestPrimaryAttack = gpGlobals->curtime + PORTALGUN_FASTEST_DRY_REFIRE_TIME;
-	m_flSoonestSecondaryAttack = gpGlobals->curtime + PORTALGUN_FASTEST_DRY_REFIRE_TIME;
-#endif
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
 }
 
@@ -226,7 +218,6 @@ void CWeaponPortalgun::PrimaryAttack( void )
 	}
 
 #ifndef CLIENT_DLL
-	m_flSoonestPrimaryAttack = gpGlobals->curtime + PORTALGUN_FASTEST_REFIRE_TIME;
 	inputdata_t inputdata;
 	inputdata.pActivator = this;
 	inputdata.pCaller = this;
@@ -268,7 +259,6 @@ void CWeaponPortalgun::SecondaryAttack( void )
 	}
 
 #ifndef CLIENT_DLL
-	m_flSoonestSecondaryAttack = gpGlobals->curtime + PORTALGUN_FASTEST_REFIRE_TIME;
 	inputdata_t inputdata;
 	inputdata.pActivator = this;
 	inputdata.pCaller = this;
@@ -321,7 +311,7 @@ void CWeaponPortalgun::ItemHolsterFrame( void )
 			return;
 
 		// Just load the clip with no animations
-		int ammoFill = MIN( (GetMaxClip1() - m_iClip1), GetOwner()->GetAmmoCount( GetPrimaryAmmoType() ) );
+		int ammoFill = min( (GetMaxClip1() - m_iClip1), GetOwner()->GetAmmoCount( GetPrimaryAmmoType() ) );
 		
 		GetOwner()->RemoveAmmo( ammoFill, GetPrimaryAmmoType() );
 		m_iClip1 += ammoFill;
@@ -347,34 +337,7 @@ bool CWeaponPortalgun::Deploy( void )
 {
 	DoEffect( EFFECT_READY );
 
-	ConVar* allow_portalgun_lowering_anim = cvar->FindVar("allow_portalgun_lowering_anim");
-
-	// moved this here from CBasePortalCombatWeapon so lowering animation can be overriden
-	// If we should be lowered, deploy in the lowered position
-	// We have to ask the player if the last time it checked, the weapon was lowered
-	if (GetOwner() && GetOwner()->IsPlayer())
-	{
-		CPortal_Player *pPlayer = assert_cast<CPortal_Player*>(GetOwner());
-		if (pPlayer->IsWeaponLowered() && allow_portalgun_lowering_anim->GetBool())
-		{
-			if (SelectWeightedSequence(ACT_VM_IDLE_LOWERED) != ACTIVITY_NOT_AVAILABLE)
-			{
-				if (DefaultDeploy((char*)GetViewModel(), (char*)GetWorldModel(), ACT_VM_IDLE_LOWERED, (char*)GetAnimPrefix()))
-				{
-					m_bLowered = true;
-
-					// Stomp the next attack time to fix the fact that the lower idles are long
-					pPlayer->SetNextAttack(gpGlobals->curtime + 1.0);
-					m_flNextPrimaryAttack = gpGlobals->curtime + 1.0;
-					m_flNextSecondaryAttack = gpGlobals->curtime + 1.0;
-					return true;
-				}
-			}
-		}
-	}
-
-	m_bLowered = false;
-	bool bReturn = CBaseCombatWeapon::Deploy(); //skip CBasePortalCombatWeapon, go straight to CBaseCombatWeapon
+	bool bReturn = BaseClass::Deploy();
 
 	m_flNextSecondaryAttack = m_flNextPrimaryAttack = gpGlobals->curtime;
 
@@ -399,40 +362,32 @@ bool CWeaponPortalgun::Deploy( void )
 
 void CWeaponPortalgun::WeaponIdle( void )
 {
-	ConVar* allow_portalgun_lowering_anim = cvar->FindVar("allow_portalgun_lowering_anim");
-	if (allow_portalgun_lowering_anim->GetBool())
+	//See if we should idle high or low
+	if ( WeaponShouldBeLowered() )
 	{
-		//See if we should idle high or low
-		if (WeaponShouldBeLowered())
+		// Move to lowered position if we're not there yet
+		if ( GetActivity() != ACT_VM_IDLE_LOWERED && GetActivity() != ACT_VM_IDLE_TO_LOWERED 
+			&& GetActivity() != ACT_TRANSITION )
 		{
-			// Move to lowered position if we're not there yet
-			if (GetActivity() != ACT_VM_IDLE_LOWERED && GetActivity() != ACT_VM_IDLE_TO_LOWERED
-				&& GetActivity() != ACT_TRANSITION)
-			{
-				SendWeaponAnim(ACT_VM_IDLE_LOWERED);
-			}
-			else if (HasWeaponIdleTimeElapsed())
-			{
-				// Keep idling low
-				SendWeaponAnim(ACT_VM_IDLE_LOWERED);
-			}
+			SendWeaponAnim( ACT_VM_IDLE_LOWERED );
 		}
-		else
+		else if ( HasWeaponIdleTimeElapsed() )
 		{
-			// See if we need to raise immediately
-			if (m_flRaiseTime < gpGlobals->curtime && GetActivity() == ACT_VM_IDLE_LOWERED)
-			{
-				SendWeaponAnim(ACT_VM_IDLE);
-			}
-			else if (HasWeaponIdleTimeElapsed())
-			{
-				SendWeaponAnim(ACT_VM_IDLE);
-			}
+			// Keep idling low
+			SendWeaponAnim( ACT_VM_IDLE_LOWERED );
 		}
 	}
-	else if (HasWeaponIdleTimeElapsed())
+	else
 	{
-		SendWeaponAnim(ACT_VM_IDLE);
+		// See if we need to raise immediately
+		if ( m_flRaiseTime < gpGlobals->curtime && GetActivity() == ACT_VM_IDLE_LOWERED ) 
+		{
+			SendWeaponAnim( ACT_VM_IDLE );
+		}
+		else if ( HasWeaponIdleTimeElapsed() ) 
+		{
+			SendWeaponAnim( ACT_VM_IDLE );
+		}
 	}
 }
 
@@ -498,26 +453,4 @@ void CWeaponPortalgun::UpdateOnRemove(void)
 {
 	DestroyEffects();
 	BaseClass::UpdateOnRemove();
-}
-
-bool CWeaponPortalgun::CanLower()
-{
-	ConVar* allow_portalgun_lowering_anim = cvar->FindVar("allow_portalgun_lowering_anim");
-	if (allow_portalgun_lowering_anim->GetBool())
-		return BaseClass::CanLower();
-	else
-		return false;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Drops the weapon into a lowered pose
-// Output : Returns true on success, false on failure.
-//-----------------------------------------------------------------------------
-bool CWeaponPortalgun::Lower(void)
-{
-	ConVar* allow_portalgun_lowering_anim = cvar->FindVar("allow_portalgun_lowering_anim");
-	if (allow_portalgun_lowering_anim->GetBool())
-		return BaseClass::Lower();
-	else
-		return false;
 }

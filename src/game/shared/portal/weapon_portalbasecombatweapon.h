@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -44,21 +44,16 @@ public:
 	virtual bool	Holster( CBaseCombatWeapon *pSwitchingTo );
 	virtual void	WeaponIdle( void );
 
-	//all of those are exactly the same as in basehlcombatweapon_shared.h so i have no idea what's the point of redefining them here
-	//I'm just gonna use methods from basehlcombatweapon_shared.h
-	//virtual void	AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, QAngle &angles );
-	//virtual	float	CalcViewmodelBob( void );
+	virtual void	AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, QAngle &angles );
+	virtual	float	CalcViewmodelBob( void );
 
-	//virtual Vector	GetBulletSpread( WeaponProficiency_t proficiency );
-	//virtual float	GetSpreadBias( WeaponProficiency_t proficiency );
+	virtual Vector	GetBulletSpread( WeaponProficiency_t proficiency );
+	virtual float	GetSpreadBias( WeaponProficiency_t proficiency );
 
-	//virtual const	WeaponProficiencyInfo_t *GetProficiencyValues();
-	//static const	WeaponProficiencyInfo_t *GetDefaultProficiencyValues();
+	virtual const	WeaponProficiencyInfo_t *GetProficiencyValues();
+	static const	WeaponProficiencyInfo_t *GetDefaultProficiencyValues();
 
 	virtual void	ItemHolsterFrame( void );
-
-	int				m_iPrimaryAttacks;		// # of primary attacks performed with this weapon
-	int				m_iSecondaryAttacks;	// # of secondary attacks performed with this weapon
 
 protected:
 

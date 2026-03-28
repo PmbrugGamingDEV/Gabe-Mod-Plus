@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -10,7 +10,6 @@
 #include "takedamageinfo.h"
 #include "ammodef.h"
 #include "portal_gamerules.h"
-#include "portal_player_shared.h"
 
 
 #ifdef CLIENT_DLL
@@ -23,12 +22,14 @@ extern IVModelInfo* modelinfo;
 #if defined( CLIENT_DLL )
 
 	#include "vgui/ISurface.h"
-	#include "vgui_controls/Controls.h"
+	#include "vgui_controls/controls.h"
+	#include "c_portal_player.h"
 	#include "hud_crosshair.h"
-	#include "PortalRender.h"
+	#include "portalrender.h"
 
 #else
 
+	#include "portal_player.h"
 	#include "vphysics/constraints.h"
 
 #endif
@@ -140,12 +141,6 @@ CPortal_Player* CWeaponPortalBase::GetPortalPlayerOwner() const
 	
 void CWeaponPortalBase::OnDataChanged( DataUpdateType_t type )
 {
-	int overrideModelIndex = CalcOverrideModelIndex();
-	if (overrideModelIndex != -1 && overrideModelIndex != GetModelIndex())
-	{
-		SetModelIndex(overrideModelIndex);
-	}
-
 	BaseClass::OnDataChanged( type );
 
 	if ( GetPredictable() && !ShouldPredict() )
@@ -181,56 +176,15 @@ int CWeaponPortalBase::DrawModel( int flags )
 
 bool CWeaponPortalBase::ShouldDraw( void )
 {
-	if (m_iWorldModelIndex == 0)
-		return false;
-
-	// FIXME: All weapons with owners are set to transmit in CBaseCombatWeapon::UpdateTransmitState,
-	// even if they have EF_NODRAW set, so we have to check this here. Ideally they would never
-	// transmit except for the weapons owned by the local player.
-	if (IsEffectActive(EF_NODRAW))
-		return false;
-
-	C_BaseCombatCharacter *pOwner = GetOwner();
-
-	// weapon has no owner, always draw it
-	if (!pOwner)
+	if ( !GetOwner() || GetOwner() != C_BasePlayer::GetLocalPlayer() )
 		return true;
 
-	bool bIsActive = (m_iState == WEAPON_IS_ACTIVE);
-
-	C_BasePlayer *pLocalPlayer = C_BasePlayer::GetLocalPlayer();
-
-	// carried by local player?
-	if (pOwner == pLocalPlayer)
-	{
-		// Only ever show the active weapon
-		if (!bIsActive)
-			return false;
-
-		if (!pOwner->ShouldDraw())
-		{
-			// Our owner is invisible.
-			// This also tests whether the player is zoomed in, in which case you don't want to draw the weapon.
-			return false;
-		}
-
-		// 3rd person mode?
-		//if ( !ShouldDrawLocalPlayerViewModel() ) we always draw 3rd person weapon model like in third person mode, so we can see it through portals
-		return true;
-
-		// don't draw active weapon if not in some kind of 3rd person mode, the viewmodel will do that
+	if ( !IsActiveByLocalPlayer() )
 		return false;
-	}
 
-	// If it's a player, then only show active weapons
-	if (pOwner->IsPlayer())
-	{
-		// Show it if it's active...
-		return bIsActive;
-	}
+	//if ( GetOwner() && GetOwner() == C_BasePlayer::GetLocalPlayer() && materials->GetRenderTarget() == 0 )
+	//	return false;
 
-	// FIXME: We may want to only show active weapons on NPCs
-	// These are carried by AIs; always show them
 	return true;
 }
 
@@ -304,23 +258,22 @@ void CWeaponPortalBase::DrawCrosshair()
 
 void CWeaponPortalBase::DoAnimationEvents( CStudioHdr *pStudioHdr )
 {
-	//// HACK: Because this model renders view and world models in the same frame 
-	//// it's using the wrong studio model when checking the sequences.
-	//C_BasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
-	//if ( pPlayer && pPlayer->GetActiveWeapon() == this )
-	//{
-	//	C_BaseViewModel *pViewModel = pPlayer->GetViewModel();
-	//	if ( pViewModel )
-	//	{
-	//		pStudioHdr = pViewModel->GetModelPtr();
-	//	}
-	//}
+	// HACK: Because this model renders view and world models in the same frame 
+	// it's using the wrong studio model when checking the sequences.
+	C_BasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
+	if ( pPlayer && pPlayer->GetActiveWeapon() == this )
+	{
+		C_BaseViewModel *pViewModel = pPlayer->GetViewModel();
+		if ( pViewModel )
+		{
+			pStudioHdr = pViewModel->GetModelPtr();
+		}
+	}
 
-	//if ( pStudioHdr )
-	//{
-	//	BaseClass::DoAnimationEvents( pStudioHdr );
-	//}
-	BaseClass::DoAnimationEvents(pStudioHdr);
+	if ( pStudioHdr )
+	{
+		BaseClass::DoAnimationEvents( pStudioHdr );
+	}
 }
 
 void CWeaponPortalBase::GetRenderBounds( Vector& theMins, Vector& theMaxs )
@@ -379,27 +332,6 @@ void CWeaponPortalBase::GetRenderBounds( Vector& theMins, Vector& theMaxs )
 	}
 }
 
-//-----------------------------------------------------------------------------
-// Allows the client-side entity to override what the network tells it to use for
-// a model. This is used for third person mode, specifically in HL2 where the
-// the weapon timings are on the view model and not the world model. That means the
-// server needs to use the view model, but the client wants to use the world model.
-//-----------------------------------------------------------------------------
-int CWeaponPortalBase::CalcOverrideModelIndex()
-{ 
-	//C_BasePlayer *localplayer = C_BasePlayer::GetLocalPlayer();
-	//if ( localplayer && 
-	//	localplayer == GetOwner() &&
-	//	ShouldDrawLocalPlayerViewModel() )
-	//{
-	//	return BaseClass::CalcOverrideModelIndex();
-	//}
-	//else
-	//{
-	//	return GetWorldModelIndex();
-	//}
-	return GetWorldModelIndex();
-}
 
 #else
 	
@@ -416,44 +348,62 @@ void CWeaponPortalBase::Spawn()
 
 void CWeaponPortalBase::	Materialize( void )
 {
-	//if ( IsEffectActive( EF_NODRAW ) )
-	//{
-	//	// changing from invisible state to visible.
-	//	EmitSound( "AlyxEmp.Charge" );
-	//	
-	//	RemoveEffects( EF_NODRAW );
-	//	DoMuzzleFlash();
-	//}
+	if ( IsEffectActive( EF_NODRAW ) )
+	{
+		// changing from invisible state to visible.
+		EmitSound( "AlyxEmp.Charge" );
+		
+		RemoveEffects( EF_NODRAW );
+		DoMuzzleFlash();
+	}
 
-	//if ( HasSpawnFlags( SF_NORESPAWN ) == false )
-	//{
-	//	VPhysicsInitNormal( SOLID_BBOX, GetSolidFlags() | FSOLID_TRIGGER, false );
-	//	SetMoveType( MOVETYPE_VPHYSICS );
+	if ( HasSpawnFlags( SF_NORESPAWN ) == false )
+	{
+		VPhysicsInitNormal( SOLID_BBOX, GetSolidFlags() | FSOLID_TRIGGER, false );
+		SetMoveType( MOVETYPE_VPHYSICS );
 
-	//	//PortalRules()->AddLevelDesignerPlacedObject( this );
-	//}
+		//PortalRules()->AddLevelDesignerPlacedObject( this );
+	}
 
-	//if ( HasSpawnFlags( SF_NORESPAWN ) == false )
-	//{
-	//	if ( GetOriginalSpawnOrigin() == vec3_origin )
-	//	{
-	//		m_vOriginalSpawnOrigin = GetAbsOrigin();
-	//		m_vOriginalSpawnAngles = GetAbsAngles();
-	//	}
-	//}
+	if ( HasSpawnFlags( SF_NORESPAWN ) == false )
+	{
+		if ( GetOriginalSpawnOrigin() == vec3_origin )
+		{
+			m_vOriginalSpawnOrigin = GetAbsOrigin();
+			m_vOriginalSpawnAngles = GetAbsAngles();
+		}
+	}
 
-	//SetPickupTouch();
+	SetPickupTouch();
 
-	//SetThink (NULL);
-	BaseClass::Materialize();
+	SetThink (NULL);
 }
 
 #endif
 
-void CWeaponPortalBase::FireBullets(const FireBulletsInfo_t &info)
-{	
-	BaseClass::FireBullets(info);
+const CPortalSWeaponInfo &CWeaponPortalBase::GetPortalWpnData() const
+{
+	const FileWeaponInfo_t *pWeaponInfo = &GetWpnData();
+	const CPortalSWeaponInfo *pPortalInfo;
+
+	#ifdef _DEBUG
+		pPortalInfo = dynamic_cast< const CPortalSWeaponInfo* >( pWeaponInfo );
+		Assert( pPortalInfo );
+	#else
+		pPortalInfo = static_cast< const CPortalSWeaponInfo* >( pWeaponInfo );
+	#endif
+
+	return *pPortalInfo;
 }
+void CWeaponPortalBase::FireBullets( const FireBulletsInfo_t &info )
+{
+	FireBulletsInfo_t modinfo = info;
+
+	modinfo.m_iPlayerDamage = GetPortalWpnData().m_iPlayerDamage;
+
+	BaseClass::FireBullets( modinfo );
+}
+
 
 #if defined( CLIENT_DLL )
 

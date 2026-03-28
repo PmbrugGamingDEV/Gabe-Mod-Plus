@@ -97,6 +97,9 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\Main Menu">
       <UniqueIdentifier>{75a07d21-a7fd-44c4-8905-937a11bdbfb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Portal">
+      <UniqueIdentifier>{81569eef-874b-4190-afd4-92fe11723bd8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">

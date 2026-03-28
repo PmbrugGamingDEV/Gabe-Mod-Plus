@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -10,11 +10,8 @@
 #include "portal_player.h"
 #include "portal/weapon_physcannon.h"
 #include "physics_npc_solver.h"
-// portal's microphone and speakers break music on some hl2 maps, so I'll just disable them for hl2 for now
-#ifndef PORTAL
 #include "envmicrophone.h"
 #include "env_speaker.h"
-#endif // !PORTAL
 #include "func_portal_detector.h"
 #include "model_types.h"
 #include "te_effect_dispatch.h"
@@ -361,7 +358,7 @@ void CProp_Portal::DelayedPlacementThink( void )
 		CPortal_Player *pFiringPlayer = dynamic_cast<CPortal_Player *>( pPortalGun->GetOwner() );
 		if( pFiringPlayer )
 		{
-			//pFiringPlayer->IncrementPortalsPlaced();
+			pFiringPlayer->IncrementPortalsPlaced();
 
 			// Placement successful, fire the output
 			m_OnPlacedSuccessfully.FireOutput( pPortalGun, this );
@@ -666,15 +663,13 @@ void CProp_Portal::Fizzle( void )
 void CProp_Portal::RemovePortalMicAndSpeaker()
 {
 
-#ifndef PORTAL
 	// Shut down microphone/speaker if they exist
 	if ( m_hMicrophone )
 	{
 		CEnvMicrophone *pMicrophone = (CEnvMicrophone*)(m_hMicrophone.Get());
 		if ( pMicrophone )
 		{
-			inputdata_t in;
-			pMicrophone->InputDisable( in );
+			pMicrophone->InputDisable( inputdata_t() );
 			UTIL_Remove( pMicrophone );
 		}
 		m_hMicrophone = 0;
@@ -701,13 +696,11 @@ void CProp_Portal::RemovePortalMicAndSpeaker()
 					}
 				}
 			}
-			inputdata_t in;
-			pSpeaker->InputTurnOff( in );
+			pSpeaker->InputTurnOff( inputdata_t() );
 			UTIL_Remove( pSpeaker );
 		}
 		m_hSpeaker = 0;
 	}
-#endif // !PORTAL
 }
 
 void CProp_Portal::PunchPenetratingPlayer( CBaseEntity *pPlayer )
@@ -764,7 +757,7 @@ void CProp_Portal::Activate( void )
 	{
 		Vector ptCenter = GetAbsOrigin();
 		QAngle qAngles = GetAbsAngles();
-		m_PortalSimulator.MoveTo(ptCenter, qAngles);
+		m_PortalSimulator.MoveTo( ptCenter, qAngles );
 
 		//resimulate everything we're touching
 		touchlink_t *root = ( touchlink_t * )GetDataObject( TOUCHLINK );
@@ -1218,6 +1211,8 @@ void CProp_Portal::TeleportTouchingEntity( CBaseEntity *pOther )
 				pOther->ApplyAbsVelocityImpulse( vNewVelocity );
 			}
 		}
+
+		pOther->RemoveEffects( EF_NOINTERP );
 	}
 
 	IPhysicsObject *pPhys = pOther->VPhysicsGetObject();
@@ -1751,7 +1746,7 @@ void CProp_Portal::ForceEntityToFitInPortalWall( CBaseEntity *pEntity )
 		{
 			Vector ptNewPos = ShortestTrace.endpos + vEntityCenterToOrigin;
 			pEntity->Teleport( &ptNewPos, NULL, NULL );
-			pEntity->IncrementInterpolationFrame();
+			pEntity->AddEffects( EF_NOINTERP );
 #if !defined ( DISABLE_DEBUG_HISTORY )
 			if ( !IsMarkedForDeletion() )
 			{
@@ -1832,7 +1827,7 @@ void CProp_Portal::UpdatePortalTeleportMatrix( void )
 	}
 }
 
-bool CProp_Portal::UpdatePortalLinkage( void )
+void CProp_Portal::UpdatePortalLinkage( void )
 {
 	if( m_bActivated )
 	{
@@ -1884,7 +1879,6 @@ bool CProp_Portal::UpdatePortalLinkage( void )
 			pLink->m_hLinkedPortal = hThis;
 			m_bIsPortal2 = !m_hLinkedPortal->m_bIsPortal2;
 
-#ifndef PORTAL
 			// Initialize mics/speakers
 			if( m_hMicrophone == 0 )
 			{
@@ -1954,13 +1948,11 @@ bool CProp_Portal::UpdatePortalLinkage( void )
 			CEnvMicrophone *pMicrophone = static_cast<CEnvMicrophone*>( m_hMicrophone.Get() );
 			pMicrophone->AddSpawnFlags( SF_MICROPHONE_IGNORE_NONATTENUATED );
 			pMicrophone->Teleport( &GetAbsOrigin(), &GetAbsAngles(), &vZero );
-			inputdata_t in;
-			pMicrophone->InputEnable( in );
+			pMicrophone->InputEnable( inputdata_t() );
 
 			CSpeaker *pSpeaker = static_cast<CSpeaker*>( m_hSpeaker.Get() );
 			pSpeaker->Teleport( &GetAbsOrigin(), &GetAbsAngles(), &vZero );
-			pSpeaker->InputTurnOn( in );
-#endif
+			pSpeaker->InputTurnOn( inputdata_t() );
 
 			UpdatePortalTeleportMatrix();
 		}
@@ -1972,10 +1964,7 @@ bool CProp_Portal::UpdatePortalLinkage( void )
 
 		Vector ptCenter = GetAbsOrigin();
 		QAngle qAngles = GetAbsAngles();
-		if (!m_PortalSimulator.MoveTo(ptCenter, qAngles)) 
-		{
-			return false;
-		}
+		m_PortalSimulator.MoveTo( ptCenter, qAngles );
 
 		if( pLink )
 			m_PortalSimulator.AttachTo( &pLink->m_PortalSimulator );
@@ -1994,8 +1983,6 @@ bool CProp_Portal::UpdatePortalLinkage( void )
 		if( pRemote )
 			pRemote->UpdatePortalLinkage();
 	}
-
-	return true;
 }
 
 void CProp_Portal::PlacePortal( const Vector &vOrigin, const QAngle &qAngles, float fPlacementSuccess, bool bDelay /*= false*/ )
@@ -2071,7 +2058,7 @@ void CProp_Portal::PlacePortal( const Vector &vOrigin, const QAngle &qAngles, fl
 	}	
 }
 
-void CProp_Portal::NewLocation( const Vector &vOrigin, const QAngle &qAngles, const bool isFailReplace )
+void CProp_Portal::NewLocation( const Vector &vOrigin, const QAngle &qAngles )
 {
 	// Tell our physics environment to stop simulating it's entities.
 	// Fast moving objects can pass through the hole this frame while it's in the old location.
@@ -2083,28 +2070,21 @@ void CProp_Portal::NewLocation( const Vector &vOrigin, const QAngle &qAngles, co
 
 	WakeNearbyEntities();
 
-	Vector prevPos = GetAbsOrigin();
-	QAngle prevRot = GetAbsAngles();
-
 	Teleport( &vOrigin, &qAngles, 0 );
 
-#ifndef PORTAL
 	if ( m_hMicrophone )
 	{
 		CEnvMicrophone *pMicrophone = static_cast<CEnvMicrophone*>( m_hMicrophone.Get() );
 		pMicrophone->Teleport( &vOrigin, &qAngles, 0 );
-		inputdata_t in;
-		pMicrophone->InputEnable( in );
+		pMicrophone->InputEnable( inputdata_t() );
 	}
 
 	if ( m_hSpeaker )
 	{
 		CSpeaker *pSpeaker = static_cast<CSpeaker*>( m_hSpeaker.Get() );
 		pSpeaker->Teleport( &vOrigin, &qAngles, 0 );
-		inputdata_t in;
-		pSpeaker->InputTurnOn( in );
+		pSpeaker->InputTurnOn( inputdata_t() );
 	}
-#endif // !PORTAL
 
 	CreateSounds();
 
@@ -2114,42 +2094,17 @@ void CProp_Portal::NewLocation( const Vector &vOrigin, const QAngle &qAngles, co
 		controller.SoundChangeVolume( m_pAmbientSound, 0.4, 0.1 );
 	}
 
-	if (!isFailReplace) 
-	{
-		DispatchParticleEffect(((m_bIsPortal2) ? ("portal_2_particles") : ("portal_1_particles")), PATTACH_POINT_FOLLOW, this, "particles_2", true);
-		DispatchParticleEffect(((m_bIsPortal2) ? ("portal_2_edge") : ("portal_1_edge")), PATTACH_POINT_FOLLOW, this, "particlespin");
-	}
+	DispatchParticleEffect( ( ( m_bIsPortal2 ) ? ( "portal_2_particles" ) : ( "portal_1_particles" ) ), PATTACH_POINT_FOLLOW, this, "particles_2", true );
+	DispatchParticleEffect( ( ( m_bIsPortal2 ) ? ( "portal_2_edge" ) : ( "portal_1_edge" ) ), PATTACH_POINT_FOLLOW, this, "particlespin" );
 
 	//if the other portal should be static, let's not punch stuff resting on it
 	bool bOtherShouldBeStatic = false;
 	if( !m_hLinkedPortal )
 		bOtherShouldBeStatic = true;
 
-	bool prevActivated = m_bActivated;
-
 	m_bActivated = true;
 
-	if (!UpdatePortalLinkage())
-	{
-		Assert(!isFailReplace);
-		DoFizzleEffect(PORTAL_FIZZLE_CANT_FIT, false);
-		if (isFailReplace)  // is is already failed, it should be ok to place on the prev position. But failed again, so only can Fizzle it.
-		{
-			Fizzle();
-		}
-		else 
-		{
-			if (prevActivated)
-			{
-				NewLocation(prevPos, prevRot, true);
-			}
-			else 
-			{
-				Fizzle();
-			}
-		}
-		return;
-	}
+	UpdatePortalLinkage();
 	UpdatePortalTeleportMatrix();
 
 	// Update the four corners of this portal for faster reference
@@ -2166,16 +2121,13 @@ void CProp_Portal::NewLocation( const Vector &vOrigin, const QAngle &qAngles, co
 		}
 	}
 
-	if (!isFailReplace)
+	if ( m_bIsPortal2 )
 	{
-		if (m_bIsPortal2)
-		{
-			EmitSound("Portal.open_red");
-		}
-		else
-		{
-			EmitSound("Portal.open_blue");
-		}
+		EmitSound( "Portal.open_red" );
+	}
+	else
+	{
+		EmitSound( "Portal.open_blue" );
 	}
 }
 
@@ -2242,7 +2194,6 @@ void CProp_Portal::InputSetActivatedState( inputdata_t &inputdata )
 		}
 
 		StopParticleEffects( this );
-		
 	}
 
 	UpdatePortalTeleportMatrix();

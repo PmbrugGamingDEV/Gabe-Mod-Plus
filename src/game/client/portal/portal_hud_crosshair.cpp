@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -12,9 +12,9 @@
 #include "c_portal_player.h"
 #include "view.h"
 #include "weapon_portalbase.h"
-#include "vgui_controls/Controls.h"
+#include "vgui_controls/controls.h"
 #include "vgui/ISurface.h"
-#include "ivrenderview.h"
+#include "IVRenderView.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -145,6 +145,5 @@ void CHudPortalCrosshair::SetCrosshair( CHudTexture *texture, Color& clr )
 //-----------------------------------------------------------------------------
 void CHudPortalCrosshair::ResetCrosshair()
 {
-	Color white(255, 255, 255, 255);
-	SetCrosshair( m_pDefaultCrosshair, white );
+	SetCrosshair( m_pDefaultCrosshair, Color(255, 255, 255, 255) );
 }

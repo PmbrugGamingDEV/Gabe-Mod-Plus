@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -6,12 +6,12 @@
 
 #include "cbase.h"
 
-#include "portal_player_shared.h"
+#include "c_portal_player.h"
 #include "c_te_effect_dispatch.h"
 #include "iviewrender_beams.h"
 #include "model_types.h"
 #include "fx_interpvalue.h"
-#include "clienteffectprecachesystem.h"
+#include "ClientEffectPrecacheSystem.h"
 #include "bone_setup.h"
 #include "c_rumble.h"
 #include "rumble_shared.h"
@@ -172,7 +172,6 @@ BEGIN_NETWORK_TABLE( C_WeaponPortalgun, DT_WeaponPortalgun )
 	RecvPropBool( RECVINFO( m_bOpenProngs ) ),
 	RecvPropFloat( RECVINFO( m_fCanPlacePortal1OnThisSurface ) ),
 	RecvPropFloat( RECVINFO( m_fCanPlacePortal2OnThisSurface ) ),
-	RecvPropFloat( RECVINFO( m_fPortalPlacementDelay ) ),
 	RecvPropFloat( RECVINFO( m_fEffectsMaxSize1 ) ), // HACK HACK! Used to make the gun visually change when going through a cleanser!
 	RecvPropFloat( RECVINFO( m_fEffectsMaxSize2 ) ),
 	RecvPropInt( RECVINFO( m_EffectState ) ),
@@ -886,13 +885,10 @@ void C_WeaponPortalgun::GetEffectParameters( EffectType_t effectID, color32 &col
 	if ( pOwner != NULL )
 	{
 		C_BaseAnimating *pModel;
-		int originalModelIndex = 0;
 
 		if ( b3rdPerson )
 		{
 			pModel = this;
-			originalModelIndex = GetModelIndex();
-			SetModelIndex( GetWorldModelIndex() );
 		}
 		else
 		{
@@ -904,10 +900,6 @@ void C_WeaponPortalgun::GetEffectParameters( EffectType_t effectID, color32 &col
 		if ( !b3rdPerson )
 		{
 			::FormatViewModelAttachment( vecAttachment, true );
-		}
-		else
-		{
-			SetModelIndex( originalModelIndex );
 		}
 	}
 }
@@ -1110,14 +1102,4 @@ void C_WeaponPortalgun::DoEffectIdle( void )
 		m_Parameters[i].GetAlpha().SetAbsolute( cl_portalgun_effects_min_alpha.GetInt() + ( cl_portalgun_effects_max_alpha.GetInt() - cl_portalgun_effects_min_alpha.GetInt() ) * m_fPulse );
 		m_Parameters[i].SetColor( colorMagSprites );
 	}
-}
-
-//-----------------------------------------------------------------------------
-// Purpose:
-// Input  :
-// Output :
-//-----------------------------------------------------------------------------
-bool C_WeaponPortalgun::Reload(void)
-{
-	return true;
 }

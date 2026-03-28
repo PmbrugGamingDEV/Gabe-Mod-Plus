@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Clones a physics object by use of shadows
 //
@@ -13,7 +13,7 @@
 #endif
 
 #include "vphysics_interface.h"
-#include "baseentity.h"
+#include "BaseEntity.h"
 #include "baseanimating.h"
 
 class CPhysicsShadowClone;

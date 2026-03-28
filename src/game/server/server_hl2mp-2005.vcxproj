@@ -523,6 +523,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="hl2\npc_blob.cpp" />
     <ClCompile Include="hl2\vehicle_jeep.cpp" />
     <ClCompile Include="hl2\vehicle_jetski.cpp" />
+    <ClCompile Include="hl2\weapon_citizenpackage.cpp" />
     <ClCompile Include="hl2\weapon_immolator.cpp" />
     <ClCompile Include="h_ai.cpp" />
     <ClCompile Include="h_cycler.cpp" />
@@ -626,6 +627,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="npc_fastzombie.cpp" />
     <ClCompile Include="npc_vehicledriver.cpp" />
     <ClCompile Include="..\shared\obstacle_pushaway.cpp" />
+    <ClCompile Include="oldmanharpoon.cpp" />
     <ClCompile Include="particle_light.cpp" />
     <ClCompile Include="..\shared\particle_parse.cpp" />
     <ClCompile Include="particle_system.cpp" />
@@ -1196,6 +1198,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="hl2\grenade_spit.h" />
     <ClInclude Include="hl2\npc_antliongrub.h" />
     <ClInclude Include="hl2\vehicle_jeep.h" />
+    <ClInclude Include="hl2\weapon_citizenpackage.h" />
     <ClInclude Include="hl2\weapon_crowbar.h" />
     <ClInclude Include="h_cycler.h" />
     <ClInclude Include="hierarchy.h" />

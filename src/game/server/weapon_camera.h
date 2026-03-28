@@ -22,6 +22,7 @@ public:
 
     void Precache(void) override;
     virtual bool Deploy(void) override;
+    virtual bool Holster(CBaseCombatWeapon* pSwitchingTo);
     void PrimaryAttack(void) override;
     void SecondaryAttack(void) override;
 private:

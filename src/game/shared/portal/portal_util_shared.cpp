@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -11,11 +11,11 @@
 #include "portal_shareddefs.h"
 #include "portal_collideable_enumerator.h"
 #include "beam_shared.h"
-#include "collisionutils.h"
+#include "CollisionUtils.h"
 #include "util_shared.h"
 #ifndef CLIENT_DLL
-	#include "util.h"
-	#include "ndebugoverlay.h"
+	#include "Util.h"
+	#include "NDebugOverlay.h"
 	#include "env_debughistory.h"
 #else
 	#include "c_portal_player.h"
@@ -24,7 +24,7 @@
 
 bool g_bAllowForcePortalTrace = false;
 bool g_bForcePortalTrace = false;
-bool g_bBulletPortalTrace = true; // makes metrocops shoot through portals (sometimes)
+bool g_bBulletPortalTrace = false;
 
 ConVar sv_portal_trace_vs_world ("sv_portal_trace_vs_world", "1", FCVAR_REPLICATED | FCVAR_CHEAT, "Use traces against portal environment world geometry" );
 ConVar sv_portal_trace_vs_displacements ("sv_portal_trace_vs_displacements", "1", FCVAR_REPLICATED | FCVAR_CHEAT, "Use traces against portal environment displacement geometry" );
@@ -52,17 +52,15 @@ public:
 
 	//abstract functions which require no transforms, just pass them along to the wrapped collideable
 	virtual IHandleEntity	*GetEntityHandle() { return m_pWrappedCollideable->GetEntityHandle(); }
-	virtual const Vector&	OBBMinsPreScaled() const { return m_pWrappedCollideable->OBBMinsPreScaled(); }
-	virtual const Vector&	OBBMaxsPreScaled() const { return m_pWrappedCollideable->OBBMaxsPreScaled(); }
-	virtual const Vector&	OBBMins() const { return m_pWrappedCollideable->OBBMins(); }
-	virtual const Vector&	OBBMaxs() const { return m_pWrappedCollideable->OBBMaxs(); }
-	virtual int				GetCollisionModelIndex() { return m_pWrappedCollideable->GetCollisionModelIndex(); }
-	virtual const model_t*	GetCollisionModel() { return m_pWrappedCollideable->GetCollisionModel(); }
-	virtual SolidType_t		GetSolid() const { return m_pWrappedCollideable->GetSolid(); }
-	virtual int				GetSolidFlags() const { return m_pWrappedCollideable->GetSolidFlags(); }
-	virtual IClientUnknown*	GetIClientUnknown() { return m_pWrappedCollideable->GetIClientUnknown(); }
-	virtual int				GetCollisionGroup() const { return m_pWrappedCollideable->GetCollisionGroup(); }
-	virtual bool			ShouldTouchTrigger( int triggerSolidFlags ) const { return m_pWrappedCollideable->ShouldTouchTrigger(triggerSolidFlags); }
+	virtual const Vector&	OBBMins() const { return m_pWrappedCollideable->OBBMins(); };
+	virtual const Vector&	OBBMaxs() const { return m_pWrappedCollideable->OBBMaxs(); };
+	virtual int				GetCollisionModelIndex() { return m_pWrappedCollideable->GetCollisionModelIndex(); };
+	virtual const model_t*	GetCollisionModel() { return m_pWrappedCollideable->GetCollisionModel(); };
+	virtual SolidType_t		GetSolid() const { return m_pWrappedCollideable->GetSolid(); };
+	virtual int				GetSolidFlags() const { return m_pWrappedCollideable->GetSolidFlags(); };
+	virtual IClientUnknown*	GetIClientUnknown() { return m_pWrappedCollideable->GetIClientUnknown(); };
+	virtual int				GetCollisionGroup() const { return m_pWrappedCollideable->GetCollisionGroup(); };
+	virtual bool			ShouldTouchTrigger( int triggerSolidFlags ) const { return m_pWrappedCollideable->ShouldTouchTrigger(triggerSolidFlags); };
 
 	//slightly trickier functions
 	virtual void			WorldSpaceTriggerBounds( Vector *pVecWorldMins, Vector *pVecWorldMaxs ) const;
@@ -175,74 +173,6 @@ void UTIL_Portal_Trace_Filter( CTraceFilterSimpleClassnameList *traceFilterPorta
 	traceFilterPortalShot->AddClassnameToIgnore( "simple_physics_brush" );
 	traceFilterPortalShot->AddClassnameToIgnore( "prop_ragdoll" );
 	traceFilterPortalShot->AddClassnameToIgnore( "prop_glados_core" );
-	traceFilterPortalShot->AddClassnameToIgnore( "updateitem2" );
-	traceFilterPortalShot->AddClassnameToIgnore("npc_turret_floor");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_manhack");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_rollermine");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_metropolice");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_combine");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_citizen");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_alyx");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_antlion");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_antlion_grub");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_antlionguard");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_barney");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_breen");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_combine_s");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_dog");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_fastzombie");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_fisherman");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_headcrab");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_headcrab_fast");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_hunter");
-	traceFilterPortalShot->AddClassnameToIgnore("hunter_flechette");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_kleiner");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_magnusson");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_monk");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_mossman");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_poisonzombie");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_stalker");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_vortigaunt");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_zombie");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_zombie_torso");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_zombine");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_357");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_ar2");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_bugbait");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_crossbow");
-	traceFilterPortalShot->AddClassnameToIgnore("crossbow_bolt");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_crowbar");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_frag");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_pistol");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_rpg");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_shotgun");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_smg1");
-	traceFilterPortalShot->AddClassnameToIgnore("prop_stickybomb");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_striderbuster");
-	traceFilterPortalShot->AddClassnameToIgnore("weapon_physcannon");
-	traceFilterPortalShot->AddClassnameToIgnore("item_box_srounds");	
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_pistol");
-	traceFilterPortalShot->AddClassnameToIgnore("item_large_box_srounds");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_pistol_large");
-	traceFilterPortalShot->AddClassnameToIgnore("item_box_mrounds");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_smg1");
-	traceFilterPortalShot->AddClassnameToIgnore("item_large_box_mrounds");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_smg1_large");
-	traceFilterPortalShot->AddClassnameToIgnore("item_box_lrounds");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_ar2");
-	traceFilterPortalShot->AddClassnameToIgnore("item_large_box_lrounds");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_ar2_large");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_357");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_357_large");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_crossbow");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ml_grenade");
-	traceFilterPortalShot->AddClassnameToIgnore("item_rpg_round");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ar2_grenade");
-	traceFilterPortalShot->AddClassnameToIgnore("item_box_buckshot");
-	traceFilterPortalShot->AddClassnameToIgnore("item_ammo_ar2_altfire");
-	traceFilterPortalShot->AddClassnameToIgnore("item_battery");
-	traceFilterPortalShot->AddClassnameToIgnore("item_crate");
-	traceFilterPortalShot->AddClassnameToIgnore("npc_bullseye");
 }
 
 
@@ -345,80 +275,6 @@ bool UTIL_Portal_TraceRay_Bullets( const CProp_Portal *pPortal, const Ray_t &ray
 	//trPostPortal.startpos = ray.m_Start;
 	UTIL_Portal_PointTransform( matThisToLinked, ray.m_Start, trPostPortal.startpos );
 	trPostPortal.fraction = trPostPortal.fraction * ( 1.0f - fPortalFraction ) + fPortalFraction;
-
-	*pTrace = trPostPortal;
-
-	return true;
-}
-
-//added this overload to use in void CBaseHLBludgeonWeapon::Swing( int bIsSecondary )
-bool UTIL_Portal_TraceRay_Bullets(const CProp_Portal *pPortal, const Ray_t &ray, unsigned int fMask, const IHandleEntity *ignore, int collisionGroup, trace_t *pTrace, bool bTraceHolyWall)
-{
-	CTraceFilterSimple traceFilter( ignore, collisionGroup );
-	if (!pPortal || !pPortal->IsActivedAndLinked())
-	{
-		//not in a portal environment, use regular traces
-		enginetrace->TraceRay(ray, fMask, &traceFilter, pTrace);
-		return false;
-	}
-
-	trace_t trReal;
-
-	enginetrace->TraceRay(ray, fMask, &traceFilter, &trReal);
-
-	Vector vRayNormal = ray.m_Delta;
-	VectorNormalize(vRayNormal);
-
-	Vector vPortalForward;
-	pPortal->GetVectors(&vPortalForward, 0, 0);
-
-	// If the ray isn't going into the front of the portal, just use the real trace
-	if (vPortalForward.Dot(vRayNormal) > 0.0f)
-	{
-		*pTrace = trReal;
-		return false;
-	}
-
-	// If the real trace collides before the portal plane, just use the real trace
-	float fPortalFraction = UTIL_IntersectRayWithPortal(ray, pPortal);
-
-	if (fPortalFraction == -1.0f || trReal.fraction + 0.0001f < fPortalFraction)
-	{
-		// Didn't intersect or the real trace intersected closer
-		*pTrace = trReal;
-		return false;
-	}
-
-	Ray_t rayPostPortal;
-	rayPostPortal = ray;
-	rayPostPortal.m_Start = ray.m_Start + ray.m_Delta * fPortalFraction;
-	rayPostPortal.m_Delta = ray.m_Delta * (1.0f - fPortalFraction);
-
-	VMatrix matThisToLinked = pPortal->MatrixThisToLinked();
-
-	Ray_t rayTransformed;
-	UTIL_Portal_RayTransform(matThisToLinked, rayPostPortal, rayTransformed);
-
-	// After a bullet traces through a portal it can hit the player that fired it
-	CTraceFilterSimple *pSimpleFilter = dynamic_cast<CTraceFilterSimple*>(&traceFilter);
-	const IHandleEntity *pPassEntity = NULL;
-	if (pSimpleFilter)
-	{
-		pPassEntity = pSimpleFilter->GetPassEntity();
-		pSimpleFilter->SetPassEntity(0);
-	}
-
-	trace_t trPostPortal;
-	enginetrace->TraceRay(rayTransformed, fMask, &traceFilter, &trPostPortal);
-
-	if (pSimpleFilter)
-	{
-		pSimpleFilter->SetPassEntity(pPassEntity);
-	}
-
-	//trPostPortal.startpos = ray.m_Start;
-	UTIL_Portal_PointTransform(matThisToLinked, ray.m_Start, trPostPortal.startpos);
-	trPostPortal.fraction = trPostPortal.fraction * (1.0f - fPortalFraction) + fPortalFraction;
 
 	*pTrace = trPostPortal;
 
@@ -1836,7 +1692,7 @@ void UTIL_TransformInterpolatedAngle( CInterpolatedVar< QAngle > &qInterped, mat
 	if( !qInterped.IsValidIndex( iHead ) )
 		return;
 
-#ifdef DBGFLAG_ASSERT
+#ifdef _DEBUG
 	float fHeadTime;
 	qInterped.GetHistoryValue( iHead, fHeadTime );
 #endif
@@ -1871,7 +1727,7 @@ void UTIL_TransformInterpolatedPosition( CInterpolatedVar< Vector > &vInterped, 
 	if( !vInterped.IsValidIndex( iHead ) )
 		return;
 
-#ifdef DBGFLAG_ASSERT
+#ifdef _DEBUG
 	float fHeadTime;
 	vInterped.GetHistoryValue( iHead, fHeadTime );
 #endif

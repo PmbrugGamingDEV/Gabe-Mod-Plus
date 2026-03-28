@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -12,9 +12,9 @@
 #pragma once
 #endif
 
-#include "materialsystem/imaterial.h"
+#include "materialsystem/IMaterial.h"
 #include "mathlib/mathlib.h"
-#include "PortalRender.h"
+#include "portalrender.h"
 
 struct PortalMeshPoint_t
 {

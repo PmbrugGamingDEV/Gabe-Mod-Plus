@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -10,7 +10,8 @@
 #pragma once
 #endif
 
-#include "basehlcombatweapon_shared.h"
+#include "basecombatweapon_shared.h"
+#include "portal_weapon_parse.h"
 
 #if defined( CLIENT_DLL )
 	#define CWeaponPortalBase C_WeaponPortalBase
@@ -59,9 +60,7 @@ typedef enum
 
 } PortalWeaponID;
 
-//made this inherit from CBaseHLCombatWeapon so portal gun can also have viewmodel bob
-//and also just in general so CWeaponPortalBase and CBasePortalCombatWeapon override CBaseHLCombatWeapon insted of replacing it
-class CWeaponPortalBase : public CBaseHLCombatWeapon
+class CWeaponPortalBase : public CBaseCombatWeapon
 {
 public:
 	DECLARE_CLASS( CWeaponPortalBase, CBaseCombatWeapon );
@@ -73,7 +72,7 @@ public:
 	#ifdef GAME_DLL
 		DECLARE_DATADESC();
 	
-		//void SendReloadSoundEvent( void );
+		void SendReloadSoundEvent( void );
 
 		void Materialize( void );
 	#endif
@@ -88,6 +87,9 @@ public:
 	virtual PortalWeaponID GetWeaponID( void ) const { return WEAPON_NONE; }
 
 	void WeaponSound( WeaponSound_t sound_type, float soundtime = 0.0f );
+	
+	CPortalSWeaponInfo const	&GetPortalWpnData() const;
+
 
 	virtual void FireBullets( const FireBulletsInfo_t &info );
 	
@@ -106,15 +108,13 @@ public:
 
 		virtual bool	OnFireEvent( C_BaseViewModel *pViewModel, const Vector& origin, const QAngle& angles, int event, const char *options );
 
-		virtual int		CalcOverrideModelIndex() OVERRIDE; //override of an ovveride i guess?
-
 	#else
 
 		virtual void	Spawn();
 
 	#endif
 
-	//float		m_flPrevAnimTime;
+	float		m_flPrevAnimTime;
 	float  m_flNextResetCheckTime;
 
 	Vector	GetOriginalSpawnOrigin( void ) { return m_vOriginalSpawnOrigin;	}

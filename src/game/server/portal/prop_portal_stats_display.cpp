@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Implements the big scary boom-boom machine Antlions fear.
 //
@@ -297,9 +297,9 @@ void CPropPortalStatsDisplay::InputUpdateStats( inputdata_t &inputdata )
 
 	if( pPlayer )
 	{
-		//m_iNumPortalsPlaced = pPlayer->NumPortalsPlaced(); challenge mode stuff
-		//m_iNumStepsTaken = pPlayer->NumStepsTaken();
-		//m_fNumSecondsTaken = pPlayer->NumSecondsTaken();
+		m_iNumPortalsPlaced = pPlayer->NumPortalsPlaced();
+		m_iNumStepsTaken = pPlayer->NumStepsTaken();
+		m_fNumSecondsTaken = pPlayer->NumSecondsTaken();
 
 		// Now that we've recorded it, don't let it change
 		pPlayer->PauseBonusProgress();
@@ -314,7 +314,7 @@ void CPropPortalStatsDisplay::InputResetPlayerStats( inputdata_t &inputdata )
 
 	if( pPlayer )
 	{
-		//pPlayer->ResetThisLevelStats();
+		pPlayer->ResetThisLevelStats();
 	}
 }
 

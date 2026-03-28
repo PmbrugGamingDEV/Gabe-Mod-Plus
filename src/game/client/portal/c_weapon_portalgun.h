@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -127,8 +127,6 @@ public:
 		return cone;
 	}
 	
-	virtual bool Lower(void);
-	virtual bool CanLower();
 	void Precache ( void );
 
 	virtual void OnRestore( void );
@@ -162,8 +160,6 @@ public:
 	void DryFire( void );
 	virtual float GetFireRate( void ) { return 0.7; };
 	void WeaponIdle( void );
-
-	float m_fPortalPlacementDelay;
 
 protected:
 

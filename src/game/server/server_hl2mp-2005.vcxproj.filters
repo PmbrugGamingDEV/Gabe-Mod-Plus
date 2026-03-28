@@ -85,6 +85,12 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\Readded Stuff\NPCs">
       <UniqueIdentifier>{65a02183-0f1b-4a8b-b91d-b6c9e1e3f2e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\C-Strike">
+      <UniqueIdentifier>{2051b118-84cd-4dea-a73e-be0dea88ba22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Portal">
+      <UniqueIdentifier>{24714670-416a-4cde-95ee-46b90a1fe234}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\achievement_saverestore.cpp">
@@ -2079,6 +2085,12 @@
     <ClCompile Include="physgun.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
+    <ClCompile Include="oldmanharpoon.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\weapon_citizenpackage.cpp">
+      <Filter>Source Files\HL2 DLL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\achievement_saverestore.h">
@@ -3919,6 +3931,9 @@
     </ClInclude>
     <ClInclude Include="hl1\hl1_monstermaker.h">
       <Filter>Source Files\Gabe Mod + Stuff\Readded Stuff\NPCs</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\weapon_citizenpackage.h">
+      <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
