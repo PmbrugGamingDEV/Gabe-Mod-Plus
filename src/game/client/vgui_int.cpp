@@ -15,7 +15,9 @@
 #include "inetgraphpanel.h"
 #include "IHTMLView.h"
 #include "idebugoverlaypanel.h"
-#include "sdk_inventory.h" // includes that file we'll create later.
+#include "ioverrideinterface.h"
+#include "OverrideUI_RootPanel.h"
+#include "sdk_inventory.h"
 #include <vgui/isurface.h>
 #include <vgui/IVGui.h>
 #include <vgui/IInput.h>
@@ -34,6 +36,8 @@ using namespace vgui;
 
 void MP3Player_Create( vgui::VPANEL parent );
 void MP3Player_Destroy();
+
+void OverrideGameUI();
 
 #include <vgui/IInputInternal.h>
 vgui::IInputInternal *g_InputInternal = NULL;
@@ -183,6 +187,9 @@ void VGui_CreateGlobalPanels( void )
 	htmlview->Create(gameParent);
 
 	GabeFPS_Create(gameParent);
+
+	OverrideUI->Create(NULL);
+	OverrideGameUI();
 
 	InventoryPanel->Create(gameParent); // Creates the panel.
 

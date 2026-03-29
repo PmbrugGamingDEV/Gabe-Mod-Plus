@@ -11,6 +11,7 @@
 #include "portal_shareddefs.h"
 #include "portal_collideable_enumerator.h"
 #include "beam_shared.h"
+#include "../../server/portal/prop_portal.h"
 #include "CollisionUtils.h"
 #include "util_shared.h"
 #ifndef CLIENT_DLL

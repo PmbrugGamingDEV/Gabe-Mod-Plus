@@ -43,6 +43,31 @@ CON_COMMAND(print_msg, "tier0 Msg")
 	Msg("%s\n", BuildMsgString(args, 1));
 }
 
+void CatLog(const char* tag, const char* fmt, ...) // Categorized log
+{
+	va_list args;
+	va_start(args, fmt);
+
+	char buffer[1024];
+	_vsnprintf(buffer, sizeof(buffer), fmt, args);
+	va_end(args);
+
+	Msg("[%s] %s", tag, buffer);
+}
+
+// Example usage: CatLog("MyTag", "This"); would print "[MyTag] This" to the console.
+
+CON_COMMAND(print_catlog, "Gabe Mod CatLog <tag> <text>")
+{
+	if (args.ArgC() < 3)
+	{
+		Msg("Usage: print_catlog <tag> <text>\n");
+		return;
+	}
+	const char* tag = args[1];
+	CatLog(tag, "%s\n", BuildMsgString(args, 2));
+}
+
 CON_COMMAND(print_warning, "tier0 Warning")
 {
 	if (args.ArgC() < 2)

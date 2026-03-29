@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>Client</ProjectName>
+    <ProjectName>Client Gabe Mod Plus</ProjectName>
     <ProjectGuid>{5FE91DC8-B6DF-4061-984E-36FD36623E72}</ProjectGuid>
     <RootNamespace>Client HL2MP</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -58,7 +58,7 @@
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
-    <OutDir>D:\Steam\steamapps\sourcemods\gabemodplus\bin</OutDir>
+    <OutDir>..\..\..\game\bin</OutDir>
     <TargetName>client</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -153,7 +153,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>.\;..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;..\..\vgui2\include;..\..\vgui2\controls;..\..\game\shared;.\game_controls;hl2mp\UI;.\hl2mp;..\..\game\shared\hl2mp;.\hl2;.\hl2\elements;..\..\game\shared\hl2;C:\GabeModPlus\src\game\shared\lua;C:\Program Files %28x86%29\Awesomium Technologies LLC\Awesomium SDK\1.7.5.1\include\;..\..\game\shared\Multiplayer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;..\..\vgui2\include;..\..\vgui2\controls;..\..\game\shared;.\game_controls;C:\GabeModPlus\src\common\gameui\gabemod;hl2mp\UI;.\hl2mp;..\..\game\shared\hl2mp;.\hl2;.\hl2\elements;..\..\game\shared\hl2;C:\GabeModPlus\src\game\shared\lua;C:\Program Files %28x86%29\Awesomium Technologies LLC\Awesomium SDK\1.7.5.1\include\;..\..\game\shared\Multiplayer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NO_STRING_T;CLIENT_DLL;VECTOR;PROTECTED_THINGS_ENABLE;fopen=dont_use_fopen;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;ENABLE_HTMLWINDOW;HL2MP;HL2_CLIENT_DLL;VERSION_SAFE_STEAM_API_INTERFACES;MP_SDK;ARGG;GE_LUA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling />
@@ -467,6 +467,9 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="history_resource.cpp" />
     <ClCompile Include="hl2\c_weapon_gravitygun.cpp" />
     <ClCompile Include="hltvcamera.cpp" />
+    <ClCompile Include="ioverrideinterface.cpp" />
+    <ClCompile Include="OverrideUI_RootPanel.cpp" />
+    <ClCompile Include="OverrideUI_RootPanel.h" />
     <ClCompile Include="hud.cpp" />
     <ClCompile Include="hud_animationinfo.cpp" />
     <ClCompile Include="hl2\hud_autoaim.cpp" />
@@ -908,6 +911,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="toolframework_client.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\common\gameui\gabemod\igabegameui.h" />
     <ClInclude Include="..\..\public\tier0\cpumonitoring.h" />
     <ClInclude Include="..\server\hl1\hl1_weapon_rpg.h" />
     <ClInclude Include="..\server\hl1\hl1_weapon_satchel.h" />
@@ -937,6 +941,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="hl1\hud_numbers.h" />
     <ClInclude Include="hud_killfeed.h" />
     <ClInclude Include="IHTMLView.h" />
+    <ClInclude Include="ioverrideinterface.h" />
     <ClInclude Include="mapload_background.h" />
     <ClInclude Include="sdk_inventory.h" />
     <ClInclude Include="vgui_avatarimage.h" />

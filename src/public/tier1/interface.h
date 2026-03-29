@@ -204,6 +204,7 @@ public:
 						CDllDemandLoader( char const *pchModuleName );
 	virtual				~CDllDemandLoader();
 	CreateInterfaceFn	GetFactory();
+	CSysModule* GetModule() { return m_hModule; }
 	void				Unload();
 
 private:

@@ -6,6 +6,7 @@
 
 #include "cbase.h"
 #include "weapon_portalgun_shared.h"
+#include "../../server/portal/weapon_portalgun.h"
 #include "npcevent.h"
 #include "in_buttons.h"
 #include "rumble_shared.h"

@@ -19,7 +19,7 @@
 	#include "game.h"
 	#include "gamerules.h"
 	#include "teamplay_gamerules.h"
-	#include "portal_player.h"
+	#include "portal_player_shared.h"
 	#include "globalstate.h"
 	#include "ai_basenpc.h"
 	#include "portal/weapon_physcannon.h"
@@ -200,7 +200,7 @@ static ConCommand ent_create_portal_metal_sphere("ent_create_portal_metal_sphere
 		if( BaseClass::ClientCommand( pEdict, args ) )
 			return true;
 
-		CPortal_Player *pPlayer = (CPortal_Player *) pEdict;
+		CBasePlayer *pPlayer = (CBasePlayer*) pEdict;
 
 		if ( pPlayer->ClientCommand( args ) )
 			return true;

@@ -81,7 +81,7 @@ public:
 	virtual bool	IsPredicted() const;
 
 	CBasePlayer* GetPlayerOwner() const;
-	CPortal_Player* GetPortalPlayerOwner() const;
+	CBasePlayer* GetPortalPlayerOwner() const;
 
 	// Get specific Portal weapon ID (ie: WEAPON_PORTALGUN, etc)
 	virtual PortalWeaponID GetWeaponID( void ) const { return WEAPON_NONE; }

@@ -88,9 +88,6 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\C-Strike">
       <UniqueIdentifier>{2051b118-84cd-4dea-a73e-be0dea88ba22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Portal">
-      <UniqueIdentifier>{24714670-416a-4cde-95ee-46b90a1fe234}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\achievement_saverestore.cpp">

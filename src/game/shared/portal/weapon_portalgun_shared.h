@@ -17,7 +17,7 @@
 #ifdef CLIENT_DLL
 #include "c_weapon_portalgun.h"
 #else
-#include "weapon_portalgun.h"
+#include "../../server/portal/weapon_portalgun.h"
 #endif
 
 #define PORTALGUN_BEAM_SPRITE "sprites/grav_beam.vmt"

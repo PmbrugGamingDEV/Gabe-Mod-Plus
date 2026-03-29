@@ -9,6 +9,7 @@
 #include "prop_portal.h"
 #include "portal_player.h"
 #include "portal/weapon_physcannon.h"
+#include "portal_util_shared.h"
 #include "physics_npc_solver.h"
 #include "envmicrophone.h"
 #include "env_speaker.h"

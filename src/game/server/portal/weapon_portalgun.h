@@ -11,17 +11,17 @@
 #endif
 
 
-#include "weapon_portalbasecombatweapon.h"
+#include "basehlcombatweapon.h"
 
 #include "prop_portal.h"
 
 
-class CWeaponPortalgun : public CBasePortalCombatWeapon
+class CWeaponPortalgun : public CBaseHLCombatWeapon
 {
 	DECLARE_DATADESC();
 
 public:
-	DECLARE_CLASS( CWeaponPortalgun, CBasePortalCombatWeapon );
+	DECLARE_CLASS( CWeaponPortalgun, CBaseHLCombatWeapon );
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
@@ -107,8 +107,6 @@ public:
 	void DryFire( void );
 	virtual float GetFireRate( void ) { return 0.7; };
 	void WeaponIdle( void );
-
-	PortalWeaponID GetWeaponID( void ) const { return WEAPON_PORTALGUN; }
 
 protected:
 

@@ -29,7 +29,7 @@ extern IVModelInfo* modelinfo;
 
 #else
 
-	#include "portal_player.h"
+	#include "player.h"
 	#include "vphysics/constraints.h"
 
 #endif
@@ -132,9 +132,9 @@ CBasePlayer* CWeaponPortalBase::GetPlayerOwner() const
 	return dynamic_cast< CBasePlayer* >( GetOwner() );
 }
 
-CPortal_Player* CWeaponPortalBase::GetPortalPlayerOwner() const
+CBasePlayer* CWeaponPortalBase::GetPortalPlayerOwner() const
 {
-	return dynamic_cast< CPortal_Player* >( GetOwner() );
+	return dynamic_cast< CBasePlayer* >( GetOwner() );
 }
 
 #ifdef CLIENT_DLL

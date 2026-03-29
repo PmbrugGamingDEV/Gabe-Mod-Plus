@@ -7,6 +7,7 @@
 
 #include "cbase.h"
 #include "prop_portal_shared.h"
+#include "../../server/portal/prop_portal.h"
 #include "portal_shareddefs.h"
 
 #ifdef CLIENT_DLL

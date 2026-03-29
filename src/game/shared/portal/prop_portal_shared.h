@@ -17,7 +17,7 @@
 #ifdef CLIENT_DLL
 #include "C_Prop_Portal.h"
 #else
-#include "prop_portal.h"
+#include "../../server/portal/prop_portal.h"
 #endif
 
 // CProp_Portal enum for the portal corners (if a user wants a specific corner)

@@ -13,6 +13,7 @@
 #include "prop_combine_ball.h"
 #include "portal_shareddefs.h"
 #include "triggers.h"
+#include "portal_util_shared.h"
 #include "CollisionUtils.h"
 #include "cbaseanimatingprojectile.h"
 #include "weapon_physcannon.h"

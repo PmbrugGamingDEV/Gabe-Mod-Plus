@@ -100,6 +100,9 @@
     <Filter Include="Source Files\Portal">
       <UniqueIdentifier>{81569eef-874b-4190-afd4-92fe11723bd8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameUI Hook">
+      <UniqueIdentifier>{1e3aef5d-5f75-46fa-b865-82696dffa07f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">
@@ -1724,6 +1727,15 @@
     </ClCompile>
     <ClCompile Include="hl2\c_weapon_gravitygun.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="OverrideUI_RootPanel.h">
+      <Filter>GameUI Hook</Filter>
+    </ClCompile>
+    <ClCompile Include="OverrideUI_RootPanel.cpp">
+      <Filter>GameUI Hook</Filter>
+    </ClCompile>
+    <ClCompile Include="ioverrideinterface.cpp">
+      <Filter>GameUI Hook</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3577,6 +3589,12 @@
     </ClInclude>
     <ClInclude Include="gplus_fps.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="ioverrideinterface.h">
+      <Filter>GameUI Hook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\gameui\gabemod\igabegameui.h">
+      <Filter>GameUI Hook</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
