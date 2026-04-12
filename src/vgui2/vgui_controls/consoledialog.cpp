@@ -307,15 +307,6 @@ CConsolePanel::CConsolePanel( vgui::Panel *pParent, const char *pName, bool bSta
 		SetMinimumSize(100,100);
 	}
 
-#ifdef _WIN32
-	MessageBoxA(
-		NULL,
-		"CConsolePanel constructor called.\nGameUI DLL is LOADED.",
-		"GameUI Debug",
-		MB_OK | MB_ICONINFORMATION
-	);
-#endif
-
 	// create controls
 	m_pHistory = new RichText(this, "ConsoleHistory");
 	m_pHistory->SetAllowKeyBindingChainToParent( false );
@@ -327,7 +318,7 @@ CConsolePanel::CConsolePanel( vgui::Panel *pParent, const char *pName, bool bSta
 	}
 	m_pHistory->GotoTextEnd();
 	
-	m_pSubmit = new Button(this, "ConsoleSubmit", "#Console_Submit");
+	m_pSubmit = new Button(this, "ConsoleSubmit", "Enter");
 	m_pSubmit->SetCommand("submit");
 	m_pSubmit->SetVisible( !m_bStatusVersion );
 
@@ -339,6 +330,15 @@ CConsolePanel::CConsolePanel( vgui::Panel *pParent, const char *pName, bool bSta
 	m_pEntry->AddActionSignalTarget(this);
 	m_pEntry->SendNewLine(true);
 	pCompletionList->SetFocusPanel( m_pEntry );
+
+	// Create filter UI
+	m_pFilterLabel = new Label(this, "FilterLabel", "Filter:");
+	m_pFilter = new TextEntry(this, "FilterEntry");
+
+	m_pFilter->AddActionSignalTarget(this);
+	m_pFilter->SetText("");
+
+	m_szFilter[0] = 0;
 
 	// need to set up default colors, since ApplySchemeSettings won't be called until later
 	m_PrintColor = Color(216, 222, 211, 255);
@@ -396,15 +396,24 @@ void CConsolePanel::Clear()
 //-----------------------------------------------------------------------------
 // Purpose: color text print
 //-----------------------------------------------------------------------------
-void CConsolePanel::ColorPrint( const Color& clr, const char *msg )
+void CConsolePanel::ColorPrint(const Color& clr, const char* msg)
 {
-	if ( m_bStatusVersion )
+	// Store full history
+	char* copy = new char[strlen(msg) + 1];
+	Q_strcpy(copy, msg);
+	m_FilterHistory.AddToTail(copy);
+
+	// Apply filter
+	if (m_szFilter[0] != 0 && !Q_stristr(msg, m_szFilter))
+		return;
+
+	if (m_bStatusVersion)
 	{
 		Clear();
 	}
 
-	m_pHistory->InsertColorChange( clr );
-	m_pHistory->InsertString( msg );
+	m_pHistory->InsertColorChange(clr);
+	m_pHistory->InsertString(msg);
 }
 
 
@@ -655,6 +664,25 @@ void CConsolePanel::OnAutoComplete(bool reverse)
 //-----------------------------------------------------------------------------
 void CConsolePanel::OnTextChanged(Panel *panel)
 {
+	if (panel == m_pFilter)
+	{
+		m_pFilter->GetText(m_szFilter, sizeof(m_szFilter));
+
+		// Rebuild console view
+		Clear();
+
+		for (int i = 0; i < m_FilterHistory.Count(); i++)
+		{
+			const char* msg = m_FilterHistory[i];
+
+			if (m_szFilter[0] == 0 || Q_stristr(msg, m_szFilter))
+			{
+				ColorPrint(m_PrintColor, msg);
+			}
+		}
+		return;
+	}
+
 	if (panel != m_pEntry)
 		return;
 
@@ -862,8 +890,12 @@ void CConsolePanel::PerformLayout()
 		const int submitWide = 64;
 		const int submitInset = 7; // x inset to pull the submit button away from the frame grab
 
-		m_pHistory->SetPos(inset, inset + topHeight); 
-		m_pHistory->SetSize(wide - (inset * 2), tall - (entryInset * 2 + inset * 2 + topHeight + entryHeight));
+		int filterOffset = 28;
+		m_pHistory->SetPos(inset, inset + topHeight + filterOffset);
+		m_pHistory->SetSize(
+			wide - (inset * 2),
+			tall - (entryInset * 2 + inset * 2 + topHeight + entryHeight + filterOffset)
+		);
 		m_pHistory->InvalidateLayout();
 
 		int nSubmitXPos = wide - ( inset + submitWide + submitInset );
@@ -872,6 +904,16 @@ void CConsolePanel::PerformLayout()
 		 
 		m_pEntry->SetPos( inset, tall - (entryInset * 2 + entryHeight) );
 		m_pEntry->SetSize( nSubmitXPos - entryInset - 2 * inset, entryHeight);
+
+		// Filter positioning (top right)
+		int filterWide = 200;
+		int filterTall = 20;
+
+		m_pFilterLabel->SetPos(wide - filterWide - 60, 6);
+		m_pFilterLabel->SetSize(50, filterTall);
+
+		m_pFilter->SetPos(wide - filterWide - 5, 4);
+		m_pFilter->SetSize(filterWide, filterTall);
 	}
 	else
 	{
@@ -1133,7 +1175,7 @@ CConsoleDialog::CConsoleDialog( vgui::Panel *pParent, const char *pName, bool bS
 	// initialize dialog
 	SetVisible( false );
 	SetTitle( "GABE MOD CONSOLE", true );
-	m_pConsolePanel = new CConsolePanel( this, "ConsolePage", bStatusVersion );
+	m_pConsolePanel = new CConsolePanel( this, "GABE MOD CONSOLE", bStatusVersion );
 }
 
 void CConsoleDialog::OnScreenSizeChanged( int iOldWide, int iOldTall )

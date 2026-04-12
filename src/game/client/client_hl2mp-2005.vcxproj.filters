@@ -103,6 +103,15 @@
     <Filter Include="GameUI Hook">
       <UniqueIdentifier>{1e3aef5d-5f75-46fa-b865-82696dffa07f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\CStrike">
+      <UniqueIdentifier>{89625e6c-5272-4561-a5d1-8d0c9ca9d3ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Utilities">
+      <UniqueIdentifier>{c5bc2504-018b-4133-a06f-5414192100ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Utilities\Test">
+      <UniqueIdentifier>{aaa4cb25-b3d1-4ead-b100-c7bb6c86623d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">
@@ -1728,14 +1737,14 @@
     <ClCompile Include="hl2\c_weapon_gravitygun.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
-    <ClCompile Include="OverrideUI_RootPanel.h">
-      <Filter>GameUI Hook</Filter>
+    <ClCompile Include="c_weapon_deagle.cpp">
+      <Filter>Source Files\CStrike</Filter>
     </ClCompile>
-    <ClCompile Include="OverrideUI_RootPanel.cpp">
-      <Filter>GameUI Hook</Filter>
+    <ClCompile Include="selfcodedpanel.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
-    <ClCompile Include="ioverrideinterface.cpp">
-      <Filter>GameUI Hook</Filter>
+    <ClCompile Include="vgui_utiltest.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Utilities\Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3590,11 +3599,14 @@
     <ClInclude Include="gplus_fps.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
-    <ClInclude Include="ioverrideinterface.h">
-      <Filter>GameUI Hook</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\common\gameui\gabemod\igabegameui.h">
       <Filter>GameUI Hook</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_util.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_all.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3645,5 +3657,6 @@
     <None Include="client_hl2mp.vpc">
       <Filter>Resources</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

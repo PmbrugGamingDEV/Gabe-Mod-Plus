@@ -282,6 +282,7 @@ private:
 	EHANDLE m_hConstraintTarget1;
 	EHANDLE m_hConstraintTarget2;
 	int m_nConstraintType; // 0: BallSocket, 1: Weld, 2: Axis
+	Vector m_vecConstraintPos1;
 
 	int m_nLightWatermelonColor;
 
@@ -1096,32 +1097,153 @@ void CWeaponMultitool::ApplyToolAction(CBaseEntity* pEnt)
 			}
 			case 2: // Rope
 			{
-				PrecacheModel("cable/cable.vmt");
-				CRopeKeyframe* pRope = CRopeKeyframe::Create(pEnt1, pEnt2, 0, 0, 2, "cable/cable.vmt", 10);
-				if (pRope)
+				// ----------------------------------------
+				// FIRST CLICK
+				// ----------------------------------------
+				if (!m_hConstraintTarget1)
 				{
-					constraint_lengthparams_t rope;
-					rope.Defaults();
-					rope.InitWorldspace(pPhys1, pPhys2, origin1, origin2, false);
-					rope.minLength = 0.0f;
-					rope.totalLength = (origin1 - origin2).Length();
-					IPhysicsConstraint* pConstraint = physenv->CreateLengthConstraint(pPhys1, pPhys2, NULL, rope);
-					if (pConstraint)
-					{
-						m_Constraints.AddToTail(pConstraint);
-						HudText(pPlayer, "Rope constraint created.", 100, 255, 100);
-					}
-					else
-						HudText(pPlayer, "Rope visual OK, physics constraint failed.", 255, 200, 100);
+					m_hConstraintTarget1 = pEnt; // store first entity (if any)
+
+					// Store vector position too (trace)
+					trace_t tr;
+					Vector start = pPlayer->EyePosition();
+					Vector forward;
+					pPlayer->EyeVectors(&forward);
+
+					UTIL_TraceLine(start, start + forward * 2048,
+						MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+
+					m_vecConstraintPos1 = tr.endpos;
+
+					HudText(pPlayer, "First rope point set.", 200, 255, 255);
+					break;
 				}
-				if (pRope)
+
+				// ----------------------------------------
+				// SECOND CLICK
+				// ----------------------------------------
+				CBaseEntity* pEnt1 = m_hConstraintTarget1;
+				CBaseEntity* pEnt2 = pEnt;
+
+				trace_t tr;
+				Vector start = pPlayer->EyePosition();
+				Vector forward;
+				pPlayer->EyeVectors(&forward);
+
+				UTIL_TraceLine(start, start + forward * 2048,
+					MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+
+				Vector vec2 = tr.endpos;
+				Vector vec1 = m_vecConstraintPos1;
+
+				// ----------------------------------------
+				// 🟢 VECTOR MODE (no entities)
+				// ----------------------------------------
+				if (!pEnt1 && !pEnt2)
 				{
-					m_CreatedRopes.AddToTail(pRope);
+					CBaseEntity* pStart = CreateEntityByName("move_rope");
+					CBaseEntity* pEnd = CreateEntityByName("keyframe_rope");
+
+					if (pStart && pEnd)
+					{
+						pStart->SetAbsOrigin(vec1);
+						pEnd->SetAbsOrigin(vec2);
+
+						char name[64];
+						Q_snprintf(name, sizeof(name), "rope_start_%d", gpGlobals->tickcount);
+
+						pStart->SetName(MAKE_STRING(name));
+						pEnd->KeyValue("NextKey", name);
+
+						pStart->KeyValue("Slack", "60");
+						pStart->KeyValue("Width", "2");
+
+						DispatchSpawn(pStart);
+						DispatchSpawn(pEnd);
+
+						HudText(pPlayer, "Vector rope created!", 100, 255, 100);
+					}
 				}
 				else
 				{
-					HudText(pPlayer, "Failed to create rope.", 255, 100, 100);
+					// ----------------------------------------
+					// 🔵 ENTITY MODE (physics rope)
+					// ----------------------------------------
+					if (!pEnt1 || !pEnt2 || pEnt1 == pEnt2)
+					{
+						HudText(pPlayer, "Invalid rope targets!", 255, 100, 100);
+						m_hConstraintTarget1 = NULL;
+						break;
+					}
+
+					IPhysicsObject* pPhys1 = pEnt1->VPhysicsGetObject();
+					IPhysicsObject* pPhys2 = pEnt2->VPhysicsGetObject();
+
+					if (!pPhys1 || !pPhys2)
+					{
+						HudText(pPlayer, "Both objects need physics!", 255, 100, 100);
+						m_hConstraintTarget1 = NULL;
+						break;
+					}
+
+					Vector pos1 = pEnt1->WorldSpaceCenter();
+					Vector pos2 = pEnt2->WorldSpaceCenter();
+
+					// ---------------------------
+					// VISUAL ROPE
+					// ---------------------------
+					PrecacheModel("cable/cable.vmt");
+
+					CRopeKeyframe* pRope = CRopeKeyframe::Create(
+						pEnt1,
+						pEnt2,
+						0,
+						0,
+						2,
+						"cable/cable.vmt",
+						10
+					);
+
+					if (pRope)
+					{
+						pRope->SetParent(pEnt1, 1);
+						pRope->m_Width = 2.0f;
+						pRope->m_Slack = 60.0f;
+						pRope->m_nSegments = 12;
+
+						m_CreatedRopes.AddToTail(pRope);
+					}
+
+					// ---------------------------
+					// PHYSICS ROPE
+					// ---------------------------
+					constraint_lengthparams_t rope;
+					rope.Defaults();
+
+					rope.InitWorldspace(pPhys1, pPhys2, pos1, pos2, false);
+
+					rope.totalLength *= 1.2f; // slack
+					rope.minLength = 0.0f;
+
+					rope.constraint.strength = 0.8f;
+					rope.constraint.forceLimit = 0;
+					rope.constraint.torqueLimit = 0;
+
+					IPhysicsConstraint* pConstraint =
+						physenv->CreateLengthConstraint(pPhys1, pPhys2, NULL, rope);
+
+					if (pConstraint)
+					{
+						m_Constraints.AddToTail(pConstraint);
+						HudText(pPlayer, "Entity rope created!", 100, 255, 100);
+					}
 				}
+
+				// ----------------------------------------
+				// RESET
+				// ----------------------------------------
+				m_hConstraintTarget1 = NULL;
+
 				break;
 			}
 			}

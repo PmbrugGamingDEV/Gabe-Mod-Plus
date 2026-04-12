@@ -15,6 +15,8 @@
 #include "tier1/UtlVector.h"
 #include "vgui_controls/EditablePanel.h"
 #include "vgui_controls/Frame.h"
+#include "vgui_controls/TextEntry.h"
+#include "vgui_controls/Label.h"
 #include "icvar.h"
 
 class ConCommandBase;
@@ -115,6 +117,17 @@ protected:
 	vgui::TextEntry *m_pEntry;
 	vgui::Button *m_pSubmit;
 	vgui::Menu *m_pCompletionList;
+
+	// NEW:
+	vgui::TextEntry* m_pFilter;
+	vgui::Label* m_pFilterLabel;
+
+	// Store full console history
+	CUtlVector<char*> m_FilterHistory;
+
+	// Current filter text
+	char m_szFilter[256];
+
 	Color m_PrintColor;
 	Color m_DPrintColor;
 

@@ -1,1 +1,87 @@
-﻿
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  WizardSubPanel.cpp
+  WizardPanel.cpp
+  URLLabel.cpp
+  TreeViewListControl.cpp
+  TreeView.cpp
+  ToolWindow.cpp
+  Tooltip.cpp
+  ToggleButton.cpp
+  TextImage.cpp
+  TextEntry.cpp
+  subrectimage.cpp
+  Splitter.cpp
+  Slider.cpp
+  SectionedListPanel.cpp
+  ScrollBarSlider.cpp
+  ScrollBar.cpp
+  ScrollableEditablePanel.cpp
+  ScalableImagePanel.cpp
+  savedocumentquery.cpp
+  RotatingProgressBar.cpp
+  Generating Code...
+  Compiling...
+  RichText.cpp
+  RadioButton.cpp
+  QueryBox.cpp
+  PropertySheet.cpp
+  PropertyPage.cpp
+  PropertyDialog.cpp
+  ProgressBox.cpp
+  ProgressBar.cpp
+  perforcefilelistframe.cpp
+  PerforceFileList.cpp
+  PerforceFileExplorer.cpp
+  PanelListPanel.cpp
+  Panel.cpp
+  MessageDialog.cpp
+  MessageBox.cpp
+  MenuItem.cpp
+  MenuButton.cpp
+  MenuBar.cpp
+  Menu.cpp
+  ListViewPanel.cpp
+  Generating Code...
+  Compiling...
+  ListPanel.cpp
+  Label.cpp
+  KeyRepeat.cpp
+  KeyBoardEditorDialog.cpp
+  KeyBindingHelpDialog.cpp
+  InputDialog.cpp
+  ImagePanel.cpp
+  ImageList.cpp
+  Image.cpp
+  HTML.cpp
+  GraphPanel.cpp
+  Frame.cpp
+  FocusNavGroup.cpp
+  filesystem_helpers.cpp
+  FileOpenStateMachine.cpp
+  FileOpenDialog.cpp
+  ExpandButton.cpp
+  EditablePanel.cpp
+  Divider.cpp
+  DirectorySelectDialog.cpp
+  Generating Code...
+  Compiling...
+  controls.cpp
+  ControllerMap.cpp
+  consoledialog.cpp
+  ComboBox.cpp
+  CircularProgressBar.cpp
+  CheckButtonList.cpp
+  CheckButton.cpp
+  Button.cpp
+  BuildModeDialog.cpp
+  BuildGroup.cpp
+  BuildFactoryHelper.cpp
+  BitmapImagePanel.cpp
+  AnimationController.cpp
+  AnimatingImagePanel.cpp
+  AnalogBar.cpp
+  EntHTML.cpp
+  Generating Code...
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1299,5): warning MSB8012: TargetPath(C:\GabeModPlus\src\vgui2\vgui_controls\..\..\lib\public\VGUI Controls Lib (vgui_controls.lib).lib) does not match the Library's OutputFile property value (C:\GabeModPlus\src\lib\public\vgui_controls.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1301,5): warning MSB8012: TargetName(VGUI Controls Lib (vgui_controls.lib)) does not match the Library's OutputFile property value (vgui_controls). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+  vgui_controls-2005.vcxproj -> C:\GabeModPlus\src\vgui2\vgui_controls\..\..\lib\public\VGUI Controls Lib (vgui_controls.lib).lib

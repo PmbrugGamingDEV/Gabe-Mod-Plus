@@ -1375,7 +1375,7 @@ bool CBaseCombatWeapon::Deploy()
 
 Activity CBaseCombatWeapon::GetDrawActivity(void)
 {
-	return ACT_VM_DRAW;
+	return ACT_VM_IDLE;
 }
 
 //-----------------------------------------------------------------------------

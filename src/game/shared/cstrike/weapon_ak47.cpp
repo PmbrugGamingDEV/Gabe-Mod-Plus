@@ -11,19 +11,19 @@
 #if defined( CLIENT_DLL )
 
 	#define CAK47 C_AK47
-	#include "c_cs_player.h"
+	#include "c_baseplayer.h"
 
 #else
 
-	#include "cs_player.h"
+	#include "player.h"
 
 #endif
 
 
-class CAK47 : public CWeaponCSBaseGun
+class CAK47 : public CBaseCombatWeapon
 {
 public:
-	DECLARE_CLASS( CAK47, CWeaponCSBaseGun );
+	DECLARE_CLASS( CAK47, CBaseCombatWeapon);
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 	
@@ -64,7 +64,7 @@ void CAK47::AK47Fire( float flSpread )
 	if ( !CSBaseGunFire( flSpread, GetCSWpnData().m_flCycleTime, true ) )
 		return;
 
-	CCSPlayer *pPlayer = GetPlayerOwner();
+	CBasePlayer *pPlayer = GetPlayerOwner();
 
 	// CSBaseGunFire can kill us, forcing us to drop our weapon, if we shoot something that explodes
 	if ( !pPlayer )
@@ -83,7 +83,7 @@ void CAK47::AK47Fire( float flSpread )
 
 void CAK47::PrimaryAttack()
 {
-	CCSPlayer *pPlayer = GetPlayerOwner();
+	CBasePlayer *pPlayer = GetPlayerOwner();
 	if ( !pPlayer )
 		return;
 	

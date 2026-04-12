@@ -38,6 +38,9 @@ void Host_Say( edict_t *pEdict, bool teamonly );
 extern CBaseEntity*	FindPickerEntityClass( CBasePlayer *pPlayer, char *classname );
 extern bool			g_fGameOver;
 
+
+ConVar oldmotd("gabe+_oldmotd", "0", FCVAR_NOTIFY | FCVAR_ARCHIVE, "Show the old in-game SDK message of the day.");
+
 void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 {
 	if (!pPlayer)
@@ -68,26 +71,23 @@ void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 	{
 		ClientPrint( pPlayer, HUD_PRINTTALK, "You are on team %s1\n", pPlayer->GetTeam()->GetName() );
 	}
+
+	if (oldmotd.GetBool())
+	{
+		const ConVar* hostname = cvar->FindVar("hostname");
+		const char* title = (hostname) ? hostname->GetString() : "WELCOME TO GABE MOD v8.1"; // this is where you customize the window title
+
+		KeyValues* data = new KeyValues("data");
+		data->SetString("title", title);		// info panel title
+		data->SetString("type", "1");			// show userdata from stringtable entry
+		data->SetString("msg", "motd");		// use this stringtable entry
+
+		pPlayer->ShowViewPortPanel(PANEL_INFO, true, data);
+
+		data->deleteThis();
+	}
 }
 
-/* I know I readded this for the fifth version, but I removed this for something special.
-CON_COMMAND(show_motd, "Show MOTD")
-{
-	CBasePlayer* pPlayer = UTIL_GetCommandClient();
-
-	const ConVar* hostname = cvar->FindVar("hostname");
-	const char* title = (hostname) ? hostname->GetString() : "MESSAGE OF THE DAY"; // this is where you customize the window title btw
-
-	KeyValues* data = new KeyValues("data");
-	data->SetString("title", title);		// info panel title
-	data->SetString("type", "1");			// show userdata from stringtable entry
-	data->SetString("msg", "motd");		// use this stringtable entry
-
-	pPlayer->ShowViewPortPanel(PANEL_INFO, true, data);
-
-	data->deleteThis();
-}
-*/
 void CHL2MP_Player::IntroTipThink(void)
 {
 	CFmtStr msg;

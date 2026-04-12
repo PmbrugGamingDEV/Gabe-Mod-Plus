@@ -195,18 +195,14 @@ void CBaseProp::Spawn( void )
 	{
 		if ( iResult == PARSE_FAILED_BAD_DATA )
 		{
-			DevWarning( "%s at %.0f %.0f %0.f uses model %s, which has an invalid prop_data type. DELETED.\n", GetClassname(), GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z, szModel );
-			UTIL_Remove( this );
-			return;
+			DevWarning( "%s at %.0f %.0f %0.f uses model %s, which has an invalid prop_data type.\n", GetClassname(), GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z, szModel );
 		}
 		else if ( iResult == PARSE_FAILED_NO_DATA )
 		{
 			// If we don't have data, but we're a prop_physics, fail
 			if ( FClassnameIs( this, "prop_physics" ) )
 			{
-				DevWarning( "%s at %.0f %.0f %0.f uses model %s, which has no propdata which means it must be used on a prop_static. DELETED.\n", GetClassname(), GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z, szModel );
-				UTIL_Remove( this );
-				return;
+				DevWarning( "%s at %.0f %.0f %0.f uses model %s, which has no propdata which means it must be used on a prop_static.\n", GetClassname(), GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z, szModel );
 			}
 		}
 		else if ( iResult == PARSE_SUCCEEDED )
@@ -214,9 +210,7 @@ void CBaseProp::Spawn( void )
 			// If we have data, and we're not a physics prop, fail
 			if ( !dynamic_cast<CPhysicsProp*>(this) )
 			{
-				DevWarning( "%s at %.0f %.0f %0.f uses model %s, which has propdata which means that it be used on a prop_physics. DELETED.\n", GetClassname(), GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z, szModel );
-				UTIL_Remove( this );
-				return;
+				DevWarning( "%s at %.0f %.0f %0.f uses model %s, which has propdata which means that it be used on a prop_physics.\n", GetClassname(), GetAbsOrigin().x, GetAbsOrigin().y, GetAbsOrigin().z, szModel );
 			}
 		}
 	}

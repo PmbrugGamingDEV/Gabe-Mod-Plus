@@ -15,8 +15,6 @@
 #include "inetgraphpanel.h"
 #include "IHTMLView.h"
 #include "idebugoverlaypanel.h"
-#include "ioverrideinterface.h"
-#include "OverrideUI_RootPanel.h"
 #include "sdk_inventory.h"
 #include <vgui/isurface.h>
 #include <vgui/IVGui.h>
@@ -187,9 +185,6 @@ void VGui_CreateGlobalPanels( void )
 	htmlview->Create(gameParent);
 
 	GabeFPS_Create(gameParent);
-
-	OverrideUI->Create(NULL);
-	OverrideGameUI();
 
 	InventoryPanel->Create(gameParent); // Creates the panel.
 

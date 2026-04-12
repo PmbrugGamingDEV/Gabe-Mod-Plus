@@ -1,160 +1,132 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose: CS Deagle
 //
 //=============================================================================//
 
-#include "cbase.h" 
-#include "decals.h" 
-#include "cbase.h" 
-#include "shake.h" 
-#include "weapon_csbase.h"
-#include "fx_cs_shared.h"
-
-
-#if defined( CLIENT_DLL )
-
-	#define CDEagle C_DEagle
-	#include "c_cs_player.h"
-
-#else
-
-	#include "cs_player.h"
-
-#endif
-
-
+#include "cbase.h"
+#include "decals.h"
+#include "shake.h"
+#include "basehlcombatweapon.h"
+#include "player.h"
 
 #define DEAGLE_WEIGHT   7
 #define DEAGLE_MAX_CLIP 7
 
-enum deagle_e {
+enum deagle_e
+{
 	DEAGLE_IDLE1 = 0,
 	DEAGLE_SHOOT1,
 	DEAGLE_SHOOT2,
 	DEAGLE_SHOOT_EMPTY,
-	DEAGLE_RELOAD,	
+	DEAGLE_RELOAD,
 	DEAGLE_DRAW,
 };
 
-
-
-class CDEagle : public CWeaponCSBase
+class CDEagle : public CBaseHLCombatWeapon
 {
 public:
-	DECLARE_CLASS( CDEagle, CWeaponCSBase );
-	DECLARE_NETWORKCLASS(); 
+	DECLARE_CLASS(CDEagle, CBaseHLCombatWeapon);
+	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
 
 	CDEagle();
 
 	void Spawn();
-
 	void PrimaryAttack();
-	void DEAGLEFire( float flSpread );
+	void DEAGLEFire(float flSpread);
 	virtual bool Deploy();
 	bool Reload();
 	void WeaponIdle();
-	void MakeBeam ();
-	void BeamUpdate ();
-	virtual bool UseDecrement() {return true;};
 
-	virtual CSWeaponID GetWeaponID( void ) const		{ return WEAPON_DEAGLE; }
-
-
-public:
-
-	float m_flLastFire;
-
+	virtual bool UseDecrement() { return true; };
 
 private:
-	CDEagle( const CDEagle & );
+	float m_flLastFire;
+
+	CDEagle(const CDEagle&);
 };
 
+IMPLEMENT_NETWORKCLASS_ALIASED(DEagle, DT_WeaponDEagle)
 
-
-IMPLEMENT_NETWORKCLASS_ALIASED( DEagle, DT_WeaponDEagle )
-
-BEGIN_NETWORK_TABLE( CDEagle, DT_WeaponDEagle )
+BEGIN_NETWORK_TABLE(CDEagle, DT_WeaponDEagle)
 END_NETWORK_TABLE()
 
-BEGIN_PREDICTION_DATA( CDEagle )
+BEGIN_PREDICTION_DATA(CDEagle)
 END_PREDICTION_DATA()
 
-LINK_ENTITY_TO_CLASS( weapon_deagle, CDEagle );
-PRECACHE_WEAPON_REGISTER( weapon_deagle );
+LINK_ENTITY_TO_CLASS(weapon_deagle, CDEagle);
+PRECACHE_WEAPON_REGISTER(weapon_deagle);
 
 
-
+//-----------------------------------------------------------------------------
+// Constructor
+//-----------------------------------------------------------------------------
 CDEagle::CDEagle()
 {
-	m_flLastFire = gpGlobals->curtime;
+	m_flLastFire = 0.0f;
 }
 
 
+//-----------------------------------------------------------------------------
+// Spawn
+//-----------------------------------------------------------------------------
 void CDEagle::Spawn()
 {
 	BaseClass::Spawn();
-	m_flAccuracy = 0.9;
+	m_iClip1 = DEAGLE_MAX_CLIP;
 }
 
 
+//-----------------------------------------------------------------------------
+// Deploy
+//-----------------------------------------------------------------------------
 bool CDEagle::Deploy()
 {
-	m_flAccuracy = 0.9;
 	return BaseClass::Deploy();
 }
 
 
+//-----------------------------------------------------------------------------
+// Primary Attack
+//-----------------------------------------------------------------------------
 void CDEagle::PrimaryAttack()
 {
-	CCSPlayer *pPlayer = GetPlayerOwner();
-	if ( !pPlayer )
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
 		return;
-	
-	if ( !FBitSet( pPlayer->GetFlags(), FL_ONGROUND ) )
-		DEAGLEFire( 1.5f * (1 - m_flAccuracy) );
-	
+
+	float flSpread;
+
+	if (!(pPlayer->GetFlags() & FL_ONGROUND))
+		flSpread = 0.1f;
 	else if (pPlayer->GetAbsVelocity().Length2D() > 5)
-		DEAGLEFire( 0.25f * (1 - m_flAccuracy) );
-	
-	else if ( FBitSet( pPlayer->GetFlags(), FL_DUCKING ) )
-		DEAGLEFire( 0.115f * (1 - m_flAccuracy) );
-	
+		flSpread = 0.05f;
+	else if (pPlayer->GetFlags() & FL_DUCKING)
+		flSpread = 0.02f;
 	else
-		DEAGLEFire( 0.13f * (1 - m_flAccuracy) );
+		flSpread = 0.03f;
+
+	DEAGLEFire(flSpread);
 }
 
 
-void CDEagle::DEAGLEFire( float flSpread )
+//-----------------------------------------------------------------------------
+// Fire logic (HL2-style)
+//-----------------------------------------------------------------------------
+void CDEagle::DEAGLEFire(float flSpread)
 {
-	CCSPlayer *pPlayer = GetPlayerOwner();
-	if ( !pPlayer )
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
 		return;
-
-	pPlayer->m_iShotsFired++;
-
-	if (pPlayer->m_iShotsFired > 1)
-		return;
-
-	// Mark the time of this shot and determine the accuracy modifier based on the last shot fired...
-	m_flAccuracy -= (0.35)*(0.4 - ( gpGlobals->curtime - m_flLastFire ) );
-
-	if (m_flAccuracy > 0.9)
-		m_flAccuracy = 0.9;
-	else if (m_flAccuracy < 0.55)
-		m_flAccuracy = 0.55;
-
-	m_flLastFire = gpGlobals->curtime;
 
 	if (m_iClip1 <= 0)
 	{
 		if (m_bFireOnEmpty)
 		{
-			PlayEmptySound();
-			m_flNextPrimaryAttack = gpGlobals->curtime + 0.2;
+			WeaponSound(EMPTY);
+			m_flNextPrimaryAttack = gpGlobals->curtime + 0.2f;
 		}
-
 		return;
 	}
 
@@ -162,68 +134,65 @@ void CDEagle::DEAGLEFire( float flSpread )
 
 	pPlayer->DoMuzzleFlash();
 
-	if( m_iClip1 > 0 )
-		SendWeaponAnim( ACT_VM_PRIMARYATTACK );
-	else
-		SendWeaponAnim( ACT_VM_DRYFIRE );
+	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+	pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-	//SetPlayerShieldAnim();
-	
-	// player "shoot" animation
-	pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	// Direction with recoil
+	QAngle angShoot = pPlayer->EyeAngles() + pPlayer->GetPunchAngle();
+	Vector vecDir;
+	AngleVectors(angShoot, &vecDir);
 
-	//pPlayer->m_iWeaponVolume = BIG_EXPLOSION_VOLUME;
-	//pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
+	// Spread
+	Vector vecSpread(flSpread, flSpread, flSpread);
 
-	FX_FireBullets(
-		pPlayer->entindex(),
-		pPlayer->Weapon_ShootPosition(),
-		pPlayer->EyeAngles() + 2.0f * pPlayer->GetPunchAngle(),
-		GetWeaponID(),
-		Primary_Mode,
-		CBaseEntity::GetPredictionRandomSeed() & 255,
-		flSpread );	// bullets
+	FireBulletsInfo_t info;
+	info.m_iShots = 1;
+	info.m_vecSrc = pPlayer->Weapon_ShootPosition();
+	info.m_vecDirShooting = vecDir;
+	info.m_vecSpread = vecSpread;
+	info.m_flDistance = MAX_TRACE_LENGTH;
+	info.m_iAmmoType = m_iPrimaryAmmoType;
+	info.m_iTracerFreq = 2;
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + GetCSWpnData().m_flCycleTime;
+	pPlayer->FireBullets(info);
 
-	if ( !m_iClip1 && pPlayer->GetAmmoCount( GetPrimaryAmmoType() ) <= 0 )
+	// Fire rate
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.3f;
+
+	// Out of ammo warning
+	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
 	{
-		// HEV suit - indicate out of ammo condition
 		pPlayer->SetSuitUpdate("!HEV_AMO0", false, 0);
 	}
 
-	SetWeaponIdleTime( gpGlobals->curtime + 1.8 );
+	SetWeaponIdleTime(gpGlobals->curtime + 1.8f);
 
-	QAngle punchAngle = pPlayer->GetPunchAngle();
-	punchAngle.x -= 2;
-	pPlayer->SetPunchAngle( punchAngle );
-
-	//ResetPlayerShieldAnim();
+	// Recoil
+	pPlayer->ViewPunch(QAngle(-2.0f, random->RandomFloat(-1.0f, 1.0f), 0));
 }
 
 
+//-----------------------------------------------------------------------------
+// Reload
+//-----------------------------------------------------------------------------
 bool CDEagle::Reload()
 {
-	if ( !DefaultPistolReload() )
-		return false;
-
-	m_flAccuracy = 0.9;
-	return true;
+	return BaseClass::Reload();
 }
 
+
+//-----------------------------------------------------------------------------
+// Idle
+//-----------------------------------------------------------------------------
 void CDEagle::WeaponIdle()
 {
-	if ( m_flTimeWeaponIdle > gpGlobals->curtime )
+	if (m_flTimeWeaponIdle > gpGlobals->curtime)
 		return;
 
-	SetWeaponIdleTime( gpGlobals->curtime + 20 );
+	SetWeaponIdleTime(gpGlobals->curtime + 20);
 
 	if (m_iClip1 != 0)
 	{
-		SendWeaponAnim( ACT_VM_IDLE );
+		SendWeaponAnim(ACT_VM_IDLE);
 	}
-
-	//if ( FBitSet(m_iWeaponState, WPNSTATE_SHIELD_DRAWN) )
-	//	 SendWeaponAnim( SHIELDGUN_DRAWN_IDLE, UseDecrement() ? 1:0 );
 }
-

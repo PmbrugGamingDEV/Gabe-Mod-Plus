@@ -312,11 +312,6 @@ LINK_ENTITY_TO_CLASS( weapon_cs_base, CWeaponCSBase );
 	ConVar cl_crosshairusealpha( "cl_crosshairusealpha", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE );
 #endif
 
-// must be included after the above macros
-#ifndef CLIENT_DLL
-	#include "cs_bot.h"
-#endif
-
 
 // ----------------------------------------------------------------------------- //
 // CWeaponCSBase implementation. 

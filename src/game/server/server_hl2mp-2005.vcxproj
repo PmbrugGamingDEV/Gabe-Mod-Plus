@@ -56,7 +56,7 @@
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
-    <OutDir>..\..\..\game\bin</OutDir>
+    <OutDir>D:\Steam\steamapps\sourcemods\gabemodplus\bin</OutDir>
     <TargetName>server</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,7 +150,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;.\;..\..\game\shared;..\..\utils\common;..\..\game\shared\hl2;.\hl2;.\hl2mp;..\..\game\shared\hl2mp;C:\GabeModPlus\src\game\shared\lua;C:\GabeModPlus\src\game\shared\portal;..\..\game\shared\Multiplayer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;.\;..\..\game\shared;..\..\utils\common;..\..\game\shared\hl2;.\hl2;.\hl2mp;..\..\game\shared\hl2mp;C:\GabeModPlus\src\game\shared\lua;C:\GabeModPlus\src\game\server\cstrike;C:\GabeModPlus\src\game\shared\cstrike;C:\GabeModPlus\src\game\shared\portal;..\..\game\shared\Multiplayer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;GAME_DLL;VECTOR;PROTECTED_THINGS_ENABLE;fopen=dont_use_fopen;sprintf=use_Q_snprintf_instead_of_sprintf;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;HL2MP;MP_SDK;HL2_DLL;VERSION_SAFE_STEAM_API_INTERFACES;ARGG;GE_LUA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling />
@@ -216,6 +216,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\achievementmgr.cpp" />
     <ClCompile Include="..\shared\achievements_hlx.cpp" />
     <ClCompile Include="..\shared\activitylist.cpp" />
+    <ClCompile Include="..\shared\cstrike\weapon_deagle.cpp" />
     <ClCompile Include="..\shared\gabe_events.cpp" />
     <ClCompile Include="..\shared\hl2mp\weapon_eattach.cpp" />
     <ClCompile Include="..\shared\hl2mp\weapon_physgun.cpp" />

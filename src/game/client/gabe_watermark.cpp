@@ -29,6 +29,7 @@ extern IClientMode* g_pClientMode;
 
 ConVar gabeplus_speedrun("gabeplus_speedrun", "0", FCVAR_CLIENTDLL,
     "Shows speedrun timer, for speedrunning purposes");
+ConVar please_dontsteal("please_dontsteal", "0", FCVAR_ARCHIVE, "Hides watermark");
 
 //=========================================================
 // Globals
@@ -172,129 +173,103 @@ void CHudWatermark::ApplySchemeSettings(IScheme* pScheme)
 
 bool CHudWatermark::ShouldDraw(void)
 {
-    return true;
+    if (please_dontsteal.GetBool())
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 //=========================================================
 
 void CHudWatermark::Paint(void)
 {
-    const int margin = 8;
-    const int padding = 6;
-
-    const wchar_t* line1 = L"Gabe Mod 8.1";
-    const wchar_t* line2 = L"sites.google.com/pmbruggaming";
-
-    wchar_t timeText[32];
-    wchar_t pbText[32];
-
-    bool drawTimer = gabeplus_speedrun.GetBool();
-
-    float elapsed = 0.0f;
-
-    if (drawTimer)
-    {
-        elapsed = gpGlobals->curtime - g_flMapStartTime;
-
-        int minutes = (int)(elapsed / 60);
-        int seconds = (int)elapsed % 60;
-        int millis = (int)((elapsed - (int)elapsed) * 1000);
-
-        swprintf_s(timeText, _countof(timeText),
-            L"%02d:%02d.%03d", minutes, seconds, millis);
-
-        // PB check
-        if (g_flPersonalBest < 0 || elapsed < g_flPersonalBest)
-        {
-            g_flPersonalBest = elapsed;
-            SavePersonalBest(elapsed);
-        }
-
-        if (g_flPersonalBest > 0)
-        {
-            int pbm = (int)(g_flPersonalBest / 60);
-            int pbs = (int)g_flPersonalBest % 60;
-            int pbms = (int)((g_flPersonalBest - (int)g_flPersonalBest) * 1000);
-
-            swprintf_s(pbText, _countof(pbText),
-                L"PB %02d:%02d.%03d", pbm, pbs, pbms);
-        }
-    }
-
     int sw, sh;
     surface()->GetScreenSize(sw, sh);
 
-    int w1, h1, w2, h2;
-    surface()->GetTextSize(m_hFont, line1, w1, h1);
-    surface()->GetTextSize(m_hFont, line2, w2, h2);
+    const int margin = 14;
+    const int padding = 10;
 
-    int w3 = 0, h3 = 0;
-    int w4 = 0, h4 = 0;
+    const wchar_t* title = L"GABE MOD";
+    const wchar_t* version = L"v8.1";
+    const wchar_t* website = L"sites.google.com/pmbruggaming";
 
-    if (drawTimer)
-        surface()->GetTextSize(m_hFont, timeText, w3, h3);
+    int wTitle, hTitle;
+    int wVersion, hVersion;
+    int wSite, hSite;
 
-    if (drawTimer && g_flPersonalBest > 0)
-        surface()->GetTextSize(m_hFont, pbText, w4, h4);
+    surface()->GetTextSize(m_hFont, title, wTitle, hTitle);
+    surface()->GetTextSize(m_hFont, version, wVersion, hVersion);
+    surface()->GetTextSize(m_hFont, website, wSite, hSite);
 
-    int boxW = max(max(max(w1, w2), w3), w4) + padding * 2;
+    int boxW = max(max(wTitle, wVersion), wSite) + padding * 2;
+    int boxH = hTitle + hVersion + hSite + padding * 2 + 8;
 
-    int boxH = h1 + h2 + padding * 2 + 2;
+    int x = sw - boxW - margin;
+    int y = margin;
 
-    if (drawTimer)
-        boxH += h3 + 2;
+    // =========================
+    // SHADOW (soft)
+    // =========================
+    surface()->DrawSetColor(0, 0, 0, 100);
+    surface()->DrawFilledRect(x + 2, y + 2, x + boxW + 2, y + boxH + 2);
 
-    if (drawTimer && g_flPersonalBest > 0)
-        boxH += h4 + 2;
+    // =========================
+    // BACKGROUND (glass)
+    // =========================
+    surface()->DrawSetColor(20, 20, 20, 170);
+    surface()->DrawFilledRect(x, y, x + boxW, y + boxH);
 
-    int boxX = sw - boxW - margin;
-    int boxY = margin;
+    // =========================
+    // OUTLINE
+    // =========================
+    surface()->DrawSetColor(0, 0, 0, 220);
+    surface()->DrawOutlinedRect(x, y, x + boxW, y + boxH);
 
-    // Background
-    surface()->DrawSetColor(0, 0, 0, 130);
-    surface()->DrawFilledRect(boxX, boxY, boxX + boxW, boxY + boxH);
+    // =========================
+    // TOP ACCENT BAR
+    // =========================
+    surface()->DrawSetColor(255, 140, 0, 220); // orange
+    surface()->DrawFilledRect(x, y, x + boxW, y + 3);
 
-    // Outline
-    surface()->DrawSetColor(0, 0, 0, 210);
-    surface()->DrawOutlinedRect(boxX, boxY, boxX + boxW, boxY + boxH);
-
-    // Accent line
-    surface()->DrawSetColor(110, 110, 110, 180);
-    surface()->DrawFilledRect(boxX, boxY, boxX + boxW, boxY + 1);
-
-    int x = boxX + padding;
-    int y = boxY + padding;
+    int tx = x + padding;
+    int ty = y + padding;
 
     surface()->DrawSetTextFont(m_hFont);
 
-    // Title
-    surface()->DrawSetTextColor(230, 230, 230, 210);
-    surface()->DrawSetTextPos(x, y);
-    surface()->DrawPrintText(line1, wcslen(line1));
-    y += h1 + 1;
+    // =========================
+    // TITLE (bold look)
+    // =========================
+    surface()->DrawSetTextColor(255, 255, 255, 230);
+    surface()->DrawSetTextPos(tx, ty);
+    surface()->DrawPrintText(title, wcslen(title));
 
-    // Website
-    surface()->DrawSetTextColor(160, 160, 160, 210);
-    surface()->DrawSetTextPos(x, y);
-    surface()->DrawPrintText(line2, wcslen(line2));
-    y += h2 + 2;
+    ty += hTitle;
 
-    if (drawTimer)
-    {
-        // Timer
-        surface()->DrawSetTextColor(255, 210, 120, 210);
-        surface()->DrawSetTextPos(x, y);
-        surface()->DrawPrintText(timeText, wcslen(timeText));
-        y += h3 + 2;
+    // =========================
+    // SUBTITLE (cyan accent)
+    // =========================
+    surface()->DrawSetTextColor(0, 200, 255, 220);
+    surface()->DrawSetTextPos(tx, ty);
+    surface()->DrawPrintText(version, wcslen(version));
 
-        // PB
-        if (g_flPersonalBest > 0)
-        {
-            surface()->DrawSetTextColor(120, 255, 120, 210);
-            surface()->DrawSetTextPos(x, y);
-            surface()->DrawPrintText(pbText, wcslen(pbText));
-        }
-    }
+    ty += hVersion + 4;
 
-    CheckForLevelFinish();
+    // =========================
+    // SEPARATOR
+    // =========================
+    surface()->DrawSetColor(80, 80, 80, 180);
+    surface()->DrawFilledRect(x + padding, ty, x + boxW - padding, ty + 1);
+
+    ty += 4;
+
+    // =========================
+    // WEBSITE
+    // =========================
+    surface()->DrawSetTextColor(160, 160, 160, 220);
+    surface()->DrawSetTextPos(tx, ty);
+    surface()->DrawPrintText(website, wcslen(website));
 }

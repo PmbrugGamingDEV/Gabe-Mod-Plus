@@ -1,4 +1,4 @@
-//===== Copyright � 1996-2005, Valve Corporation, All rights reserved. ======//
+﻿//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Spawn and use functions for editor-placed triggers.
 //
@@ -775,18 +775,29 @@ int CTriggerHurt::HurtAllTouchers( float dt )
 	m_hurtEntities.RemoveAll();
 
 	touchlink_t *root = ( touchlink_t * )GetDataObject( TOUCHLINK );
-	if ( root )
+	for (touchlink_t* link = root->nextLink; link != root; link = link->nextLink)
 	{
-		for ( touchlink_t *link = root->nextLink; link != root; link = link->nextLink )
+		CBaseEntity* pTouch = link->entityTouched;
+
+		if (!pTouch)
+			continue;
+
+		// ✅ CRITICAL FIX: skip entities that can't take damage
+		if (pTouch->m_takedamage == DAMAGE_NO)
+			continue;
+
+		if (pTouch->IsPlayer())
 		{
-			CBaseEntity *pTouch = link->entityTouched;
-			if ( pTouch )
-			{
-				if ( HurtEntity( pTouch, fldmg ) )
-				{
-					hurtCount++;
-				}
-			}
+			CBasePlayer* pPlayer = ToBasePlayer(pTouch);
+
+			// Extra safety for godmode
+			if (pPlayer && (pPlayer->GetFlags() & FL_GODMODE))
+				continue;
+		}
+
+		if (HurtEntity(pTouch, fldmg))
+		{
+			hurtCount++;
 		}
 	}
 

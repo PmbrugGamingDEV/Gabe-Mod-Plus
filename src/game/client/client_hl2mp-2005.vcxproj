@@ -58,7 +58,7 @@
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
-    <OutDir>..\..\..\game\bin</OutDir>
+    <OutDir>D:\Steam\steamapps\sourcemods\gabemodplus\bin</OutDir>
     <TargetName>client</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -299,6 +299,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="c_func_conveyor.cpp" />
     <ClCompile Include="c_func_dust.cpp" />
     <ClCompile Include="c_func_lod.cpp" />
+    <ClCompile Include="c_weapon_deagle.cpp" />
     <ClCompile Include="c_weapon_proplauncher.cpp" />
     <ClCompile Include="c_weapon__stubs_gabemod.cpp" />
     <ClCompile Include="gabeplus_fps.cpp" />
@@ -467,9 +468,6 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="history_resource.cpp" />
     <ClCompile Include="hl2\c_weapon_gravitygun.cpp" />
     <ClCompile Include="hltvcamera.cpp" />
-    <ClCompile Include="ioverrideinterface.cpp" />
-    <ClCompile Include="OverrideUI_RootPanel.cpp" />
-    <ClCompile Include="OverrideUI_RootPanel.h" />
     <ClCompile Include="hud.cpp" />
     <ClCompile Include="hud_animationinfo.cpp" />
     <ClCompile Include="hl2\hud_autoaim.cpp" />
@@ -640,6 +638,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="sdk_inventory.cpp" />
+    <ClCompile Include="selfcodedpanel.cpp" />
     <ClCompile Include="simple_keys.cpp" />
     <ClCompile Include="..\..\public\simple_physics.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -713,6 +712,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="vgui_netgraphpanel.cpp" />
     <ClCompile Include="vgui_slideshow_display_screen.cpp" />
     <ClCompile Include="vgui_test.cpp" />
+    <ClCompile Include="vgui_utiltest.cpp" />
     <ClCompile Include="view.cpp" />
     <ClCompile Include="view_beams.cpp" />
     <ClCompile Include="view_effects.cpp" />
@@ -941,11 +941,12 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="hl1\hud_numbers.h" />
     <ClInclude Include="hud_killfeed.h" />
     <ClInclude Include="IHTMLView.h" />
-    <ClInclude Include="ioverrideinterface.h" />
     <ClInclude Include="mapload_background.h" />
     <ClInclude Include="sdk_inventory.h" />
+    <ClInclude Include="vgui_all.h" />
     <ClInclude Include="vgui_avatarimage.h" />
     <ClInclude Include="vgui_keyvalue.h" />
+    <ClInclude Include="vgui_util.h" />
     <ClInclude Include="viewdebug.h" />
     <ClInclude Include="viewpostprocess.h" />
     <ClInclude Include="game_controls\basemodel_panel.h" />
@@ -1549,6 +1550,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
   </ItemGroup>
   <ItemGroup>
     <None Include="client_hl2mp.vpc" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

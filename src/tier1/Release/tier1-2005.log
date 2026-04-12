@@ -1,1 +1,32 @@
-﻿
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  bitbuf.cpp
+  byteswap.cpp
+  characterset.cpp
+  checksum_crc.cpp
+  checksum_md5.cpp
+  commandbuffer.cpp
+  convar.cpp
+  datamanager.cpp
+  diff.cpp
+  generichash.cpp
+  interface.cpp
+  KeyValues.cpp
+  mempool.cpp
+  memstack.cpp
+  NetAdr.cpp
+  newbitbuf.cpp
+  rangecheckedvar.cpp
+  stringpool.cpp
+  strtools.cpp
+  tier1.cpp
+  Generating Code...
+  Compiling...
+  tokenreader.cpp
+  uniqueid.cpp
+  utlbuffer.cpp
+  utlbufferutil.cpp
+  utlstring.cpp
+  utlsymbol.cpp
+  Generating Code...
+  processor_detect.cpp
+  tier1-2005.vcxproj -> C:\GabeModPlus\src\tier1\..\lib\public\tier1.lib

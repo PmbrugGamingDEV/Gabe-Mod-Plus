@@ -88,6 +88,9 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\C-Strike">
       <UniqueIdentifier>{2051b118-84cd-4dea-a73e-be0dea88ba22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\CStrike Weapons">
+      <UniqueIdentifier>{00a4e244-fb1a-47b3-ad53-31afde059ad4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\achievement_saverestore.cpp">
@@ -2087,6 +2090,9 @@
     </ClCompile>
     <ClCompile Include="hl2\weapon_citizenpackage.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\cstrike\weapon_deagle.cpp">
+      <Filter>Source Files\CStrike Weapons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

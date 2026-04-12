@@ -8,6 +8,24 @@
 #include "ieffects.h"
 #endif
 
+static void FixSpawnPosition(CBaseEntity* pEnt, const Vector& hitPos)
+{
+	if (!pEnt)
+		return;
+
+	Vector pos = hitPos;
+
+	if (pEnt->CollisionProp())
+	{
+		Vector mins = pEnt->CollisionProp()->OBBMins();
+
+		// Correct: shift up by how far bottom is below origin
+		pos.z -= mins.z;
+	}
+
+	pEnt->SetAbsOrigin(pos);
+}
+
 static void SpawnFromCommand(
 	CBasePlayer* pPlayer,
 	const char* pszSpawnType,
@@ -24,7 +42,7 @@ static void SpawnFromCommand(
 	if (!tr.DidHit())
 		return;
 
-	Vector pos = tr.endpos + Vector(0, 0, 42);
+	Vector hitPos = tr.endpos;
 
 	// --------------------------------------------------
 	// PROPS
@@ -32,12 +50,21 @@ static void SpawnFromCommand(
 	if (!Q_stricmp(pszSpawnType, "prop"))
 	{
 		CBaseEntity* pEnt = CreateEntityByName("prop_physics");
+
+		if (pEnt)
+		{
+			pEnt->PrecacheModel(pszValue);
+			pEnt->SetModel(pszValue);
+
+			DispatchSpawn(pEnt);
+		}
+
 		if (!pEnt)
 			return;
 
-		pEnt->PrecacheModel(pszValue);
-		pEnt->SetModel(pszValue);
-		pEnt->SetAbsOrigin(pos);
+		// Fix position AFTER model is set
+		FixSpawnPosition(pEnt, hitPos);
+
 		DispatchSpawn(pEnt);
 		pEnt->Activate();
 		return;
@@ -54,7 +81,9 @@ static void SpawnFromCommand(
 
 		pEnt->PrecacheModel(pszValue);
 		pEnt->SetModel(pszValue);
-		pEnt->SetAbsOrigin(pos);
+
+		FixSpawnPosition(pEnt, hitPos);
+
 		DispatchSpawn(pEnt);
 		pEnt->Activate();
 		return;
@@ -72,8 +101,10 @@ static void SpawnFromCommand(
 			return;
 		}
 
-		pEnt->SetAbsOrigin(pos);
 		DispatchSpawn(pEnt);
+
+		FixSpawnPosition(pEnt, hitPos);
+
 		pEnt->Activate();
 		return;
 	}
@@ -94,7 +125,8 @@ static void SpawnFromCommand(
 		pCarrier->SetMoveType(MOVETYPE_VPHYSICS);
 		pCarrier->SetSolid(SOLID_VPHYSICS);
 		pCarrier->VPhysicsInitNormal(SOLID_VPHYSICS, NULL, false);
-		pCarrier->SetAbsOrigin(pos);
+
+		FixSpawnPosition(pCarrier, hitPos);
 
 		DispatchSpawn(pCarrier);
 		pCarrier->Activate();
@@ -110,9 +142,9 @@ static void SpawnFromCommand(
 
 		pEffect->PrecacheModel(pszValue);
 		pEffect->SetModel(pszValue);
-		pEffect->SetAbsOrigin(pos);
 		pEffect->SetParent(pCarrier);
 		pEffect->SetSolid(SOLID_NONE);
+		pEffect->SetLocalOrigin(vec3_origin);
 
 		DispatchSpawn(pEffect);
 		pEffect->Activate();
@@ -131,22 +163,30 @@ static void SpawnFromCommand(
 			return;
 		}
 
-		pEnt->SetAbsOrigin(pos);
 		DispatchSpawn(pEnt);
+
+		FixSpawnPosition(pEnt, hitPos);
+
 		pEnt->Activate();
 		return;
 	}
 
+	// --------------------------------------------------
+	// WEAPONS
+	// --------------------------------------------------
 	if (!Q_stricmp(pszSpawnType, "weapon"))
 	{
 		CBaseEntity* pEnt = CreateEntityByName(pszValue);
 		if (!pEnt)
 		{
-			Warning("[Spawnmenu] Attempted to spawn unknown weapon: %s\n", pszValue);
+			Warning("[Spawnmenu] Unknown weapon: %s\n", pszValue);
 			return;
 		}
-		pEnt->SetAbsOrigin(pos);
+
 		DispatchSpawn(pEnt);
+
+		FixSpawnPosition(pEnt, hitPos);
+
 		pEnt->Activate();
 		return;
 	}
@@ -164,13 +204,12 @@ static void SpawnFromCommand(
 		char cmd[512];
 		Q_snprintf(cmd, sizeof(cmd), "%s\n", pszValue);
 
-		engine->ServerCommand(cmd);
-		engine->ServerExecute();
-
+		engine->ClientCommand(pPlayer->edict(), cmd);
 		return;
 	}
 
-	g_pEffects->Sparks(pos, 1, 1, 0);
+	// fallback effect
+	g_pEffects->Sparks(hitPos, 1, 1, 0);
 }
 
 CON_COMMAND(gabe_spawn, "gabe_spawn <prop|ragdoll|npc|effect|debug|weapon|command> <value>")
