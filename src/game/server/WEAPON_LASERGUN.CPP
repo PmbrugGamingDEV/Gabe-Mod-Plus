@@ -5,6 +5,7 @@
 #include "te_effect_dispatch.h"
 #include "ieffects.h"
 #include "beam_shared.h"
+#include "GABE.H"
 
 IMPLEMENT_NETWORKCLASS_ALIASED(WeaponLaserGun, DT_WeaponLaserGun)
 
@@ -44,9 +45,9 @@ void CWeaponLaserGun::PrimaryAttack()
 
 void CWeaponLaserGun::FireLaser()
 {
-    CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
-    if (!pPlayer)
-        return;
+    CBasePlayer* pPlayer = GabeMod::GetPlayer();
+	if (!pPlayer)
+		return;
 
     Vector vecSrc = pPlayer->Weapon_ShootPosition();
 

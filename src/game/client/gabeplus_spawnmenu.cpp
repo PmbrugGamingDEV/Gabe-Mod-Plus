@@ -119,7 +119,7 @@ public:
 			}
 
 			// BUTTON
-			if (y + btnH > h - pad)
+			if (y + btnH > h - 15) // 🔥 15px threshold from bottom
 			{
 				y = pad;
 				x += btnW + pad;
@@ -151,6 +151,8 @@ public:
 					engine->ClientCmd_Unrestricted(
 						VarArgs("gabe_spawn %s \"%s\"\n", m_szSpawnType, value)
 					);
+
+					surface()->PlaySound("ui/buttonclickrelease.wav");
 
 					break;
 				}

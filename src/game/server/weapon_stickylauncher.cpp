@@ -88,6 +88,9 @@ void CWeaponStickyLauncher::PrimaryAttack()
 		pPellet->SetOwnerEntity(pPlayer);
 		pPellet->Spawn();
 
+		trace_t tr;
+		UTIL_TraceLine(vecSrc, vecSrc + vecAiming * 2048, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
+
 		WeaponSound(SINGLE);
 	    SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 

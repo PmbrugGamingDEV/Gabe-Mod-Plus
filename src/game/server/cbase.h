@@ -126,6 +126,22 @@ enum
 
 #define OVERRIDE override
 
+#define ConsoleOut(x) Msg(#x "\n")
+#define DConsoleOut(x) DevMsg(#x "\n")
+#define ConsoleInNoArgs(cmd) \
+	do { \
+		CBasePlayer* pPlayer = UTIL_GetCommandClient(); \
+		if (pPlayer) \
+			engine->ClientCommand(pPlayer->edict(), #cmd); \
+	} while(0)
+
+#define ConsoleIn(cmd) \
+	do { \
+		CBasePlayer* pPlayer = UTIL_GetCommandClient(); \
+		if (pPlayer) \
+			engine->ClientCommand(pPlayer->edict(), cmd); \
+	} while(0)
+
 // when calling KILLED(), a value that governs gib behavior is expected to be 
 // one of these three values
 #define GIB_NORMAL			0// gib if entity was overkilled

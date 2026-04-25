@@ -28,6 +28,7 @@ void RegisterUserMessages( void )
 	usermessages->Register("MultitoolHUD", -1);
 	usermessages->Register("KillFeed", -1);
 	usermessages->Register("DamageFeed", -1);
+	usermessages->Register("TaskList", -1);
 	usermessages->Register( "ShowMenu", -1 );
 	usermessages->Register("EntityNames", -1);
 	usermessages->Register( "Shake", 13 );

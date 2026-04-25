@@ -13,7 +13,7 @@
 #else
 	#include "hl2mp_player.h"
 	#include "util.h" // For UTIL_HudHintText
-	#include "gabeplus_shared.h"
+	#include "GABE.H"
 #endif
 
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
@@ -346,7 +346,7 @@ bool CWeaponPistol::Deploy(void)
 	if (!pPlayer)
 		return false;
 
-	HudText(pPlayer, "TIP: Hold right mouse button to fire a burst of bullets.");
+	GabeMod::HudText(pPlayer, "TIP: Hold right mouse button to fire a burst of bullets.");
 #endif
 
 	return BaseClass::Deploy();

@@ -217,6 +217,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\achievements_hlx.cpp" />
     <ClCompile Include="..\shared\activitylist.cpp" />
     <ClCompile Include="..\shared\cstrike\weapon_deagle.cpp" />
+    <ClCompile Include="..\shared\GABE.cpp" />
     <ClCompile Include="..\shared\gabe_events.cpp" />
     <ClCompile Include="..\shared\hl2mp\weapon_eattach.cpp" />
     <ClCompile Include="..\shared\hl2mp\weapon_physgun.cpp" />
@@ -288,6 +289,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\animation.cpp" />
     <ClCompile Include="..\shared\base_playeranimstate.cpp" />
     <ClCompile Include="baseprojectile.cpp" />
+    <ClCompile Include="basestaticragdoll.cpp" />
     <ClCompile Include="base_transmit_proxy.cpp" />
     <ClCompile Include="..\shared\baseachievement.cpp" />
     <ClCompile Include="baseanimating.cpp" />
@@ -339,6 +341,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\decals.cpp" />
     <ClCompile Include="edictfiller.cpp" />
     <ClCompile Include="ent_test.cpp" />
+    <ClCompile Include="env_tasklist.cpp" />
     <ClCompile Include="fartcmd.cpp" />
     <ClCompile Include="gabeplus_chaosent.cpp" />
     <ClCompile Include="gabeplus_debugobjects.cpp" />
@@ -431,6 +434,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="gabe_effects.cpp" />
     <ClCompile Include="gabe_effect_carrier.cpp" />
     <ClCompile Include="gabe_nextbot.cpp" />
+    <ClCompile Include="gabe_saverestore.cpp" />
     <ClCompile Include="ge_gamelua.cpp" />
     <ClCompile Include="ge_luamanager.cpp" />
     <ClCompile Include="hl1\hl1_basegrenade.cpp" />
@@ -484,6 +488,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="hl1\hl1_weapon_shotgun.cpp" />
     <ClCompile Include="hl1\hl1_weapon_snark.cpp" />
     <ClCompile Include="hl1\hl1_xen.cpp" />
+    <ClCompile Include="hl2mp\hl2mp_bot_temp.cpp" />
     <ClCompile Include="hl2\Func_Monitor.cpp" />
     <ClCompile Include="func_movelinear.cpp" />
     <ClCompile Include="func_occluder.cpp" />
@@ -609,7 +614,6 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\movevars_shared.cpp" />
     <ClCompile Include="..\shared\mp_shareddefs.cpp" />
     <ClCompile Include="..\shared\multiplay_gamerules.cpp" />
-    <ClCompile Include="MP_AI\bot_main.cpp" />
     <ClCompile Include="nav_area.cpp" />
     <ClCompile Include="nav_colors.cpp" />
     <ClCompile Include="nav_edit.cpp" />
@@ -1025,6 +1029,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="..\shared\achievementmgr.h" />
     <ClInclude Include="..\shared\activitylist.h" />
     <ClInclude Include="..\shared\ai_activity.h" />
+    <ClInclude Include="..\shared\gabe.h" />
     <ClInclude Include="..\shared\gabe_events.h" />
     <ClInclude Include="ai_baseactor.h" />
     <ClInclude Include="ai_basehumanoid.h" />
@@ -1166,6 +1171,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="gabe_constraints.h" />
     <ClInclude Include="gabe_effects.h" />
     <ClInclude Include="gabe_effect_carrier.h" />
+    <ClInclude Include="gabe_saverestore.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameinterface.h" />
     <ClInclude Include="..\shared\gamemovement.h" />
@@ -1196,6 +1202,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="hl1\hl1_weapon_mp5.h" />
     <ClInclude Include="hl1\hl1_weapon_rpg.h" />
     <ClInclude Include="hl1\hl1_weapon_satchel.h" />
+    <ClInclude Include="hl2mp\hl2mp_bot_temp.h" />
     <ClInclude Include="hl2\grenade_spit.h" />
     <ClInclude Include="hl2\npc_antliongrub.h" />
     <ClInclude Include="hl2\vehicle_jeep.h" />
@@ -1238,9 +1245,6 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="movehelper_server.h" />
     <ClInclude Include="movie_explosion.h" />
     <ClInclude Include="..\shared\multiplay_gamerules.h" />
-    <ClInclude Include="MP_AI\bot_combat.h" />
-    <ClInclude Include="MP_AI\bot_main.h" />
-    <ClInclude Include="MP_AI\bot_navigation.h" />
     <ClInclude Include="nav.h" />
     <ClInclude Include="nav_area.h" />
     <ClInclude Include="nav_colors.h" />

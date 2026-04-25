@@ -1048,7 +1048,7 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	ConColorMsg(clr, "Edicts used up: %d/%d\n", used, MAX_EDICTS);
 
 	Color gbclr(0, 0, 255, 255);
-	ConColorMsg(gbclr, "Gabe Mod (v8.1) - 3/1/2026\n");
+	ConColorMsg(gbclr, "Gabe Mod (v8.1) - 4/12/2026\n");
 
 	if (!g_bDidPrecacheAllSounds)
 	{
@@ -1228,7 +1228,7 @@ void CServerGameDLL::GameFrame( bool simulating )
 	// Any entities that detect network state changes on a timer do it here.
 	g_NetworkPropertyEventMgr.FireEvents();
 
-	Bot_RunAll();
+	//Bot_RunAll();
 
 	gpGlobals->frametime = oldframetime;
 }

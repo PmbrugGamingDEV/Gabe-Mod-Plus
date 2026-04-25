@@ -236,6 +236,7 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_shotgun" );
 	GiveNamedItem( "weapon_frag" );
 	GiveNamedItem( "weapon_physgun" );
+	GiveNamedItem( "weapon_jbphysgun" );
 	GiveNamedItem( "weapon_hax" );
 	GiveNamedItem( "weapon_camera" );
 	GiveNamedItem( "weapon_crossbow" );
@@ -243,13 +244,15 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_annabelle" );
 	GiveNamedItem( "weapon_flaregun" );
 	GiveNamedItem( "weapon_multitool" );
-	GiveNamedItem( "weapon_spawnmenu" );
+	//GiveNamedItem( "weapon_spawnmenu" );
 
 	GiveNamedItem( "weapon_rpg" );
 
 	GiveNamedItem( "weapon_slam" );
 
 	GiveNamedItem( "weapon_physcannon" );
+
+	engine->ClientCommand(this->edict(), "viewmodel_fov 54");
 }
 
 void CHL2MP_Player::GiveHL1Items(void)
@@ -283,8 +286,7 @@ void CHL2MP_Player::GiveHL1Items(void)
 	GiveNamedItem("weapon_handgrenade");
 	GiveNamedItem("weapon_satchel");
 
-	engine->ServerCommand("viewmodel_fov 90");
-	engine->ServerExecute();
+	engine->ClientCommand(this->edict(), "viewmodel_fov 90");
 }
 
 void CHL2MP_Player::GiveDefaultItems( void )
@@ -310,6 +312,8 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	GiveNamedItem( "weapon_smg1" );
 	GiveNamedItem( "weapon_frag" );
 	GiveNamedItem( "weapon_physcannon" );
+
+	engine->ClientCommand(this->edict(), "viewmodel_fov 54");
 }
 
 void CHL2MP_Player::GiveSDKItems(void)
@@ -319,11 +323,13 @@ void CHL2MP_Player::GiveSDKItems(void)
 	GiveNamedItem("sdk_mp5");
 	GiveNamedItem("sdk_grenade");
 	GiveNamedItem("sdk_shotgun");
+	engine->ClientCommand(this->edict(), "viewmodel_fov 54");
 }
 
 void CHL2MP_Player::GiveNoItems(void)
 {
 	// Nothing!
+	engine->ClientCommand(this->edict(), "viewmodel_fov 54");
 }
 
 
@@ -560,7 +566,7 @@ void CHL2MP_Player::Spawn(void)
 		}
 	}
 
-	Weapon_Switch(Weapon_OwnsThisType("weapon_physcannon"));
+	Weapon_Switch(Weapon_OwnsThisType("weapon_physgun"));
 
 	RemoveEffects( EF_NOINTERP );
 

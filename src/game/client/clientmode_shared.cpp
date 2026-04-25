@@ -40,6 +40,8 @@
 #include "xbox/xbox_console.h"
 #endif
 
+#include "gabe.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -240,6 +242,10 @@ void ClientModeShared::Init()
 	}
 
 	CamBlur_Init();
+
+#ifdef CLIENT_DLL
+	GabeMod::MessageBox("Welcome to Gabe Mod v8.1", "hi, you're playing Gabe Mod or a modpack/build based off of it.\n Thanks for playing!");
+#endif
 }
 
 

@@ -1746,6 +1746,13 @@
     <ClCompile Include="vgui_utiltest.cpp">
       <Filter>Source Files\Gabe Mod + Stuff\Utilities\Test</Filter>
     </ClCompile>
+    <ClCompile Include="hud_undo.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\GABE.cpp" />
+    <ClCompile Include="hud_tasklist.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="achievement_notification_panel.h">
@@ -3607,6 +3614,12 @@
     </ClInclude>
     <ClInclude Include="vgui_all.h">
       <Filter>Source Files\Gabe Mod + Stuff\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\gabe.h">
+      <Filter>Game Shared Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_tasklist.h">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,28 +3,11 @@
   "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_client.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\hl2mp\\hl2mp_client.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\serverbenchmark_base.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\serverbenchmark_base.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\hl2mp\\hl2mp_player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}|tier1\\tier1-2005.vcxproj|C:\\GabeModPlus\\src\\public\\tier1\\iconvar.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}|tier1\\tier1-2005.vcxproj|solutionrelative:public\\tier1\\iconvar.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\gameinterface.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\gameinterface.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\hl2mp\\ui\\hl2mptextwindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\hl2mp\\ui\\hl2mptextwindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\game_controls\\vguitextwindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\game_controls\\vguitextwindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,7 +17,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,78 +29,29 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "iconvar.h",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\public\\tier1\\iconvar.h",
-              "RelativeDocumentMoniker": "public\\tier1\\iconvar.h",
-              "ToolTip": "C:\\GabeModPlus\\src\\public\\tier1\\iconvar.h",
-              "RelativeToolTip": "public\\tier1\\iconvar.h",
-              "ViewState": "AgIAAGIAAAAAAAAAAAAcwGQAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-11T17:52:29.669Z",
+              "DocumentIndex": 0,
+              "Title": "serverbenchmark_base.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\serverbenchmark_base.cpp",
+              "RelativeDocumentMoniker": "game\\server\\serverbenchmark_base.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\serverbenchmark_base.cpp",
+              "RelativeToolTip": "game\\server\\serverbenchmark_base.cpp",
+              "ViewState": "AgIAACkAAAAAAAAAAAAAAC4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-04-25T22:19:22.673Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "hl2mp_player.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp",
-              "RelativeDocumentMoniker": "game\\server\\hl2mp\\hl2mp_player.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_player.cpp",
-              "RelativeToolTip": "game\\server\\hl2mp\\hl2mp_player.cpp",
-              "ViewState": "AgIAAIMAAAAAAAAAAAAYwI4AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-11T17:52:27.338Z",
+              "Title": "Microsoft.CppCommon.targets",
+              "DocumentMoniker": "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets",
+              "RelativeDocumentMoniker": "..\\..\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets",
+              "ToolTip": "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets",
+              "RelativeToolTip": "..\\..\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets",
+              "ViewState": "AgIAAG8AAAAAAAAAAAArwIcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2026-04-25T22:14:34.165Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "hl2mp_client.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_client.cpp",
-              "RelativeDocumentMoniker": "game\\server\\hl2mp\\hl2mp_client.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\hl2mp\\hl2mp_client.cpp",
-              "RelativeToolTip": "game\\server\\hl2mp\\hl2mp_client.cpp",
-              "ViewState": "AgIAAEIAAAAAAAAAAAAswEsAAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-11T17:49:03.837Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "gameinterface.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\gameinterface.cpp",
-              "RelativeDocumentMoniker": "game\\server\\gameinterface.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\gameinterface.cpp",
-              "RelativeToolTip": "game\\server\\gameinterface.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-11T17:48:55.451Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "hl2mptextwindow.h",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\hl2mp\\ui\\hl2mptextwindow.h",
-              "RelativeDocumentMoniker": "game\\client\\hl2mp\\ui\\hl2mptextwindow.h",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\hl2mp\\ui\\hl2mptextwindow.h",
-              "RelativeToolTip": "game\\client\\hl2mp\\ui\\hl2mptextwindow.h",
-              "ViewState": "AgIAADYAAAAAAAAAAAAYwBEAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-11T17:48:46.965Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "vguitextwindow.h",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\game_controls\\vguitextwindow.h",
-              "RelativeDocumentMoniker": "game\\client\\game_controls\\vguitextwindow.h",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\game_controls\\vguitextwindow.h",
-              "RelativeToolTip": "game\\client\\game_controls\\vguitextwindow.h",
-              "ViewState": "AgIAACEAAAAAAAAAAAAYwBoAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-11T17:48:43.018Z"
             }
           ]
         }

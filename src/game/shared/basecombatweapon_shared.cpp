@@ -25,6 +25,8 @@
 #include "hl2mp_gamerules.h"
 #endif
 
+#include "beam_shared.h"
+
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -1370,12 +1372,33 @@ bool CBaseCombatWeapon::DefaultDeploy(char* szViewModel, char* szWeaponModel, in
 bool CBaseCombatWeapon::Deploy()
 {
 	MDLCACHE_CRITICAL_SECTION();
-	return DefaultDeploy((char*)GetViewModel(), (char*)GetWorldModel(), GetDrawActivity(), (char*)GetAnimPrefix());
+
+	bool bResult = DefaultDeploy(
+		(char*)GetViewModel(),
+		(char*)GetWorldModel(),
+		GetDrawActivity(),
+		(char*)GetAnimPrefix()
+	);
+
+	if (bResult)
+	{
+		CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+		if (pOwner)
+		{
+			CBaseViewModel* vm = pOwner->GetViewModel();
+			if (vm)
+			{
+				vm->SetPlaybackRate(3.0f); // 🔥 faster animation
+			}
+		}
+	}
+
+	return bResult;
 }
 
 Activity CBaseCombatWeapon::GetDrawActivity(void)
 {
-	return ACT_VM_IDLE;
+	return ACT_VM_DRAW;
 }
 
 //-----------------------------------------------------------------------------
@@ -1514,6 +1537,8 @@ void CBaseCombatWeapon::ItemPreFrame(void)
 #endif
 }
 
+ConVar gabeplus_laser("gabe+_laser", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "Show weapon laser");
+
 //====================================================================================
 // WEAPON BEHAVIOUR
 //====================================================================================
@@ -1634,6 +1659,53 @@ void CBaseCombatWeapon::ItemPostFrame(void)
 		{
 			WeaponIdle();
 		}
+	}
+
+	if (gabeplus_laser.GetBool())
+	{
+		CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+		if (!pPlayer)
+			return;
+
+		// 🔫 Muzzle position
+		Vector vecSrc = pPlayer->Weapon_ShootPosition();
+
+		// 🎯 Direction
+		Vector forward;
+		AngleVectors(pPlayer->EyeAngles(), &forward);
+
+		// 🔍 Trace
+		trace_t tr;
+		UTIL_TraceLine(
+			vecSrc,
+			vecSrc + forward * 8192,
+			MASK_SHOT,
+			pPlayer,
+			COLLISION_GROUP_NONE,
+			&tr
+		);
+
+#ifndef CLIENT_DLL
+		// 🔴 Create beam
+		CBeam* pBeam = CBeam::BeamCreate("sprites/laserbeam.vmt", 2.0f);
+		if (pBeam)
+		{
+			pBeam->PointEntInit(tr.endpos, this);
+
+			// 🔧 Attach to muzzle (usually attachment 1)
+			pBeam->SetEndAttachment(1);
+
+			pBeam->SetBrightness(255);
+			pBeam->SetColor(255, 0, 0);
+
+			pBeam->SetWidth(2.0f);
+			pBeam->SetEndWidth(2.0f);
+
+			pBeam->RelinkBeam();
+
+			pBeam->LiveForTime(gpGlobals->absoluteframetime); // short lifetime = smooth update
+		}
+#endif
 	}
 }
 

@@ -33,6 +33,7 @@
 	#include "voice_gamemgr.h"
 	#include "hl2mp_gameinterface.h"
 	#include "hl2mp_cvars.h"
+	#include "hl2mp_bot_temp.h"
 
 extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
 
@@ -2001,7 +2002,7 @@ CAmmoDef* GetAmmoDef()
 
 #else
 
-#if 0
+#if 1
 
 	// Handler for the "bot" command.
 	void Bot_f()
@@ -2246,8 +2247,22 @@ void CHL2MPRules::CheckChatForReadySignal( CHL2MP_Player *pPlayer, const char *c
 	}
 }
 
+bool IsHL2Map()
+{
+	const char* map = STRING(gpGlobals->mapname);
+
+	return !Q_strnicmp(map, "d1_", 3) ||
+		!Q_strnicmp(map, "d2_", 3) ||
+		!Q_strnicmp(map, "d3_", 3);
+}
+
 void CHL2MPRules::CheckRestartGame( void )
 {
+	if (IsHL2Map())
+	{
+		return; // Don't allow restarts on HL2 maps, game crashes
+	}
+
 	// Restart the game if specified by the server
 	int iRestartDelay = mp_restartgame.GetInt();
 

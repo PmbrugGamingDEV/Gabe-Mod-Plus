@@ -88,6 +88,57 @@ void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 	}
 }
 
+CON_COMMAND(gabe_bbox, "Show the bounding box of picker ents")
+{
+	CBasePlayer* pPlayer = UTIL_GetCommandClient();
+	if (!pPlayer)
+		return;
+
+	// Trace forward from player's eyes
+	Vector vecStart = pPlayer->EyePosition();
+	Vector vecForward;
+	AngleVectors(pPlayer->EyeAngles(), &vecForward);
+
+	Vector vecEnd = vecStart + (vecForward * 8192);
+
+	trace_t tr;
+	UTIL_TraceLine(
+		vecStart,
+		vecEnd,
+		MASK_SHOT,
+		pPlayer,
+		COLLISION_GROUP_NONE,
+		&tr
+	);
+
+	// Did we hit something?
+	if (!tr.m_pEnt)
+	{
+		Msg("Found World\n");
+		return;
+	}
+
+	CBaseEntity* pEnt = tr.m_pEnt;
+
+	// Get bounding box
+	Vector mins = pEnt->WorldAlignMins();
+	Vector maxs = pEnt->WorldAlignMaxs();
+
+	Msg("Entity: %s\n", pEnt->GetClassname());
+	Msg("Mins: %.2f %.2f %.2f\n", mins.x, mins.y, mins.z);
+	Msg("Maxs: %.2f %.2f %.2f\n", maxs.x, maxs.y, maxs.z);
+
+	// Draw debug box
+	NDebugOverlay::Box(
+		pEnt->GetAbsOrigin(),
+		pEnt->WorldAlignMins(),
+		pEnt->WorldAlignMaxs(),
+		255, 0, 0,  // red
+		0,
+		5.0f        // duration
+	);
+}
+
 void CHL2MP_Player::IntroTipThink(void)
 {
 	CFmtStr msg;

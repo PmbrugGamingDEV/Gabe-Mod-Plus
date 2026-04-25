@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+﻿//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -18,6 +18,7 @@
 #include "vguicenterprint.h"
 #include "vgui/keycode.h"
 #include <KeyValues.h>
+#include <time.h>
 #include "ienginevgui.h"
 #include "c_playerresource.h"
 #include "ihudlcd.h"
@@ -217,7 +218,7 @@ void CBaseHudChatLine::ApplySchemeSettings(vgui::IScheme *pScheme)
 #endif
 
 
-	m_hFontMarlett = pScheme->GetFont( "Marlett" );
+	m_hFontMarlett = pScheme->GetFont( "Default" );
 
 	m_clrText = pScheme->GetColor( "FgColor", GetFgColor() );
 	SetFont( m_hFont );
@@ -1110,17 +1111,19 @@ int CBaseHudChat::ComputeBreakChar( int width, const char *text, int textlen )
 //-----------------------------------------------------------------------------
 #pragma warning( push )
 #pragma warning( disable: 4748 ) // /GS can not protect parameters and local variables from local buffer overrun because optimizations are disabled in function
-void CBaseHudChat::Printf( int iFilter, const char *fmt, ... )
+
+void CBaseHudChat::Printf(int iFilter, const char* fmt, ...)
 {
 	va_list marker;
 	char msg[4096];
 
 	va_start(marker, fmt);
-	Q_vsnprintf(msg, sizeof( msg), fmt, marker);
+	Q_vsnprintf(msg, sizeof(msg), fmt, marker);
 	va_end(marker);
 
-	ChatPrintf( 0, iFilter, "%s", msg );
+	ChatPrintf(0, iFilter, "%s", msg);
 }
+
 #pragma warning( pop )
 #pragma optimize( "", on )
 
@@ -1547,7 +1550,25 @@ void CBaseHudChat::ChatPrintf( int iPlayerIndex, int iFilter, const char *fmt, .
 	char msg[4096];
 
 	va_start(marker, fmt);
-	Q_vsnprintf(msg, sizeof( msg), fmt, marker);
+	Q_vsnprintf(msg, sizeof(msg), fmt, marker);
+
+	// 🕒 Get time
+	time_t rawtime;
+	time(&rawtime);
+	tm* timeinfo = localtime(&rawtime);
+
+	char timeBuf[32];
+	Q_snprintf(timeBuf, sizeof(timeBuf), "[%02d:%02d:%02d] ",
+		timeinfo->tm_hour,
+		timeinfo->tm_min,
+		timeinfo->tm_sec);
+
+	// 🧩 Combine time + original message
+	char newMsg[4096];
+	Q_snprintf(newMsg, sizeof(newMsg), "%s%s", timeBuf, msg);
+
+	// Copy back into msg (so rest of code works unchanged)
+	Q_strncpy(msg, newMsg, sizeof(msg));
 	va_end(marker);
 
 	// Strip any trailing '\n'

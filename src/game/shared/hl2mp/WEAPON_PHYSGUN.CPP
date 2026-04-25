@@ -75,78 +75,44 @@ CLIENTEFFECT_REGISTER_END()
 #endif
 IPhysicsObject* GetPhysObjFromPhysicsBone(CBaseEntity* pEntity, short physicsbone)
 {
-	if (!pEntity)
-		return NULL;
-
-	const char* pszClass = pEntity->GetClassname();
-
-	// --------------------------------------------------
-	// 1) Ragdolls / animated entities with physics bones
-	// --------------------------------------------------
-	CBaseAnimating* pAnim = pEntity->GetBaseAnimating();
-	if (pAnim)
-	{
-#ifdef CLIENT_DLL
-		CRagdoll* pRagdoll = pAnim->m_pRagdoll;
-#else
-		CRagdollProp* pRagdoll = dynamic_cast<CRagdollProp*>(pEntity);
-#endif
-		if (pRagdoll)
-		{
-			ragdoll_t* pRagdollT = pRagdoll->GetRagdoll();
-			if (pRagdollT && pRagdollT->listCount > 0)
-			{
-				// Always grab root (pelvis) for stability
-				IPhysicsObject* pPhys = pRagdollT->list[0].pObject;
-				if (pPhys)
-					return pPhys;
-			}
-		}
-	}
-
-	// --------------------------------------------------
-	// 2) Props and NPCs with normal physics
-	// --------------------------------------------------
-	// Props
-	if (FClassnameIs(pEntity, "prop_physics") ||
-		FClassnameIs(pEntity, "prop_physics_multiplayer") ||
-		FClassnameIs(pEntity, "prop_ragdoll"))
-	{
-		return pEntity->VPhysicsGetObject();
-	}
-
-	// NPCs (alive NPCs usually only have root physics)
 	if (pEntity->IsNPC())
 	{
 		return pEntity->VPhysicsGetObject();
 	}
 
-#ifndef CLIENT_DLL
-	// --------------------------------------------------
-	// 3) Doors and buttons (explicit allowlist)
-	// --------------------------------------------------
-	if (FClassnameIs(pEntity, "func_door") ||
-		FClassnameIs(pEntity, "func_door_rotating") ||
-		FClassnameIs(pEntity, "func_button"))
+	CBaseAnimating* pModel = static_cast<CBaseAnimating*>(pEntity);
+	if (pModel != NULL)
 	{
-		// If they already have physics, use it
-		IPhysicsObject* pPhys = pEntity->VPhysicsGetObject();
-		if (pPhys)
-			return pPhys;
+		IPhysicsObject* pPhysicsObject = NULL;
 
-		// Otherwise, temporarily give them VPhysics
-		pEntity->SetMoveType(MOVETYPE_VPHYSICS);
-		pEntity->SetSolid(SOLID_VPHYSICS);
-		pEntity->CreateVPhysics();
-
-		return pEntity->VPhysicsGetObject();
-	}
+		//Find the real object we hit.
+		if (physicsbone >= 0)
+		{
+#ifdef CLIENT_DLL
+			if (pModel->m_pRagdoll)
+			{
+				CRagdoll* pCRagdoll = dynamic_cast <CRagdoll*> (pModel->m_pRagdoll);
+#else
+			// Affect the object
+			CRagdollProp* pCRagdoll = dynamic_cast<CRagdollProp*>(pEntity);
 #endif
+			if (pCRagdoll)
+			{
+				ragdoll_t* pRagdollT = pCRagdoll->GetRagdoll();
 
-	// --------------------------------------------------
-	// 4) Final fallback: any entity that already has physics
-	// --------------------------------------------------
-	return pEntity->VPhysicsGetObject();
+				if (physicsbone < pRagdollT->listCount)
+				{
+					pPhysicsObject = pRagdollT->list[physicsbone].pObject;
+				}
+				return pPhysicsObject;
+			}
+#ifdef CLIENT_DLL
+			}
+#endif
+		}
+	}
+
+return pEntity->VPhysicsGetObject();
 }
 
 class CGravControllerPoint : public IMotionEvent
@@ -287,32 +253,56 @@ QAngle CGravControllerPoint::TransformAnglesFromPlayerSpace(const QAngle& angles
 }
 
 
-void CGravControllerPoint::AttachEntity(CBasePlayer* pPlayer, CBaseEntity* pEntity, IPhysicsObject* pPhys, short physicsbone, const Vector& vGrabPosition)
+void CGravControllerPoint::AttachEntity(
+	CBasePlayer* pPlayer,
+	CBaseEntity* pEntity,
+	IPhysicsObject* pPhys,
+	short physicsbone,
+	const Vector& vGrabPosition)
 {
 	m_attachedEntity = pEntity;
 	m_attachedPhysicsBone = physicsbone;
+
+	// 🔥 CRITICAL: re-find correct physics object based on hit position
+	IPhysicsObject* pCorrectPhys = GetPhysObjFromPhysicsBone(
+		pEntity,
+		physicsbone
+	);
+
+	if (!pCorrectPhys)
+		return;
+
+	// Replace with correct bone
+	pPhys = pCorrectPhys;
+
+	// --------------------------------------------------
+	// Store grab positions properly
+	// --------------------------------------------------
 	pPhys->WorldToLocal(&m_localPosition, vGrabPosition);
 	m_worldPosition = vGrabPosition;
+
+	// Save physics state
 	pPhys->GetDamping(NULL, &m_saveDamping);
 	m_saveMass = pPhys->GetMass();
 
 	float damping = 2.0f;
 	pPhys->SetDamping(NULL, &damping);
 
-	// Temporarily increase mass while held
-	pPhys->SetMass(50000.0f);
+	// --------------------------------------------------
+	// Attach controller to CORRECT bone
+	// --------------------------------------------------
 	m_controller = physenv->CreateMotionController(this);
 	m_controller->AttachObject(pPhys, true);
+
 	Vector position;
 	QAngle angles;
 	pPhys->GetPosition(&position, &angles);
+
 	SetTargetPosition(vGrabPosition, angles);
 	m_targetRotation = TransformAnglesToPlayerSpace(angles, pPlayer);
+
 #ifdef ARGG
-	// adnan
-	// we need to grab the preferred/non preferred carry angles here for the rotatedcarryangles
 	m_vecRotatedCarryAngles = m_targetRotation;
-	// end adnan
 #endif
 }
 
@@ -557,7 +547,7 @@ private:
 
 	// add an int to measure the amount of frozen props
 #ifndef CLIENT_DLL
-	CUtlVector<EHANDLE> m_vecFrozenEnts;
+	CUtlVector<IPhysicsObject*> m_vecFrozenPhys;
 #endif
 	int			m_frozenObjects;
 
@@ -678,7 +668,7 @@ CWeaponGravityGun::CWeaponGravityGun()
 	m_bInWeapon2 = false;
 	m_frozenObjects = 0;
 #ifndef CLIENT_DLL
-	m_vecFrozenEnts = NULL;
+	m_vecFrozenPhys = NULL;
 #endif
 }
 
@@ -1262,7 +1252,6 @@ void CWeaponGravityGun::DetachObject(void)
 	}
 }
 
-/*
 
 struct WeightRange_t
 {
@@ -1314,7 +1303,7 @@ const char* GetWeightComparison(float massKg)
 	}
 	return "something of unknown weight";
 }
-*/
+
 
 
 void CWeaponGravityGun::AttachObject(
@@ -1402,29 +1391,29 @@ void CWeaponGravityGun::AttachObject(
 	// --------------------------------------------------
 	// Mark as player-held
 	// --------------------------------------------------
-		IPhysicsObject* pList[VPHYSICS_MAX_OBJECT_LIST_COUNT];
-		int count = pObject->VPhysicsGetObjectList(pList, ARRAYSIZE(pList));
+	IPhysicsObject* pList[VPHYSICS_MAX_OBJECT_LIST_COUNT];
+	int count = pObject->VPhysicsGetObjectList(pList, ARRAYSIZE(pList));
 
-		float totalMass = 0.0f;
+	float totalMass = 0.0f;
 
-		for (int i = 0; i < count; i++)
-		{
-			if (pList[i])
-				totalMass += pList[i]->GetMass();
-		}
+	for (int i = 0; i < count; i++)
+	{
+		if (pList[i])
+			totalMass += pList[i]->GetMass();
+	}
 
-		float mass = totalMass;
+	float mass = totalMass;
 
 	for (int i = 0; i < count; i++)
 	{
 		PhysSetGameFlags(pList[i], FVPHYSICS_PLAYER_HELD);
 	}
-	
-	/*Msg("Object mass: %.2f lbs (%.2f kg) '%s'\n", kg2lbs(mass), mass, GetWeightComparison(mass));*/// NO
-	
+
+	Msg("Object mass: %.2f lbs (%.2f kg) '%s'\n", kg2lbs(mass), mass, GetWeightComparison(mass));
+
 
 #ifndef CLIENT_DLL
-	Pickup_OnPhysGunPickup(pObject, pOwner);
+		Pickup_OnPhysGunPickup(pObject, pOwner);
 #endif
 }
 
@@ -1471,7 +1460,10 @@ void CWeaponGravityGun::SecondaryAttack(void)
 	CBaseEntity* pHit = m_hObject;
 	if (!pHit) { return; }
 
-	IPhysicsObject* pPhys = pHit->VPhysicsGetObject();
+	IPhysicsObject* pPhys = GetPhysObjFromPhysicsBone(
+		pHit,
+		m_physicsBone
+	);
 	if (!pPhys) { return; }
 
 	const char* pszClass = pHit->GetClassname();
@@ -1492,28 +1484,33 @@ void CWeaponGravityGun::SecondaryAttack(void)
 	// Toggle motion
 	const bool bWasMotionEnabled = pPhys->IsMotionEnabled();
 
-	if (bWasMotionEnabled)
-	{
-		// Freeze
-		pPhys->EnableMotion(false);
-		pPhys->Sleep();                 // settle immediately
+	// Toggle motion
+	bool bFrozen = (m_vecFrozenPhys.Find(pPhys) != m_vecFrozenPhys.InvalidIndex());
 
-		m_vecFrozenEnts.AddToTail(pHit);
+	if (!bFrozen)
+	{
+		// 🔒 Freeze ONLY this bone
+		pPhys->EnableMotion(false);
+		pPhys->Sleep();
+
+		m_vecFrozenPhys.AddToTail(pPhys);
 		m_frozenObjects++;
-		Msg("%d frozen bastards\n", m_frozenObjects);
+
+		Msg("Frozen bone (%d total)\n", m_frozenObjects);
 	}
 	else
 	{
-		// Unfreeze
+		// 🔓 Unfreeze ONLY this bone
 		pPhys->EnableMotion(true);
-		pPhys->Wake();                  // wake so gravity applies
+		pPhys->Wake();
 
-		int idx = m_vecFrozenEnts.Find(pHit);
-		if (idx != m_vecFrozenEnts.InvalidIndex())
-			m_vecFrozenEnts.FastRemove(idx);
+		int idx = m_vecFrozenPhys.Find(pPhys);
+		if (idx != m_vecFrozenPhys.InvalidIndex())
+			m_vecFrozenPhys.FastRemove(idx);
 
 		m_frozenObjects--;
-		Msg("%d frozen bastards now\n", m_frozenObjects);
+
+		Msg("Unfrozen bone (%d left)\n", m_frozenObjects);
 	}
 #endif // !1
 }
@@ -1602,7 +1599,20 @@ int CWeaponGravityGun::DrawModel(int flags)
 		}
 		else
 		{
-			pObject->EntityToWorldSpace(m_worldPosition, &points[2]);
+			IPhysicsObject* pPhys = GetPhysObjFromPhysicsBone(pObject, m_physicsBone);
+
+			if (pPhys)
+			{
+				Vector pos;
+				QAngle ang;
+				pPhys->GetPosition(&pos, &ang);
+
+				points[2] = pos;
+			}
+			else
+			{
+				points[2] = pObject->GetAbsOrigin();
+			}
 		}
 
 		Vector forward;
@@ -1905,42 +1915,53 @@ bool CWeaponGravityGun::Reload(void)
 {
 #ifndef CLIENT_DLL
 
-	for (int i = m_vecFrozenEnts.Count() - 1; i >= 0; --i)
+	for (int i = m_vecFrozenPhys.Count() - 1; i >= 0; --i)
 	{
-		CBaseEntity* pEnt = m_vecFrozenEnts[i];
+		IPhysicsObject* pPhys = m_vecFrozenPhys[i];
+		if (!pPhys)
+			continue;
+
+		// 🔥 Get entity from physics object
+		CBaseEntity* pEnt = (CBaseEntity*)pPhys->GetGameData();
 		if (!pEnt)
 			continue;
 
-		IPhysicsObject* pPhys = pEnt->VPhysicsGetObject();
-		if (!pPhys)
-			continue;
+		// --------------------------------------------------
+		// Visual effect at THIS BONE (not whole entity)
+		// --------------------------------------------------
+		Vector pos;
+		QAngle ang;
+		pPhys->GetPosition(&pos, &ang);
 
 		CBeam* pBeam = CBeam::BeamCreate("sprites/physbeam.vmt", 1.5f);
 		if (pBeam)
 		{
-			pBeam->PointEntInit(pEnt->WorldSpaceCenter(), this);
-			pBeam->SetEndAttachment(1);
+			pBeam->PointsInit(pos, pos + Vector(0, 0, 1)); // tiny beam at bone
 			pBeam->SetBrightness(255);
 			pBeam->SetColor(255, 255, 255);
 			pBeam->RelinkBeam();
-			pBeam->LiveForTime(0.1);
+			pBeam->LiveForTime(0.1f);
 		}
 
 		CEffectData data;
-		data.m_vOrigin = pEnt->WorldSpaceCenter();
+		data.m_vOrigin = pos;
 		data.m_vNormal = Vector(0, 0, 1);
 		DispatchEffect("cball_explode", data);
 
+		// --------------------------------------------------
+		// Unfreeze ONLY this bone
+		// --------------------------------------------------
 		pPhys->EnableMotion(true);
 		pPhys->Wake();
 	}
 
-	WeaponSound(RELOAD);
+	this->PrecacheSound("npc/roller/mine/rmine_chirp_answer1.wav");
+	this->EmitSound("npc/roller/mine/rmine_chirp_answer1.wav");
 
-	m_vecFrozenEnts.RemoveAll();
+	m_vecFrozenPhys.RemoveAll();
 	m_frozenObjects = 0;
 
-	Msg("All bastards released.\n");
+	Msg("All bones released.\n");
 
 #endif
 

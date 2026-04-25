@@ -5,13 +5,19 @@
 #include <vgui_controls/Panel.h>
 #include "utlvector.h"
 
-// Each line in the kill feed
+//=========================================================
+// DATA
+//=========================================================
+
 struct KillFeedLine
 {
-    wchar_t text[128];
-    float   timeAdded;
-    bool    isDamage;
+	wchar_t text[128];
+	float timeAdded;
+	bool isDamage;
+
+	char weapon[32];
 };
+
 
 
 class CHudKillFeed : public CHudElement, public vgui::Panel

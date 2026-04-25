@@ -1,5 +1,4 @@
-﻿  vgui_utiltest.cpp
-c:\gabemodplus\src\game\client\vgui_utiltest.cpp(8): warning C4003: not enough actual parameters for macro 'PANEL_CREATE'
+﻿  saverestore.cpp
 C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1137,5): warning MSB8012: TargetPath(C:\GabeModPlus\src\game\client\.\Debug_hl2mp\Client Gabe Mod Plus.dll) does not match the Linker's OutputFile property value (C:\GabeModPlus\src\game\client\Debug_hl2mp\Client.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
 C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1139,5): warning MSB8012: TargetName(Client Gabe Mod Plus) does not match the Linker's OutputFile property value (Client). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
   client_hl2mp-2005.vcxproj -> C:\GabeModPlus\src\game\client\.\Debug_hl2mp\Client Gabe Mod Plus.dll

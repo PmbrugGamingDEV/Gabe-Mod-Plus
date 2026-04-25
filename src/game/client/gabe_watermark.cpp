@@ -15,6 +15,7 @@
 #include "tier1/KeyValues.h"
 #include "convar.h"
 #include "cdll_client_int.h"
+#include "con_nprint.h"
 
 // memdbgon must be last
 #include "tier0/memdbgon.h"
@@ -30,6 +31,8 @@ extern IClientMode* g_pClientMode;
 ConVar gabeplus_speedrun("gabeplus_speedrun", "0", FCVAR_CLIENTDLL,
     "Shows speedrun timer, for speedrunning purposes");
 ConVar please_dontsteal("please_dontsteal", "0", FCVAR_ARCHIVE, "Hides watermark");
+ConVar gabeplus_legacy("gabeplus_legacy", "0", FCVAR_CLIENTDLL,
+	"Use legacy console watermark rendering");
 
 //=========================================================
 // Globals
@@ -187,6 +190,29 @@ bool CHudWatermark::ShouldDraw(void)
 
 void CHudWatermark::Paint(void)
 {
+
+	// 🔥 LEGACY MODE (console text)
+	if (gabeplus_legacy.GetBool())
+	{
+		con_nprint_s info;
+		info.fixed_width_font = false;
+		info.color[0] = 1.0f;
+		info.color[1] = 0.5f;
+		info.color[2] = 0.0f;
+		info.time_to_live = 0.1f;
+
+		info.index = 0;
+		engine->Con_NXPrintf(&info, "GABE MOD v8.1");
+
+		info.index = 1;
+		info.color[0] = 0.0f;
+		info.color[1] = 0.8f;
+		info.color[2] = 1.0f;
+		engine->Con_NXPrintf(&info, "sites.google.com/pmbruggaming");
+
+		return; // 🔥 skip VGUI rendering
+	}
+
     int sw, sh;
     surface()->GetScreenSize(sw, sh);
 

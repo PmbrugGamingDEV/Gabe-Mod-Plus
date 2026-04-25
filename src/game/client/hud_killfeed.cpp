@@ -39,8 +39,17 @@ void CHudKillFeed::MsgFunc_KillFeed( bf_read &msg )
     msg.ReadString(attacker, sizeof(attacker));
     msg.ReadString(victim, sizeof(victim));
 
-    char buffer[128];
-    Q_snprintf(buffer, sizeof(buffer), "%s killed %s", attacker, victim);
+	char buffer[128];
+
+	// combine everything
+	Q_snprintf(
+		buffer,
+		sizeof(buffer),
+		"%s %s %s",
+		attacker,
+		"killed",
+		victim
+	);
 
     KillFeedLine line;
     g_pVGuiLocalize->ConvertANSIToUnicode(buffer, line.text, sizeof(line.text));
@@ -65,7 +74,7 @@ void CHudKillFeed::MsgFunc_DamageFeed( bf_read &msg )
     msg.ReadString( dmgType, sizeof(dmgType) );
 
     char buffer[160];
-    Q_snprintf( buffer, sizeof(buffer), "%s gave +%d %s to %s", attacker, dmg, dmgType, victim );
+	Q_snprintf(buffer, sizeof(buffer), "%s gave +%d %s to %s", attacker, dmg, dmgType, victim);
 
     KillFeedLine line;
     g_pVGuiLocalize->ConvertANSIToUnicode( buffer, line.text, sizeof(line.text) );
@@ -79,34 +88,105 @@ void CHudKillFeed::MsgFunc_DamageFeed( bf_read &msg )
 
 void CHudKillFeed::Paint()
 {
-    vgui::HFont font = scheme()->GetIScheme(GetScheme())->GetFont("Default", true);
-    int y = 25; // top offset
+	int screenW, screenH;
+	surface()->GetScreenSize(screenW, screenH);
 
-    for (int i = 0; i < m_Lines.Count(); i++)
-    {
-        // fade out after 5 seconds
-        float age = gpGlobals->curtime - m_Lines[i].timeAdded;
-        if (age > 5.0f)
-        {
-            m_Lines.Remove(i);
-            i--;
-            continue;
-        }
+	HFont font = scheme()->GetIScheme(GetScheme())->GetFont("DefaultVerySmall", true);
 
-        int alpha = RemapValClamped(age, 0.0f, 5.0f, 255.0f, 0.0f);
+	int baseY = screenH * 0.18f;
+	int spacing = 30;
 
-        surface()->DrawSetTextFont(font);
-			if ( m_Lines[i].isDamage )
-			{
-				surface()->DrawSetTextColor( 255, 128, 0, alpha ); // orange for damage
-			}
-	else
+	for (int i = m_Lines.Count() - 1; i >= 0; i--)
 	{
-		surface()->DrawSetTextColor( 255, 0, 0, alpha );   // Red for kills
-	}
-        surface()->DrawSetTextPos(10, y);
-        surface()->DrawPrintText(m_Lines[i].text, wcslen(m_Lines[i].text));
+		float age = gpGlobals->curtime - m_Lines[i].timeAdded;
 
-        y += 15;
-    }
+		// remove expired safely
+		if (age > 5.0f)
+		{
+			m_Lines.Remove(i);
+			continue;
+		}
+
+		int drawIndex = (m_Lines.Count() - 1) - i;
+
+		// =========================
+		// ANIMATION
+		// =========================
+
+		int alpha = RemapValClamped(age, 0.0f, 5.0f, 255.0f, 0.0f);
+		float slide = RemapValClamped(age, 0.0f, 0.25f, 120.0f, 0.0f);
+		float yOffset = RemapValClamped(age, 0.0f, 0.2f, -10.0f, 0.0f);
+
+		// =========================
+		// SYMBOL (SAFE ASCII)
+		// =========================
+
+		const wchar_t* symbol = m_Lines[i].isDamage ? L"+" : L"x";
+
+		int symW, symH;
+		surface()->GetTextSize(font, symbol, symW, symH);
+
+		// =========================
+		// TEXT SIZE
+		// =========================
+
+		int textW, textH;
+		surface()->GetTextSize(font, m_Lines[i].text, textW, textH);
+
+		int totalW = textW + symW + 15;
+
+		int x = screenW - totalW - 60 + slide;
+		int y = baseY + (drawIndex * spacing) + yOffset;
+
+		// =========================
+		// BACKGROUND
+		// =========================
+
+		int pad = 8;
+
+		surface()->DrawSetColor(0, 0, 0, alpha / 2);
+		surface()->DrawFilledRect(
+			x - pad,
+			y - 3,
+			x + totalW + pad,
+			y + textH + 3
+		);
+
+		// highlight strip
+		if (m_Lines[i].isDamage)
+			surface()->DrawSetColor(255, 140, 0, alpha);
+		else
+			surface()->DrawSetColor(255, 60, 60, alpha);
+
+		surface()->DrawFilledRect(
+			x - pad,
+			y - 3,
+			x - pad + 3,
+			y + textH + 3
+		);
+
+		// =========================
+		// SYMBOL
+		// =========================
+
+		if (m_Lines[i].isDamage)
+			surface()->DrawSetTextColor(255, 180, 0, alpha);
+		else
+			surface()->DrawSetTextColor(255, 255, 255, alpha);
+
+		surface()->DrawSetTextFont(font);
+		surface()->DrawSetTextPos(x, y);
+		surface()->DrawPrintText(symbol, wcslen(symbol));
+
+		x += symW + 5;
+
+		// =========================
+		// TEXT
+		// =========================
+
+		surface()->DrawSetTextColor(255, 255, 255, alpha);
+
+		surface()->DrawSetTextPos(x, y);
+		surface()->DrawPrintText(m_Lines[i].text, wcslen(m_Lines[i].text));
+	}
 }

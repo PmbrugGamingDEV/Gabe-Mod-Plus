@@ -20,7 +20,7 @@ public:
 
 	bool m_bFireOnRelease;
 
-	CWeaponStickyLauncher() { m_bFireOnRelease = false; }
+	CWeaponStickyLauncher() { m_bFireOnRelease = false; m_bFiresUnderwater = true; }
 
 	CUtlVector<CHandle<CStickyPellet>> m_Pellets;
 };

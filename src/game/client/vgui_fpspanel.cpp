@@ -207,6 +207,8 @@ void CFPSPanel::Paint()
 	int i = 0;
 	int x = 2;
 
+	g_bDisplayParticlePerformance = true;
+
 	if ( g_bDisplayParticlePerformance )
 	{
 		int nPerf = GetParticlePerformance();

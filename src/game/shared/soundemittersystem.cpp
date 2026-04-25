@@ -1354,7 +1354,7 @@ bool CBaseEntity::PrecacheSound( const char *name )
 {
 	if ( IsPC() && !g_bPermitDirectSoundPrecache )
 	{
-		Warning( "Direct precache of %s\n", name );
+		DevWarning( "Direct precache of %s\n", name );
 	}
 
 	// If this is out of order, warn
@@ -1364,7 +1364,7 @@ bool CBaseEntity::PrecacheSound( const char *name )
 		{
 			Assert( !"CBaseEntity::PrecacheSound:  too late" );
 
-			Warning( "Late precache of %s\n", name );
+			DevWarning( "Late precache of %s\n", name );
 		}
 	}
 

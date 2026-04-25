@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+﻿//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Base combat character with no AI
 //
@@ -2521,7 +2521,6 @@ int CBaseCombatCharacter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		m_iHealth -= flIntegerDamage;
 	}
 	SendDamageFeed(info, this);
-	Msg("SendDamageFeed fired: dmg=%f type=%d victim=%s\n", info.GetDamage(), info.GetDamageType(), GetClassname());
 	return 1;
 }
 

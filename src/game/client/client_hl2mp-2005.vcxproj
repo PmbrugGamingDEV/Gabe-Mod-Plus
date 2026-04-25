@@ -232,6 +232,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="..\server\hl1\hl1_weapon_shotgun.cpp" />
     <ClCompile Include="..\shared\achievements_gabemod.cpp" />
     <ClCompile Include="..\shared\dbg_cmds.cpp" />
+    <ClCompile Include="..\shared\GABE.cpp" />
     <ClCompile Include="..\shared\gabe_events.cpp" />
     <ClCompile Include="..\shared\hl2mp\weapon_physgun.cpp" />
     <ClCompile Include="..\shared\hl2\achievements_hl2.cpp" />
@@ -492,6 +493,8 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="hud_numericdisplay.cpp" />
     <ClCompile Include="hud_pdump.cpp" />
     <ClCompile Include="hud_redraw.cpp" />
+    <ClCompile Include="hud_tasklist.cpp" />
+    <ClCompile Include="hud_undo.cpp" />
     <ClCompile Include="hud_vehicle.cpp" />
     <ClCompile Include="hud_voicestatus.cpp" />
     <ClCompile Include="hud_weapon.cpp" />
@@ -915,6 +918,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="..\..\public\tier0\cpumonitoring.h" />
     <ClInclude Include="..\server\hl1\hl1_weapon_rpg.h" />
     <ClInclude Include="..\server\hl1\hl1_weapon_satchel.h" />
+    <ClInclude Include="..\shared\gabe.h" />
     <ClInclude Include="..\shared\gabe_client.h" />
     <ClInclude Include="..\shared\gabe_events.h" />
     <ClInclude Include="..\shared\lauxlib.h" />
@@ -940,6 +944,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="gplus_fps.h" />
     <ClInclude Include="hl1\hud_numbers.h" />
     <ClInclude Include="hud_killfeed.h" />
+    <ClInclude Include="hud_tasklist.h" />
     <ClInclude Include="IHTMLView.h" />
     <ClInclude Include="mapload_background.h" />
     <ClInclude Include="sdk_inventory.h" />

@@ -13,7 +13,8 @@
 #include "game.h"
 #include "entityflame.h"
 #include "IEffects.h"
-#include "gabeplus_shared.h"
+#include "GABE.H"
+#include "beam_shared.h"
 #include "in_buttons.h"
 #include "baseanimating.h"
 #include "vphysics/constraints.h"
@@ -21,6 +22,7 @@
 #include "props.h"
 #include "physics_prop_ragdoll.h"
 #include "usermessages.h"
+#include "sprite.h"
 #include "ai_basenpc.h"
 #include "baseflex.h"
 #include "vphysics_interface.h"
@@ -28,6 +30,8 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "memdbgon.h"
+
+using GabeMod::HudText;
 
 extern IEffects* g_pEffects;
 
@@ -156,7 +160,7 @@ static Vector GetDuplicateSpawnPos(CBasePlayer* pPlayer)
 	return pPlayer->EyePosition() + forward * 96.0f;
 }
 
-ConVar gabeplus_multitool_pmessagetext("gabe+_multitool_pmessagetext", "Customize me with gabe+_multitool_pmessagename!", FCVAR_ARCHIVE);
+ConVar gabeplus_multitool_pmessagetext("gabe+_multitool_pmessagetext", "Customize me with gabe+_multitool_pmessagetext!", FCVAR_ARCHIVE);
 
 class CL_Watermelon : public CBaseAnimating
 {
@@ -264,6 +268,7 @@ public:
 
 	CWeaponMultitool();
 
+	virtual void Precache();
 	virtual void PrimaryAttack();
 	virtual void SecondaryAttack();
 	virtual void ItemPostFrame();
@@ -437,6 +442,11 @@ bool CWeaponMultitool::Deploy()
 	return result;
 }
 
+void CWeaponMultitool::Precache()
+{
+	BaseClass::Precache();
+}
+
 void CWeaponMultitool::PrimaryAttack()
 {
 	CBaseEntity* pEnt = FindEntityInFront();
@@ -449,7 +459,13 @@ void CWeaponMultitool::PrimaryAttack()
 	if (!pPlayer)
 		return;
 
-	EmitSound("Weapon_357.Single");
+	int r = random->RandomInt(1, 2);
+
+	char snd[128];
+	Q_snprintf(snd, sizeof(snd), "multitool/airboat_gun_lastshot%d.wav", r);
+
+	PrecacheSound(snd);
+	EmitSound(snd);
 
 	trace_t tr;
 	Vector vecStart = pPlayer->EyePosition();
@@ -459,11 +475,45 @@ void CWeaponMultitool::PrimaryAttack()
 
 	UTIL_TraceLine(vecStart, vecEnd, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &tr);
 
+	PrecacheModel("effects/tool_tracer.vmt");
+	CBeam* pBeam = CBeam::BeamCreate("effects/tool_tracer.vmt", 5);
+	if (pBeam)
+	{
+		pBeam->PointEntInit(tr.endpos, this);
+		pBeam->SetEndAttachment(1);
+		pBeam->SetBrightness(255);
+		pBeam->SetColor(255, 255, 255);
+		pBeam->RelinkBeam();
+		pBeam->LiveForTime(0.1);
+	}
+
+	CSingleUserRecipientFilter filter(pPlayer);
+	filter.MakeReliable();
+
+	CSprite* pSprite = CSprite::SpriteCreate("sprites/select_dot.vmt", tr.endpos, false);
+	if (pSprite)
+	{
+		// align to surface
+		QAngle ang;
+		VectorAngles(tr.plane.normal, ang);
+
+		pSprite->SetAbsAngles(ang);
+
+		// push slightly off surface to avoid z-fighting
+		pSprite->SetAbsOrigin(tr.endpos + tr.plane.normal * 0.5f);
+
+		// visuals
+		pSprite->SetScale(0.5f);
+		pSprite->SetBrightness(255);
+		pSprite->SetColor(255, 255, 255);
+
+		// make it fade quickly like a tracer
+		pSprite->FadeAndDie(0.1f);
+	}
+
 	if (tr.fraction < 1.0f)
 	{
 		g_pEffects->Sparks(tr.endpos, 1, 1);
-		g_pEffects->Ricochet(tr.endpos, tr.plane.normal);
-		g_pEffects->EnergySplash(tr.endpos, tr.plane.normal);
 	}
 
 	SendWeaponAnim(ACT_VM_PRIMARYATTACK);

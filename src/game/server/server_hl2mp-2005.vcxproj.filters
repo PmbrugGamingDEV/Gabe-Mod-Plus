@@ -76,9 +76,6 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\NPCs">
       <UniqueIdentifier>{f1ed40e1-7738-4ad2-9039-b08ccc875ca1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Gabe Mod + Stuff\MP_BOT">
-      <UniqueIdentifier>{de6baeb3-d27a-44ae-97a8-130eb489e155}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Gabe Mod + Stuff\Readded Stuff">
       <UniqueIdentifier>{c4ccf48c-0a28-4021-b98b-ecd7e79188e5}</UniqueIdentifier>
     </Filter>
@@ -90,6 +87,9 @@
     </Filter>
     <Filter Include="Source Files\CStrike Weapons">
       <UniqueIdentifier>{00a4e244-fb1a-47b3-ad53-31afde059ad4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gabe Mod + Stuff\Saverestore">
+      <UniqueIdentifier>{e90723ac-bb93-406d-b5f6-d2253b088c9a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1893,9 +1893,6 @@
     <ClCompile Include="sticky_pellet.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
-    <ClCompile Include="MP_AI\bot_main.cpp">
-      <Filter>Source Files\Gabe Mod + Stuff\MP_BOT</Filter>
-    </ClCompile>
     <ClCompile Include="weapon_proto1.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClCompile>
@@ -2094,6 +2091,19 @@
     <ClCompile Include="..\shared\cstrike\weapon_deagle.cpp">
       <Filter>Source Files\CStrike Weapons</Filter>
     </ClCompile>
+    <ClCompile Include="..\shared\GABE.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="basestaticragdoll.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="env_tasklist.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2mp\hl2mp_bot_temp.cpp">
+      <Filter>Source Files\HL2MP</Filter>
+    </ClCompile>
+    <ClCompile Include="gabe_saverestore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\achievement_saverestore.h">
@@ -3869,15 +3879,6 @@
     <ClInclude Include="weapon_stickylauncher.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
-    <ClInclude Include="MP_AI\bot_combat.h">
-      <Filter>Source Files\Gabe Mod + Stuff\MP_BOT</Filter>
-    </ClInclude>
-    <ClInclude Include="MP_AI\bot_main.h">
-      <Filter>Source Files\Gabe Mod + Stuff\MP_BOT</Filter>
-    </ClInclude>
-    <ClInclude Include="MP_AI\bot_navigation.h">
-      <Filter>Source Files\Gabe Mod + Stuff\MP_BOT</Filter>
-    </ClInclude>
     <ClInclude Include="baseprojectile.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
     </ClInclude>
@@ -3938,6 +3939,13 @@
     <ClInclude Include="hl2\weapon_citizenpackage.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
+    <ClInclude Include="..\shared\gabe.h">
+      <Filter>Source Files\Gabe Mod + Stuff\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2mp\hl2mp_bot_temp.h">
+      <Filter>Source Files\HL2MP</Filter>
+    </ClInclude>
+    <ClInclude Include="gabe_saverestore.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\lib\public\choreoobjects.lib">
