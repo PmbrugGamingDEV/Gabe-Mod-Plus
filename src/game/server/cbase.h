@@ -18,7 +18,7 @@
 #pragma warning(disable : 4201)		// nameless struct/union
 #pragma warning(disable : 4511)     // copy constructor could not be generated
 #pragma warning(disable : 4675)     // resolved overload was found by argument dependent lookup
-#pragma error(disable : errorcode)
+#pragma warning(disable : 4189)     // local variable is initialized but not referenced
 #endif
 
 #ifdef _DEBUG
@@ -95,7 +95,7 @@ struct animevent_t;
 struct studiohdr_t;
 class CStudioHdr;
 
-extern void FireTargets( const char *targetName, CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
+extern void FireTargets(const char* targetName, CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
 
 // people gib if their health is <= this at the time of death
 #define	GIB_HEALTH_VALUE	-30

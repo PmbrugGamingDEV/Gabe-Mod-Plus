@@ -22,6 +22,7 @@
 #include "hl2_vehicle_radar.h"
 #include "props.h"
 #include "ai_dynamiclink.h"
+#include "ai_behavior_passenger_companion.h"
 
 extern ConVar phys_upimpactforcescale;
 
@@ -719,7 +720,7 @@ void CPropJeepEpisodic::CreateCargoTrigger( void )
 void CPropJeepEpisodic::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 	// Fall back and get in the vehicle instead, skip giving ammo
-	BaseClass::BaseClass::Use( pActivator, pCaller, useType, value );
+	BaseClass::Use( pActivator, pCaller, useType, value );
 }
 
 #define	MIN_WHEEL_DUST_SPEED	5

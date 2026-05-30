@@ -172,7 +172,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <BrowseInformation />
       <BrowseInformationFile>$(IntDir)</BrowseInformationFile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
       <ErrorReporting>Prompt</ErrorReporting>
@@ -303,6 +303,8 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClCompile Include="c_weapon_deagle.cpp" />
     <ClCompile Include="c_weapon_proplauncher.cpp" />
     <ClCompile Include="c_weapon__stubs_gabemod.cpp" />
+    <ClCompile Include="episodic\c_weapon_hopwire.cpp" />
+    <ClCompile Include="episodic\episodic_screenspaceeffects.cpp" />
     <ClCompile Include="gabeplus_fps.cpp" />
     <ClCompile Include="gabeplus_friendslist.cpp" />
     <ClCompile Include="gabeplus_issues.cpp" />
@@ -941,6 +943,7 @@ copy "$(TargetDir)"client.dll "D:\Program Files (x86)\Steam\steamapps\SourceMods
     <ClInclude Include="..\shared\point_bonusmaps_accessor.h" />
     <ClInclude Include="..\shared\predicted_viewmodel.h" />
     <ClInclude Include="c_weapon_proplauncher.h" />
+    <ClInclude Include="episodic\episodic_screenspaceeffects.h" />
     <ClInclude Include="gplus_fps.h" />
     <ClInclude Include="hl1\hud_numbers.h" />
     <ClInclude Include="hud_killfeed.h" />

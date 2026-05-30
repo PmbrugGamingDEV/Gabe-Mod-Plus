@@ -483,6 +483,28 @@ void CHL2MP_Player::RemoveHL2Weapons()
 
 ConVar gabeplus_sandbox("gabeplus_sandbox", "1", FCVAR_ARCHIVE, "If set to 1, players will spawn with all weapons and infinite aux power.");
 
+CON_COMMAND(gabeplus_createfakeclient, "Creates a fake client for testing purposes")
+{
+	if (args.ArgC() < 2)
+	{
+		Msg("Usage: gabeplus_createfakeclient <name>\n");
+		return;
+	}
+
+	const char* pszName = args[1];
+
+	edict_t* pBot = engine->CreateFakeClient(pszName);
+
+	if (!pBot)
+	{
+		Msg("Failed to create fake client!\n");
+		return;
+	}
+
+	Msg("Fake client '%s' created!\n", pszName);
+}
+
+
 //-----------------------------------------------------------------------------
 // Purpose: Sets HL2 specific defaults.
 //-----------------------------------------------------------------------------

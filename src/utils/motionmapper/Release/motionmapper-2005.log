@@ -1,2 +1,10 @@
-﻿     Creating library .\Release\Motionmapper.lib and object .\Release\Motionmapper.exp
+﻿  cmdlib.cpp
+  filesystem_helpers.cpp
+  filesystem_init.cpp
+  filesystem_tools.cpp
+  memoverride.cpp
+  motionmapper.cpp
+  scriplib.cpp
+  Generating Code...
+     Creating library .\Release\Motionmapper.lib and object .\Release\Motionmapper.exp
   motionmapper-2005.vcxproj -> C:\GabeModPlus\src\utils\motionmapper\.\Release\Motionmapper.exe

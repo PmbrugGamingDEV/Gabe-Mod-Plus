@@ -91,6 +91,9 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\Saverestore">
       <UniqueIdentifier>{e90723ac-bb93-406d-b5f6-d2253b088c9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Episodic">
+      <UniqueIdentifier>{161054d6-47b6-4577-a4af-79ac93225f64}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\achievement_saverestore.cpp">
@@ -2104,6 +2107,24 @@
       <Filter>Source Files\HL2MP</Filter>
     </ClCompile>
     <ClCompile Include="gabe_saverestore.cpp" />
+    <ClCompile Include="gabeplus_testfile.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="episodic\weapon_hopwire.cpp">
+      <Filter>Source Files\Episodic</Filter>
+    </ClCompile>
+    <ClCompile Include="episodic\grenade_hopwire.cpp">
+      <Filter>Source Files\Episodic</Filter>
+    </ClCompile>
+    <ClCompile Include="testcombatcharacter.cpp">
+      <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="gabe_simpgun.cpp">
+      <Filter>Source Files\Episodic</Filter>
+    </ClCompile>
+    <ClCompile Include="macrotest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\shared\achievement_saverestore.h">
@@ -3946,6 +3967,9 @@
       <Filter>Source Files\HL2MP</Filter>
     </ClInclude>
     <ClInclude Include="gabe_saverestore.h" />
+    <ClInclude Include="episodic\grenade_hopwire.h">
+      <Filter>Source Files\Episodic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\lib\public\choreoobjects.lib">

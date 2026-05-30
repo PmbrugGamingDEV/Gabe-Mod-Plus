@@ -2,9 +2,9 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerCommand>D:\Steam\SteamApps\common\source sdk base 2007\hl2.exe</LocalDebuggerCommand>
-    <LocalDebuggerCommandArguments>-allowdebug -dev -sw -novid +map gabe_pond +sv_cheats 1 +god +sv_infinite_aux_power 1 -game "D:\Steam\SteamApps\SourceMods\gabemodplus"</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-allowdebug -dev -w 1024 -h 768 -novid +sv_cheats 1 +god +sv_infinite_aux_power 1 -game "D:\Steam\SteamApps\SourceMods\gabemodplus"</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>D:\Steam\SteamApps\common\source sdk base 2007</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArgumentsHistory>-allowdebug -dev -sw -novid -game "D:\Steam\SteamApps\SourceMods\gabemodplus"|-allowdebug -dev -sw -novid +map gabe_pond +sv_cheats 1 +god +sv_infinite_aux_power 1 -game "D:\Steam\SteamApps\SourceMods\gabemodplus"|</LocalDebuggerCommandArgumentsHistory>
+    <LocalDebuggerCommandArgumentsHistory>-allowdebug -dev -sw -novid -game "D:\Steam\SteamApps\SourceMods\gabemodplus"|-allowdebug -dev -sw -novid +map gabe_pond +sv_cheats 1 +god +sv_infinite_aux_power 1 -game "D:\Steam\SteamApps\SourceMods\gabemodplus"|-allowdebug -dev -novid +sv_cheats 1 +god +sv_infinite_aux_power 1 -game "D:\Steam\SteamApps\SourceMods\gabemodplus"|-allowdebug -dev -w 1024 -h 1000 -novid +sv_cheats 1 +god +sv_infinite_aux_power 1 -game "D:\Steam\SteamApps\SourceMods\gabemodplus"|-allowdebug -dev -w 1024 -h 768 -novid +sv_cheats 1 +god +sv_infinite_aux_power 1 -game "D:\Steam\SteamApps\SourceMods\gabemodplus"|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
 </Project>

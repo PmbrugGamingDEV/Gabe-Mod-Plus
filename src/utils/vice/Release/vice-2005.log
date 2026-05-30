@@ -1,2 +1,9 @@
-﻿     Creating library .\Release\Vice.lib and object .\Release\Vice.exp
+﻿  cmdlib.cpp
+  filesystem_helpers.cpp
+  filesystem_init.cpp
+  filesystem_tools.cpp
+  memoverride.cpp
+  vice.cpp
+  Generating Code...
+     Creating library .\Release\Vice.lib and object .\Release\Vice.exp
   vice-2005.vcxproj -> C:\GabeModPlus\src\utils\vice\.\Release\Vice.exe

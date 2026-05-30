@@ -241,7 +241,6 @@ bool CWeaponHopwire::Reload( void )
 //-----------------------------------------------------------------------------
 void CWeaponHopwire::SecondaryAttack( void )
 {
-	/*
 	if ( m_bRedraw )
 		return;
 
@@ -271,7 +270,6 @@ void CWeaponHopwire::SecondaryAttack( void )
 	{
 		pPlayer->SwitchToNextBestWeapon( this );
 	}
-	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -330,13 +328,10 @@ void CWeaponHopwire::PrimaryAttack( void )
 	m_flTimeWeaponIdle = FLT_MAX;
 	m_flNextPrimaryAttack = FLT_MAX;
 
-	// If I'm now out of ammo, switch away
-	/*
 	if ( !HasPrimaryAmmo() )
 	{
 		pPlayer->SwitchToNextBestWeapon( this );
 	}
-	*/
 }
 
 //-----------------------------------------------------------------------------

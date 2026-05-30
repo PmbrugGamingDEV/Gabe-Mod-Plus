@@ -1,4 +1,4 @@
-﻿  saverestore.cpp
+﻿  triggers.cpp
 C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1137,5): warning MSB8012: TargetPath(C:\GabeModPlus\src\game\server\.\Debug_hl2mp\Server Gabe Mod Plus.dll) does not match the Linker's OutputFile property value (C:\GabeModPlus\src\game\server\Debug_hl2mp\Server.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
 C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1139,5): warning MSB8012: TargetName(Server Gabe Mod Plus) does not match the Linker's OutputFile property value (Server). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
   server_hl2mp-2005.vcxproj -> C:\GabeModPlus\src\game\server\.\Debug_hl2mp\Server Gabe Mod Plus.dll

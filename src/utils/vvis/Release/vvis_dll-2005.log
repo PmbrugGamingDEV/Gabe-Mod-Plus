@@ -1,4 +1,25 @@
-﻿vmpi.lib(deflate.obj) : error LNK2026: module unsafe for SAFESEH image.
+﻿  bsplib.cpp
+  cmdlib.cpp
+  collisionutils.cpp
+  filesystem_helpers.cpp
+  flow.cpp
+  loadcmdline.cpp
+  lumpfiles.cpp
+  mpi_stats.cpp
+  mpivis.cpp
+  MySqlDatabase.cpp
+  pacifier.cpp
+  scratchpad3d.cpp
+  scratchpad_helpers.cpp
+  scriplib.cpp
+  threads.cpp
+  tools_minidump.cpp
+  vmpi_tools_shared.cpp
+  vvis.cpp
+  WaterDist.cpp
+  zip_utils.cpp
+  Generating Code...
+vmpi.lib(deflate.obj) : error LNK2026: module unsafe for SAFESEH image.
 vmpi.lib(inflate.obj) : error LNK2026: module unsafe for SAFESEH image.
 vmpi.lib(zutil.obj) : error LNK2026: module unsafe for SAFESEH image.
 vmpi.lib(adler32.obj) : error LNK2026: module unsafe for SAFESEH image.

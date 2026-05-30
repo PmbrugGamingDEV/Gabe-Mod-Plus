@@ -1,4 +1,7 @@
-﻿bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
+﻿  memoverride.cpp
+  tgadiff.cpp
+  Generating Code...
+bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
 bitmap.lib(S3_quant.obj) : error LNK2026: module unsafe for SAFESEH image.
      Creating library .\Release\Tgadiff.lib and object .\Release\Tgadiff.exp
 .\Release\tgadiff.exe : fatal error LNK1281: Unable to generate SAFESEH image.

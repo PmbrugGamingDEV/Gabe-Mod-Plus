@@ -190,112 +190,174 @@ bool CHudWatermark::ShouldDraw(void)
 
 void CHudWatermark::Paint(void)
 {
+	//=========================================================
+	// LEGACY WATERMARK
+	//=========================================================
 
-	// 🔥 LEGACY MODE (console text)
 	if (gabeplus_legacy.GetBool())
 	{
-		con_nprint_s info;
-		info.fixed_width_font = false;
-		info.color[0] = 1.0f;
-		info.color[1] = 0.5f;
-		info.color[2] = 0.0f;
-		info.time_to_live = 0.1f;
+		if (!m_hFont)
+		{
+			m_hFont = surface()->CreateFont();
 
-		info.index = 0;
-		engine->Con_NXPrintf(&info, "GABE MOD v8.1");
+			surface()->SetFontGlyphSet(
+				m_hFont,
+				"Tahoma",
+				15,
+				500,
+				0,
+				0,
+				0x001
+			);
+		}
 
-		info.index = 1;
-		info.color[0] = 0.0f;
-		info.color[1] = 0.8f;
-		info.color[2] = 1.0f;
-		engine->Con_NXPrintf(&info, "sites.google.com/pmbruggaming");
+		const wchar_t* wText = L"Gabe Mod v8.1";
 
-		return; // 🔥 skip VGUI rendering
+		surface()->DrawSetTextFont(m_hFont);
+		surface()->DrawSetTextColor(255, 255, 255, 255);
+
+		int wide, tall;
+		surface()->GetTextSize(m_hFont, wText, wide, tall);
+
+		int padding = 6;
+		int boxWidth = wide + padding * 2;
+		int boxHeight = tall + padding * 2;
+
+		int panelWide, panelTall;
+		GetSize(panelWide, panelTall);
+
+		// top-right positioning
+		int x = panelWide - boxWidth - 10;
+		int y = 10;
+
+		// background
+		surface()->DrawSetColor(50, 50, 50, 200);
+		surface()->DrawFilledRect(
+			x,
+			y,
+			x + boxWidth,
+			y + boxHeight
+		);
+
+		// outline
+		surface()->DrawSetColor(0, 0, 0, 220);
+		surface()->DrawOutlinedRect(
+			x,
+			y,
+			x + boxWidth,
+			y + boxHeight
+		);
+
+		// text
+		surface()->DrawSetTextPos(
+			x + padding,
+			y + padding
+		);
+
+		surface()->DrawPrintText(
+			wText,
+			wcslen(wText)
+		);
+
+		return;
 	}
 
-    int sw, sh;
-    surface()->GetScreenSize(sw, sh);
+	//=========================================================
+	// MODERN WATERMARK
+	//=========================================================
 
-    const int margin = 14;
-    const int padding = 10;
+	int sw, sh;
+	surface()->GetScreenSize(sw, sh);
 
-    const wchar_t* title = L"GABE MOD";
-    const wchar_t* version = L"v8.1";
-    const wchar_t* website = L"sites.google.com/pmbruggaming";
+	const int margin = 14;
+	const int padding = 10;
 
-    int wTitle, hTitle;
-    int wVersion, hVersion;
-    int wSite, hSite;
+	const wchar_t* title = L"GABE MOD";
+	const wchar_t* version = L"v8.1";
+	const wchar_t* website = L"sites.google.com/pmbruggaming";
 
-    surface()->GetTextSize(m_hFont, title, wTitle, hTitle);
-    surface()->GetTextSize(m_hFont, version, wVersion, hVersion);
-    surface()->GetTextSize(m_hFont, website, wSite, hSite);
+	int wTitle, hTitle;
+	int wVersion, hVersion;
+	int wSite, hSite;
 
-    int boxW = max(max(wTitle, wVersion), wSite) + padding * 2;
-    int boxH = hTitle + hVersion + hSite + padding * 2 + 8;
+	surface()->GetTextSize(m_hFont, title, wTitle, hTitle);
+	surface()->GetTextSize(m_hFont, version, wVersion, hVersion);
+	surface()->GetTextSize(m_hFont, website, wSite, hSite);
 
-    int x = sw - boxW - margin;
-    int y = margin;
+	int boxW = max(max(wTitle, wVersion), wSite) + padding * 2;
+	int boxH = hTitle + hVersion + hSite + padding * 2 + 8;
 
-    // =========================
-    // SHADOW (soft)
-    // =========================
-    surface()->DrawSetColor(0, 0, 0, 100);
-    surface()->DrawFilledRect(x + 2, y + 2, x + boxW + 2, y + boxH + 2);
+	int x = sw - boxW - margin;
+	int y = margin;
 
-    // =========================
-    // BACKGROUND (glass)
-    // =========================
-    surface()->DrawSetColor(20, 20, 20, 170);
-    surface()->DrawFilledRect(x, y, x + boxW, y + boxH);
+	// shadow
+	surface()->DrawSetColor(0, 0, 0, 100);
+	surface()->DrawFilledRect(
+		x + 2,
+		y + 2,
+		x + boxW + 2,
+		y + boxH + 2
+	);
 
-    // =========================
-    // OUTLINE
-    // =========================
-    surface()->DrawSetColor(0, 0, 0, 220);
-    surface()->DrawOutlinedRect(x, y, x + boxW, y + boxH);
+	// background
+	surface()->DrawSetColor(20, 20, 20, 170);
+	surface()->DrawFilledRect(
+		x,
+		y,
+		x + boxW,
+		y + boxH
+	);
 
-    // =========================
-    // TOP ACCENT BAR
-    // =========================
-    surface()->DrawSetColor(255, 140, 0, 220); // orange
-    surface()->DrawFilledRect(x, y, x + boxW, y + 3);
+	// outline
+	surface()->DrawSetColor(0, 0, 0, 220);
+	surface()->DrawOutlinedRect(
+		x,
+		y,
+		x + boxW,
+		y + boxH
+	);
 
-    int tx = x + padding;
-    int ty = y + padding;
+	// accent bar
+	surface()->DrawSetColor(255, 140, 0, 220);
+	surface()->DrawFilledRect(
+		x,
+		y,
+		x + boxW,
+		y + 3
+	);
 
-    surface()->DrawSetTextFont(m_hFont);
+	int tx = x + padding;
+	int ty = y + padding;
 
-    // =========================
-    // TITLE (bold look)
-    // =========================
-    surface()->DrawSetTextColor(255, 255, 255, 230);
-    surface()->DrawSetTextPos(tx, ty);
-    surface()->DrawPrintText(title, wcslen(title));
+	surface()->DrawSetTextFont(m_hFont);
 
-    ty += hTitle;
+	// title
+	surface()->DrawSetTextColor(255, 255, 255, 230);
+	surface()->DrawSetTextPos(tx, ty);
+	surface()->DrawPrintText(title, wcslen(title));
 
-    // =========================
-    // SUBTITLE (cyan accent)
-    // =========================
-    surface()->DrawSetTextColor(0, 200, 255, 220);
-    surface()->DrawSetTextPos(tx, ty);
-    surface()->DrawPrintText(version, wcslen(version));
+	ty += hTitle;
 
-    ty += hVersion + 4;
+	// version
+	surface()->DrawSetTextColor(0, 200, 255, 220);
+	surface()->DrawSetTextPos(tx, ty);
+	surface()->DrawPrintText(version, wcslen(version));
 
-    // =========================
-    // SEPARATOR
-    // =========================
-    surface()->DrawSetColor(80, 80, 80, 180);
-    surface()->DrawFilledRect(x + padding, ty, x + boxW - padding, ty + 1);
+	ty += hVersion + 4;
 
-    ty += 4;
+	// separator
+	surface()->DrawSetColor(80, 80, 80, 180);
+	surface()->DrawFilledRect(
+		x + padding,
+		ty,
+		x + boxW - padding,
+		ty + 1
+	);
 
-    // =========================
-    // WEBSITE
-    // =========================
-    surface()->DrawSetTextColor(160, 160, 160, 220);
-    surface()->DrawSetTextPos(tx, ty);
-    surface()->DrawPrintText(website, wcslen(website));
+	ty += 4;
+
+	// website
+	surface()->DrawSetTextColor(160, 160, 160, 220);
+	surface()->DrawSetTextPos(tx, ty);
+	surface()->DrawPrintText(website, wcslen(website));
 }

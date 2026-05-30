@@ -168,7 +168,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <BrowseInformation />
       <BrowseInformationFile>$(IntDir)</BrowseInformationFile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
       <ErrorReporting>Prompt</ErrorReporting>
@@ -342,6 +342,8 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="edictfiller.cpp" />
     <ClCompile Include="ent_test.cpp" />
     <ClCompile Include="env_tasklist.cpp" />
+    <ClCompile Include="episodic\grenade_hopwire.cpp" />
+    <ClCompile Include="episodic\weapon_hopwire.cpp" />
     <ClCompile Include="fartcmd.cpp" />
     <ClCompile Include="gabeplus_chaosent.cpp" />
     <ClCompile Include="gabeplus_debugobjects.cpp" />
@@ -430,11 +432,13 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="gabeplus_npcinfo.cpp" />
     <ClCompile Include="gabeplus_npc_nextbot.cpp" />
     <ClCompile Include="gabeplus_shared.cpp" />
+    <ClCompile Include="gabeplus_testfile.cpp" />
     <ClCompile Include="gabe_constraints.cpp" />
     <ClCompile Include="gabe_effects.cpp" />
     <ClCompile Include="gabe_effect_carrier.cpp" />
     <ClCompile Include="gabe_nextbot.cpp" />
     <ClCompile Include="gabe_saverestore.cpp" />
+    <ClCompile Include="gabe_simpgun.cpp" />
     <ClCompile Include="ge_gamelua.cpp" />
     <ClCompile Include="ge_luamanager.cpp" />
     <ClCompile Include="hl1\hl1_basegrenade.cpp" />
@@ -593,6 +597,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="lua_player.cpp" />
     <ClCompile Include="lua_test.cpp" />
     <ClCompile Include="lua_vector.cpp" />
+    <ClCompile Include="macrotest.cpp" />
     <ClCompile Include="mapentities.cpp" />
     <ClCompile Include="..\shared\mapentities_shared.cpp" />
     <ClCompile Include="maprules.cpp" />
@@ -780,6 +785,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClCompile Include="..\shared\takedamageinfo.cpp" />
     <ClCompile Include="sv_htmlcon.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="testcombatcharacter.cpp" />
     <ClCompile Include="weapon_crowbar_hl1.cpp" />
     <ClCompile Include="weapon_egon.cpp" />
     <ClCompile Include="weapon_hl1tripmine.cpp" />
@@ -1153,6 +1159,7 @@ if exist "$(TargetDir)"server.dll copy "$(TargetDir)"server.dll "D:\Program File
     <ClInclude Include="EnvMessage.h" />
     <ClInclude Include="envmicrophone.h" />
     <ClInclude Include="..\..\public\event_flags.h" />
+    <ClInclude Include="episodic\grenade_hopwire.h" />
     <ClInclude Include="event_tempentity_tester.h" />
     <ClInclude Include="..\shared\eventlist.h" />
     <ClInclude Include="eventqueue.h" />

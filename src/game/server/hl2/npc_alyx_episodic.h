@@ -7,6 +7,7 @@
 #include "ai_baseactor.h"
 #include "npc_playercompanion.h"
 #include "ai_behavior_holster.h"
+#include "ai_behavior_passenger.h"
 #include "ai_behavior_functank.h"
 #include "soundenvelope.h"
 

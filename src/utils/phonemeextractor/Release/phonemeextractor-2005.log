@@ -1,2 +1,7 @@
-﻿  phonemeextractor.cpp
+﻿  extractor_utils.cpp
+  memoverride.cpp
+  phonemeconverter.cpp
+  phonemeextractor.cpp
 C:\Program Files (x86)\Windows Kits\8.0\Include\um\sphelper.h(51): fatal error C1083: Cannot open include file: 'atlbase.h': No such file or directory
+  sentence.cpp
+  Generating Code...

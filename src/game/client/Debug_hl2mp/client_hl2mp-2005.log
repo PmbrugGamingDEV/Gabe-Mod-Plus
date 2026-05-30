@@ -1,4 +1,111 @@
-﻿  saverestore.cpp
+﻿cl : Command line warning D9030: '/Gm' is incompatible with multiprocessing; ignoring /MP switch
+  viewdebug.cpp
+  view.cpp
+  vgui_netgraphpanel.cpp
+  vgui_credits.cpp
+  ragdoll.cpp
+  physpropclientside.cpp
+  physics_main_client.cpp
+  physics.cpp
+  in_camera.cpp
+  fx_hl2_tracers.cpp
+  fx_hl2_impacts.cpp
+  glow_overlay.cpp
+  gabe_newgamedialog.cpp
+c:\gabemodplus\src\game\client\gabe_newgamedialog.cpp(931): warning C4189: 'publicServer' : local variable is initialized but not referenced
+  fx_water.cpp
+  c_te_playerdecal.cpp
+  c_baseplayer.cpp
+  soundenvelope.cpp
+  saverestore.cpp
+  weapon_stunstick.cpp
+  hl_gamemovement.cpp
+  Generating Code...
+  Compiling...
+  gamerules.cpp
+  baseplayer_shared.cpp
+  achievementmgr.cpp
+  Generating Code...
+  Compiling...
+  cdll_client_int.cpp
+  c_baseanimating.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  viewrender.cpp
+  view_beams.cpp
+  vgui_int.cpp
+  prediction.cpp
+  particles_new.cpp
+  particlemgr.cpp
+  c_strider.cpp
+  fx_sparks.cpp
+  fx_quad.cpp
+  fx_impact.cpp
+  fx.cpp
+  flashlighteffect.cpp
+  detailobjectsystem.cpp
+  colorcorrectionmgr.cpp
+  clientsideeffects_test.cpp
+  clientsideeffects.cpp
+  clientshadowmgr.cpp
+  clientleafsystem.cpp
+  client_thinklist.cpp
+  cl_camblur.cpp
+  c_te_worlddecal.cpp
+  c_te_spritespray.cpp
+  c_te_sprite.cpp
+  c_te_smoke.cpp
+  c_te_projecteddecal.cpp
+  c_te_physicsprop.cpp
+  c_te_muzzleflash.cpp
+  c_te_legacytempents.cpp
+  c_te_killplayerattachments.cpp
+  c_te_impact.cpp
+  c_te_glowsprite.cpp
+  c_te_glassshatter.cpp
+  c_te_footprint.cpp
+  c_te_fizz.cpp
+  c_te_energysplash.cpp
+  c_te_effect_dispatch.cpp
+  c_te_dynamiclight.cpp
+  c_te_decal.cpp
+  c_te_clientprojectile.cpp
+  c_te_bubbletrail.cpp
+  c_te_bubbles.cpp
+  c_te_bspdecal.cpp
+  c_te_breakmodel.cpp
+  c_te_bloodsprite.cpp
+  c_te_beamspline.cpp
+  c_te_armorricochet.cpp
+  c_sprite.cpp
+  c_rope.cpp
+  c_pixel_visibility.cpp
+  c_physicsprop.cpp
+  c_particle_system.cpp
+  c_impact_effects.cpp
+  c_func_dust.cpp
+  c_effects.cpp
+  c_baseflex.cpp
+  c_baseentity.cpp
+  c_basecombatweapon.cpp
+  c_baseanimatingoverlay.cpp
+  ragdoll_shared.cpp
+  physics_main_shared.cpp
+  igamesystem.cpp
+  hl2mp_playeranimstate.cpp
+  gamemovement.cpp
+  baseentity_shared.cpp
+  base_playeranimstate.cpp
+  animation.cpp
+  SpriteTrail.cpp
+  Sprite.cpp
+  SoundEmitterSystem.cpp
+  multiplayer_animstate.cpp
+  Skipping... (no relevant changes detected)
+  bone_setup.cpp
 C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1137,5): warning MSB8012: TargetPath(C:\GabeModPlus\src\game\client\.\Debug_hl2mp\Client Gabe Mod Plus.dll) does not match the Linker's OutputFile property value (C:\GabeModPlus\src\game\client\Debug_hl2mp\Client.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
 C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(1139,5): warning MSB8012: TargetName(Client Gabe Mod Plus) does not match the Linker's OutputFile property value (Client). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+     Creating library .\Debug_hl2mp\Client.lib and object .\Debug_hl2mp\Client.exp
   client_hl2mp-2005.vcxproj -> C:\GabeModPlus\src\game\client\.\Debug_hl2mp\Client Gabe Mod Plus.dll
+  Copying to D:\Program Files (x86)\Steam\steamapps\SourceMods\gabemodplus\bin\
+          1 file(s) copied.

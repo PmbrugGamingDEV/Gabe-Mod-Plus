@@ -1,4 +1,53 @@
-﻿bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
+﻿  bsptreedata.cpp
+  disp_common.cpp
+  disp_powerinfo.cpp
+  disp_vrad.cpp
+  imagepacker.cpp
+  incremental.cpp
+  leaf_ambient_lighting.cpp
+  lightmap.cpp
+  loadcmdline.cpp
+  lumpfiles.cpp
+  macro_texture.cpp
+  memoverride.cpp
+  mpi_stats.cpp
+  mpivrad.cpp
+  MySqlDatabase.cpp
+  pacifier.cpp
+  physdll.cpp
+  radial.cpp
+  samplehash.cpp
+  trace.cpp
+  Generating Code...
+  Compiling...
+  utilmatlib.cpp
+  vismat.cpp
+  vmpi_tools_shared.cpp
+  vrad.cpp
+  vrad_dispcoll.cpp
+  vraddetailprops.cpp
+  vraddisps.cpp
+  vraddll.cpp
+  vradstaticprops.cpp
+  zip_utils.cpp
+  bsplib.cpp
+  builddisp.cpp
+  chunkfile.cpp
+  cmdlib.cpp
+  dispcoll_common.cpp
+  map_shared.cpp
+  polylib.cpp
+  scriplib.cpp
+  threads.cpp
+  tools_minidump.cpp
+  Generating Code...
+  Compiling...
+  collisionutils.cpp
+  filesystem_helpers.cpp
+  scratchpad3d.cpp
+  ScratchPadUtils.cpp
+  Generating Code...
+bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
 bitmap.lib(S3_quant.obj) : error LNK2026: module unsafe for SAFESEH image.
 vmpi.lib(deflate.obj) : error LNK2026: module unsafe for SAFESEH image.
 vmpi.lib(inflate.obj) : error LNK2026: module unsafe for SAFESEH image.

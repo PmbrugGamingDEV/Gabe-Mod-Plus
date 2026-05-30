@@ -1,4 +1,5 @@
-﻿bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
+﻿  height2normal.cpp
+bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
 bitmap.lib(S3_quant.obj) : error LNK2026: module unsafe for SAFESEH image.
      Creating library .\Release\Height2normal.lib and object .\Release\Height2normal.exp
 .\Release\height2normal.exe : fatal error LNK1281: Unable to generate SAFESEH image.

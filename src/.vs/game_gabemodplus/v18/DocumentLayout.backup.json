@@ -3,11 +3,20 @@
   "WorkspaceRootPath": "C:\\GabeModPlus\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\serverbenchmark_base.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\serverbenchmark_base.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\server\\cbase.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\server\\cbase.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\shared\\gamemovement.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\shared\\gamemovement.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\shared\\gamemovement.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}|game\\server\\server_hl2mp-2005.vcxproj|solutionrelative:game\\shared\\gamemovement.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|C:\\GabeModPlus\\src\\game\\client\\spdruntimer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5FE91DC8-B6DF-4061-984E-36FD36623E72}|game\\client\\client_hl2mp-2005.vcxproj|solutionrelative:game\\client\\spdruntimer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -17,8 +26,34 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "cbase.h",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\cbase.h",
+              "RelativeDocumentMoniker": "game\\server\\cbase.h",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\cbase.h",
+              "RelativeToolTip": "game\\server\\cbase.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAABXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-05-30T19:23:11.891Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "gamemovement.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\shared\\GAMEMOVEMENT.CPP",
+              "RelativeDocumentMoniker": "game\\shared\\GAMEMOVEMENT.CPP",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\shared\\GAMEMOVEMENT.CPP",
+              "RelativeToolTip": "game\\shared\\GAMEMOVEMENT.CPP",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-05-30T19:22:25.794Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
@@ -28,29 +63,33 @@
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "serverbenchmark_base.cpp",
-              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\server\\serverbenchmark_base.cpp",
-              "RelativeDocumentMoniker": "game\\server\\serverbenchmark_base.cpp",
-              "ToolTip": "C:\\GabeModPlus\\src\\game\\server\\serverbenchmark_base.cpp",
-              "RelativeToolTip": "game\\server\\serverbenchmark_base.cpp",
-              "ViewState": "AgIAACkAAAAAAAAAAAAAAC4AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-25T22:19:22.673Z",
+              "DocumentIndex": 2,
+              "Title": "gamemovement.h",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\shared\\gamemovement.h",
+              "RelativeDocumentMoniker": "game\\shared\\gamemovement.h",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\shared\\gamemovement.h",
+              "RelativeToolTip": "game\\shared\\gamemovement.h",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAAAIUAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-05-30T19:22:19.379Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Microsoft.CppCommon.targets",
-              "DocumentMoniker": "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets",
-              "RelativeDocumentMoniker": "..\\..\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets",
-              "ToolTip": "C:\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets",
-              "RelativeToolTip": "..\\..\\Program Files (x86)\\MSBuild\\Microsoft.Cpp\\v4.0\\V110\\Microsoft.CppCommon.targets",
-              "ViewState": "AgIAAG8AAAAAAAAAAAArwIcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-04-25T22:14:34.165Z",
+              "DocumentIndex": 3,
+              "Title": "spdruntimer.cpp",
+              "DocumentMoniker": "C:\\GabeModPlus\\src\\game\\client\\spdruntimer.cpp",
+              "RelativeDocumentMoniker": "game\\client\\spdruntimer.cpp",
+              "ToolTip": "C:\\GabeModPlus\\src\\game\\client\\spdruntimer.cpp",
+              "RelativeToolTip": "game\\client\\spdruntimer.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-05-25T23:42:05.874Z",
               "EditorCaption": ""
             }
           ]

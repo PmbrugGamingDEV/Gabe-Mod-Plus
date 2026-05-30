@@ -1,3 +1,16 @@
-﻿     Creating library .\Release\demoinfo.lib and object .\Release\demoinfo.exp
+﻿  characterset.cpp
+  cmdlib.cpp
+  demoinfo.cpp
+  filesystem_helpers.cpp
+  filesystem_init.cpp
+  filesystem_tools.cpp
+  interface.cpp
+  KeyValues.cpp
+  tooldemofile.cpp
+  utlbuffer.cpp
+  utlsymbol.cpp
+  Generating Code...
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+     Creating library .\Release\demoinfo.lib and object .\Release\demoinfo.exp
 cmdlib.obj : error LNK2019: unresolved external symbol "void __cdecl MathLib_Init(float,float,float,int,bool,bool,bool,bool)" (?MathLib_Init@@YAXMMMH_N000@Z) referenced in function "void __cdecl CmdLib_InitCommandLine(int,char * *)" (?CmdLib_InitCommandLine@@YAXHPAPAD@Z)
 .\Release/demoinfo.exe : fatal error LNK1120: 1 unresolved externals

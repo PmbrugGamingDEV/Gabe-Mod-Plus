@@ -1,4 +1,59 @@
-﻿bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
+﻿  brushbsp.cpp
+  collisionutils.cpp
+  csg.cpp
+  cubemap.cpp
+  detail.cpp
+  detailobjects.cpp
+  disp_common.cpp
+  disp_ivp.cpp
+  disp_powerinfo.cpp
+  disp_vbsp.cpp
+  faces.cpp
+  glfile.cpp
+  ivp.cpp
+  leakfile.cpp
+  loadcmdline.cpp
+  lumpfiles.cpp
+  map.cpp
+  materialpatch.cpp
+  materialsub.cpp
+  memoverride.cpp
+  Generating Code...
+  Compiling...
+  mstristrip.cpp
+  nodraw.cpp
+  normals.cpp
+  overlay.cpp
+  physdll.cpp
+  portals.cpp
+  prtfile.cpp
+  scratchpad3d.cpp
+  scratchpad_helpers.cpp
+  staticprop.cpp
+  textures.cpp
+  tree.cpp
+  utilmatlib.cpp
+  vbsp.cpp
+  worldvertextransitionfixup.cpp
+  writebsp.cpp
+  zip_utils.cpp
+  bsplib.cpp
+  builddisp.cpp
+  chunkfile.cpp
+  Generating Code...
+  Compiling...
+  cmdlib.cpp
+  filesystem_helpers.cpp
+  filesystem_init.cpp
+  filesystem_tools.cpp
+  map_shared.cpp
+  pacifier.cpp
+  polylib.cpp
+  scriplib.cpp
+  threads.cpp
+  tools_minidump.cpp
+  Generating Code...
+bitmap.lib(S3_intrf.obj) : error LNK2026: module unsafe for SAFESEH image.
 bitmap.lib(S3_quant.obj) : error LNK2026: module unsafe for SAFESEH image.
      Creating library .\Release\Vbsp.lib and object .\Release\Vbsp.exp
 .\Release\vbsp.exe : fatal error LNK1281: Unable to generate SAFESEH image.

@@ -73,6 +73,19 @@ public:
 		m_pText->SetPaintBackgroundEnabled(false);
 
 		// --------------------------------------------------
+		// Version Label
+		// --------------------------------------------------
+
+		m_pVersion = new Label(
+			this,
+			"VersionText",
+			"Gabe Mod Beta v8.1"
+		);
+
+		m_pVersion->SetContentAlignment(Label::a_west);
+		m_pVersion->SetPaintBackgroundEnabled(false);
+
+		// --------------------------------------------------
 		// Holiday Label (big)
 		// --------------------------------------------------
 
@@ -91,9 +104,9 @@ public:
 
 		HFont small = pScheme->GetFont("DebugFixedSmall", false);
 		m_pText->SetFont(small);
+		m_pVersion->SetFont(small); // FIX: version uses small font
 
-			HFont big = pScheme->GetFont("Default", false);
-
+		HFont big = pScheme->GetFont("Default", false);
 		m_pHoliday->SetFont(big);
 	}
 
@@ -105,7 +118,7 @@ public:
 		surface()->GetScreenSize(sw, sh);
 
 		const int width = 500;
-		const int height = 190; // increased
+		const int height = 190;
 		const int pad = 12;
 
 		SetSize(width, height);
@@ -115,13 +128,18 @@ public:
 			sh - height - pad
 		);
 
-		const int creditsHeight = 150;
+		// Split layout into 3 parts
+		const int creditsHeight = 130;
+		const int versionHeight = 16;
 
 		m_pText->SetPos(0, 0);
 		m_pText->SetSize(width, creditsHeight);
 
-		m_pHoliday->SetPos(0, creditsHeight + 6);
-		m_pHoliday->SetSize(width, height - creditsHeight - 6);
+		m_pVersion->SetPos(0, creditsHeight);
+		m_pVersion->SetSize(width, versionHeight);
+
+		m_pHoliday->SetPos(0, creditsHeight + versionHeight + 6);
+		m_pHoliday->SetSize(width, height - creditsHeight - versionHeight - 6);
 	}
 
 	virtual void OnThink()
@@ -141,7 +159,9 @@ public:
 			currentColor = Color(r, g, b, 255);
 		}
 
+		// Apply color to ALL labels
 		m_pText->SetFgColor(currentColor);
+		m_pVersion->SetFgColor(Color(0, 255, 0, 255)); // 
 
 		// ------------------------------
 		// Holiday Handling
@@ -162,13 +182,14 @@ public:
 			m_pHoliday->SetFgColor(currentColor);
 
 			m_pHoliday->SetText(
-				CFmtStr("no holiday, sorry!") 
+				CFmtStr("no holiday, sorry!")
 			);
 		}
 	}
 
 private:
 	Label* m_pText;
+	Label* m_pVersion;
 	Label* m_pHoliday;
 };
 

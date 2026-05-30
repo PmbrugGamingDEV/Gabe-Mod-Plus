@@ -1,6 +1,6 @@
  vice
 
- Timestamp is 6987e1e4 (Sat Feb 07 20:07:48 2026)
+ Timestamp is 69ed4330 (Sat Apr 25 18:41:52 2026)
 
  Preferred load address is 00400000
 
@@ -99,13 +99,13 @@
  0001:000021b0       ??3@YAXPAX@Z               004031b0 f   memoverride.obj
  0001:00002210       ?Process_File@@YA_NPADH@Z  00403210 f   vice.obj
  0001:00002470       _main                      00403470 f   vice.obj
- 0001:000027d0       ?SinCos@@YAXMPAM0@Z        004037d0 f i mathlib:mathlib_base.obj
- 0001:000027f0       ?_sqrtf@@YAMM@Z            004037f0 f   mathlib:mathlib_base.obj
- 0001:00002810       ?_rsqrtf@@YAMM@Z           00403810 f   mathlib:mathlib_base.obj
- 0001:00002840       ?_VectorNormalize@@YIMAAVVector@@@Z 00403840 f   mathlib:mathlib_base.obj
- 0001:000028b0       ?_VectorNormalizeFast@@YIXAAVVector@@@Z 004038b0 f   mathlib:mathlib_base.obj
- 0001:00002920       ?_InvRSquared@@YAMPBM@Z    00403920 f   mathlib:mathlib_base.obj
- 0001:00002970       _cosf                      00403970 f i mathlib:mathlib_base.obj
+ 0001:000027d0       ?_sqrtf@@YAMM@Z            004037d0 f   mathlib:mathlib_base.obj
+ 0001:000027f0       ?_rsqrtf@@YAMM@Z           004037f0 f   mathlib:mathlib_base.obj
+ 0001:00002820       ?_VectorNormalize@@YIMAAVVector@@@Z 00403820 f   mathlib:mathlib_base.obj
+ 0001:00002890       ?_VectorNormalizeFast@@YIXAAVVector@@@Z 00403890 f   mathlib:mathlib_base.obj
+ 0001:00002900       ?_InvRSquared@@YAMPBM@Z    00403900 f   mathlib:mathlib_base.obj
+ 0001:00002950       _cosf                      00403950 f i mathlib:mathlib_base.obj
+ 0001:00002970       ?SinCos@@YAXMPAM0@Z        00403970 f i mathlib:mathlib_base.obj
  0001:00002990       ??0IceKey@@QAE@H@Z         00403990 f   mathlib:IceKey.obj
  0001:00002a00       ??1IceKey@@QAE@XZ          00403a00 f   mathlib:IceKey.obj
  0001:00002a60       ?blockSize@IceKey@@QBEHXZ  00403a60 f   mathlib:IceKey.obj
@@ -1305,8 +1305,8 @@
  0003:00004a40       ___crtDebugCheckCount      00432a40     memoverride.obj
  0003:00004a44       ___crtDebugFillThreshold   00432a44     memoverride.obj
  0003:00004a48       __crtBreakAlloc            00432a48     memoverride.obj
- 0003:00004a90       ?SinCosTable@@3PAMA        00432a90     mathlib:mathlib_base.obj
- 0003:00004e94       ?s_bMathlibInitialized@@3_NA 00432e94     mathlib:mathlib_base.obj
+ 0003:00004a94       ?s_bMathlibInitialized@@3_NA 00432a94     mathlib:mathlib_base.obj
+ 0003:00004a98       ?SinCosTable@@3PAMA        00432a98     mathlib:mathlib_base.obj
  0003:00004ea0       ?vec3_origin@@3VVector@@B  00432ea0     mathlib:mathlib_base.obj
  0003:00004eac       ?vec3_angle@@3VQAngle@@B   00432eac     mathlib:mathlib_base.obj
  0003:00008ec0       ?lineartovertex@@3PAMA     00436ec0     mathlib:color_conversion.obj
@@ -2022,10 +2022,10 @@
  0003:00004a64       _vec2_origin               00432a64     vice.obj
  0003:00004a6c       _g_ICEKey                  00432a6c     vice.obj
  0003:00004a7c       _g_Extension               00432a7c     vice.obj
- 0003:00004e90       _s_b3DNowEnabled           00432e90     mathlib:mathlib_base.obj
- 0003:00004e91       _s_bMMXEnabled             00432e91     mathlib:mathlib_base.obj
- 0003:00004e92       _s_bSSEEnabled             00432e92     mathlib:mathlib_base.obj
- 0003:00004e93       _s_bSSE2Enabled            00432e93     mathlib:mathlib_base.obj
+ 0003:00004a90       _s_b3DNowEnabled           00432a90     mathlib:mathlib_base.obj
+ 0003:00004a91       _s_bMMXEnabled             00432a91     mathlib:mathlib_base.obj
+ 0003:00004a92       _s_bSSEEnabled             00432a92     mathlib:mathlib_base.obj
+ 0003:00004a93       _s_bSSE2Enabled            00432a93     mathlib:mathlib_base.obj
  0003:00004e98       _vec2_origin               00432e98     mathlib:mathlib_base.obj
  0003:00004eb8       _ice_sboxes_initialised    00432eb8     mathlib:IceKey.obj
  0003:00004ec0       _ice_sbox                  00432ec0     mathlib:IceKey.obj

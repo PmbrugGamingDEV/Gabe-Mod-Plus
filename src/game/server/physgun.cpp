@@ -13,7 +13,7 @@
 #include "beam_shared.h"
 #include "player.h"
 #include "gamerules.h"
-#include "basehlcombatweapon.h"
+#include "weapon_hl2mpbasehlmpcombatweapon.h"
 #include "baseviewmodel.h"
 #include "vphysics/constraints.h"
 #include "physics.h"
@@ -24,21 +24,23 @@
 #include "physics_saverestore.h"
 #include "player_pickup.h"
 #include "rope.h"
+
+#include "sprite.h"
 #include "soundemittersystem/isoundemittersystembase.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar phys_gunmass("phys_gunmass", "200");
-ConVar phys_gunvel("phys_gunvel", "400");
-ConVar phys_gunforce("phys_gunforce", "5e5");
-ConVar phys_guntorque("phys_guntorque", "100");
+ConVar phys_gunmass("phys_gunmass", "2000");
+ConVar phys_gunvel("phys_gunvel", "4000");
+ConVar phys_gunforce("phys_gunforce", "9e5");
+ConVar phys_guntorque("phys_guntorque", "1000");
 ConVar phys_gunglueradius("phys_gunglueradius", "128");
 
 static int g_physgunBeam;
 #define PHYSGUN_BEAM_SPRITE		"sprites/physbeam.vmt"
 
-#define MAX_PELLETS 512 // Same as jbmod
+#define MAX_PELLETS 999
 
 enum physgun_constraint_mode
 {
@@ -359,7 +361,7 @@ IMotionEvent::simresult_e CJBGravControllerPoint::Simulate(IPhysicsMotionControl
 	pObject->LocalToWorld(&world, m_localPosition);
 	m_worldPosition = world;
 	pObject->GetVelocity(&vel, &angVel);
-	//pObject->GetVelocityAtPoint( world, vel );
+	pObject->GetVelocityAtPoint( world, &vel );
 	float damping = 1.0;
 	world += vel * deltaTime * damping;
 	Vector delta = (m_targetPosition - world) * fracRemainingSimTime * invDeltaTime;
@@ -435,10 +437,10 @@ IMotionEvent::simresult_e CJBGravControllerPoint::Simulate(IPhysicsMotionControl
 				float angleDiff = angleDest - angleSrc;
 				angleDiff = RAD2DEG(angleDiff);
 				axis += m_targetAlignNormal * angleDiff;
-				//world = m_targetPosition;// + rotDest * (1-ratio);
-//				NDebugOverlay::Line( worldRotCenter, worldRotCenter-m_targetAlignNormal*50, 255, 0, 0, false, 0.1 );
-//				NDebugOverlay::Line( worldRotCenter, worldRotCenter+tangent*50, 0, 255, 0, false, 0.1 );
-//				NDebugOverlay::Line( worldRotCenter, worldRotCenter+binormal*50, 0, 0, 255, false, 0.1 );
+				world = m_targetPosition;// + rotDest * (1-ratio);
+				NDebugOverlay::Line( worldRotCenter, worldRotCenter-m_targetAlignNormal*50, 255, 0, 0, false, 0.1 );
+				NDebugOverlay::Line( worldRotCenter, worldRotCenter+tangent*50, 0, 255, 0, false, 0.1 );
+				NDebugOverlay::Line( worldRotCenter, worldRotCenter+binormal*50, 0, 0, 255, false, 0.1 );
 			}
 		}
 
@@ -525,12 +527,12 @@ struct pelletlist_t
 	EHANDLE						parent;
 };
 
-class CJBWeaponGravityGun : public CBaseHLCombatWeapon
+class CJBWeaponGravityGun : public CBaseHL2MPCombatWeapon
 {
 	DECLARE_DATADESC();
 
 public:
-	DECLARE_CLASS(CJBWeaponGravityGun, CBaseHLCombatWeapon);
+	DECLARE_CLASS(CJBWeaponGravityGun, CBaseHL2MPCombatWeapon);
 
 	CJBWeaponGravityGun();
 	void Spawn(void);
@@ -825,12 +827,12 @@ void CJBWeaponGravityGun::EffectUpdate(void)
 	float distance = tr.fraction * 4096;
 	if (tr.fraction != 1)
 	{
-		// too close to the player, drop the object
-		if (distance < 36)
+		// // too close to the player, drop the object
+		/*if (distance < 36)
 		{
 			DetachObject();
 			return;
-		}
+		}*/
 	}
 
 	if (m_hObject == NULL && tr.DidHitNonWorldEntity())

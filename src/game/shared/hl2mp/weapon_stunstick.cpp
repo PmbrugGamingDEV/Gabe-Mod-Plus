@@ -38,7 +38,8 @@
 extern ConVar metropolice_move_and_melee;
 
 #define	STUNSTICK_RANGE				75.0f
-#define	STUNSTICK_REFIRE			0.35f
+ConVar gabeplus_stunstick_refire("gabeplus_stunstick_refire", "0.35", FCVAR_ARCHIVE, "Refire rate for the stunstick");
+#define	STUNSTICK_REFIRE			gabeplus_stunstick_refire.GetFloat()
 #define	STUNSTICK_BEAM_MATERIAL		"sprites/lgtning.vmt"
 #define STUNSTICK_GLOW_MATERIAL		"sprites/light_glow02_add"
 #define STUNSTICK_GLOW_MATERIAL2	"effects/blueflare1"

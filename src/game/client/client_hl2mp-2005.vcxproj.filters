@@ -112,6 +112,9 @@
     <Filter Include="Source Files\Gabe Mod + Stuff\Utilities\Test">
       <UniqueIdentifier>{aaa4cb25-b3d1-4ead-b100-c7bb6c86623d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Episodic">
+      <UniqueIdentifier>{7fd83667-f08a-47e5-9b4f-9c7abe4427a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="achievement_notification_panel.cpp">
@@ -1752,6 +1755,12 @@
     <ClCompile Include="..\shared\GABE.cpp" />
     <ClCompile Include="hud_tasklist.cpp">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="episodic\c_weapon_hopwire.cpp">
+      <Filter>Source Files\Episodic</Filter>
+    </ClCompile>
+    <ClCompile Include="episodic\episodic_screenspaceeffects.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3620,6 +3629,9 @@
     </ClInclude>
     <ClInclude Include="hud_tasklist.h">
       <Filter>Source Files\Gabe Mod + Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="episodic\episodic_screenspaceeffects.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
