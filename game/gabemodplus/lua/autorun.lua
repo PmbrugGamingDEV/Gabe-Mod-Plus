@@ -1,0 +1,1 @@
+player.ForceRespawn(1)
