@@ -1,8 +1,0 @@
-"ServerBrowserGameTypes.txt"
-{
-	"gametype_1"
-	{
-		"prefix"	"dm_"
-		"name"		"deathmatch"
-	}
-}

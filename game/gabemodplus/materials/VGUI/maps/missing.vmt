@@ -1,9 +1,0 @@
-"UnlitGeneric"
-{
-	"$basetexture" "VGUI/maps/missing"
-	"$nocull" 1
-	"$translucent" 1
-	"$vertexalpha" 1
-	"$vertexcolor" 1
-	"$ignorez"     1
-}

@@ -1,7 +1,0 @@
-"UnlitGeneric"
-{
-	"$basetexture"		"VGUI/maps/ep1_c17_00a"
-                "$nolod" 1
-	"$translucent" 1
-	"$vertexalpha" 1
-}

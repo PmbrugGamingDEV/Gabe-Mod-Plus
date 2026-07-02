@@ -1,8 +1,0 @@
-"SpeedrunPB"
-{
-	"maps"
-	{
-		"d1_canals_12.bsp"		"2.070740"
-		"d1_canals_11.bsp"		"1.278020"
-	}
-}

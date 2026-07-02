@@ -1,4 +1,0 @@
-credit to JoshuaC for the buildingblocks map.
-credit to Garry Newman for the Block spawning section of the map (Buttons).
-credit to GMod idiot box for Hax!
-credit to HL2SB developers and Adnan's Rotational Gravity Gun for the base physics gun code.

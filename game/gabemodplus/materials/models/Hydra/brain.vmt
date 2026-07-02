@@ -1,7 +1,0 @@
-"UnlitGeneric"
-{
-	// Original shader: addtexture
-	"$basetexture" "models/MissingInfo_E3/Hydra/brain"
-	"$additive" 1
-	"$model" 1
-}
